@@ -1,10 +1,8 @@
 package com.ssafy.trip.member.controller;
 
-import com.ssafy.trip.file.Table;
-import com.ssafy.trip.member.model.Member;
-import com.ssafy.trip.member.model.MemberFind;
+import com.ssafy.trip.member.model.dto.Member;
+import com.ssafy.trip.member.model.dto.MemberFind;
 import com.ssafy.trip.member.service.MemberService;
-import com.ssafy.trip.util.PasswordUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,10 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.IOException;
 import java.util.Map;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,7 +40,7 @@ public class MemberController {
     @PostMapping("/find/id")
     public String findId(MemberFind member, Model model) {
 
-        String id = memberService.getMemberIdByEmailAndName(member.getEmail(), member.getName());
+        String id = memberService.getMemberIdByEmailAndName(member);
         String msg = null;
         if (id == null) {
             msg = "해당하는 회원 정보가 없습니다.";
@@ -68,7 +64,7 @@ public class MemberController {
     @PostMapping("/find/pw")
     private String findPassword(MemberFind member, Model model) {
 
-        String password = memberService.getMemberPasswordByIdAndEmailAndPhone(member.getId(), member.getEmail(), member.getPhone());
+        String password = memberService.getMemberPasswordByIdAndEmailAndPhone(member);
 
         String msg = null;
 
@@ -194,19 +190,8 @@ public class MemberController {
 
     @PostMapping("/regist")
     private String regist(@RequestParam Map<String, String> map, Model model, RedirectAttributes redirect) {
-        String email = map.get("registerEmail") + map.get("registerEmailAdd");
-        Member member = new Member();
-        member.setId(map.get("registerId"));
-        member.setEmail(email);
-        member.setName(map.get("registerName"));
-        member.setPassword(map.get("registerPw"));
-        member.setPhone(map.get("registerPhone"));
-        member.setNickname(map.get("registerNickname"));
-        member.setMbti(map.get("mbti"));
-        member.setIntroduction(map.get("introduction"));
-        member.setRole("general");
 
-        int statusCode = memberService.createMember(member);
+        int statusCode = memberService.createMember(map);
         String msg;
         if (statusCode == 1) { // 성공 페이지
             msg = "회원가입에 성공하였습니다. 로그인 해주세요!";
@@ -225,12 +210,12 @@ public class MemberController {
      * @return
      */
     @GetMapping("/logout")
-    private String logout(HttpSession session, Model model) {
+    private String logout(HttpSession session, Model model, RedirectAttributes redirectAttributes) {
         session.removeAttribute("memberDto");
         session.invalidate();
         String msg = "로그아웃 되었습니다!";
-        model.addAttribute("msg", msg);
-        return "/";
+        redirectAttributes.addFlashAttribute("msg", msg);
+        return "redirect:/";
     }
 
     /**
@@ -251,11 +236,10 @@ public class MemberController {
 
         if (member != null) {
             session.setAttribute("memberDto", member);
-
             saveCookieId(request, response, id);
         } else {
             String msg = "로그인을 실패하였습니다. 다시 시도해주세요!";
-            redirect.addAttribute("msg", msg);
+            redirect.addFlashAttribute("msg", msg);
         }
         return "redirect:/";
     }

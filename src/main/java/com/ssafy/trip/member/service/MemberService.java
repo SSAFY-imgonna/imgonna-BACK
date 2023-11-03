@@ -1,16 +1,17 @@
 package com.ssafy.trip.member.service;
 
-import com.ssafy.trip.member.model.Member;
+import com.ssafy.trip.member.model.dto.Member;
+import com.ssafy.trip.member.model.dto.MemberFind;
+
+import java.util.Map;
 
 public interface MemberService {
 
-	int createMember(Member member);
+	int createMember(Map<String, String> map);
 	Member getMemberByIdAndPassword(String id, String password);
-	int getMemberById(String id);
-	int getMemberByEmail(String email);
-	String getMemberIdByEmailAndName(String email, String name);
-	String getMemberPasswordByIdAndEmailAndPhone(String id, String email, String phone);
-	void delete(String id);
+	String getMemberIdByEmailAndName(MemberFind member);
+	String getMemberPasswordByIdAndEmailAndPhone(MemberFind member);
+	int delete(String id);
 	int updateMember(Member member);
 	int updateMemberPasswordById(String id, String password);
 }

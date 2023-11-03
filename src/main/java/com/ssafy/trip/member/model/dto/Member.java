@@ -1,4 +1,4 @@
-package com.ssafy.trip.member.model;
+package com.ssafy.trip.member.model.dto;
 
 import java.io.Serializable;
 

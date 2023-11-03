@@ -40,7 +40,54 @@
         where id = #{id}
     </select>
 
-<!--    &lt;!&ndash; ADMIN &ndash;&gt;-->
+    <select id="getMemberIdByEmailAndName" parameterType="map" resultType="String">
+        select id
+        from members
+        where email = #{email} and name = #{name}
+    </select>
+
+    <select id="getMemberPasswordByIdAndEmailAndPhone" parameterType="map" resultType="String">
+        select password
+        from members
+        where id = #{id} and email = #{email} and phone = #{phone}
+    </select>
+
+    <delete id="deleteMember" parameterType="String">
+        delete from members
+        where id = #{id}
+    </delete>
+
+    <update id="updateMember" parameterType="member">
+        update members
+        <trim prefix="set" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="nickname != null">nickname = #{nickname},</if>
+            <if test="mbti != null">mbti = #{mbti},</if>
+            <if test="introduction != null">introduction = #{introduction},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="updateMemberPasswordById" parameterType="map" >
+        update members
+        <trim prefix="set" suffixOverrides=",">
+            <if test="password != null">password = #{password},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <!--    <update id="updateMember" parameterType="memberDto">-->
+    <!--        update members-->
+    <!--        <trim prefix="set" suffixOverrides=",">-->
+    <!--            <if test="userPwd != null">user_password = #{userPwd},</if>-->
+    <!--            <if test="emailId != null">email_id = #{emailId},</if>-->
+    <!--            <if test="emailDomain != null">email_domain = #{emailDomain},</if>-->
+    <!--        </trim>-->
+    <!--        where user_id = #{userId}-->
+    <!--    </update>-->
+
+    <!--    &lt;!&ndash; ADMIN &ndash;&gt;-->
 <!--    <select id="listMember" resultMap="memberAll">-->
 <!--        select user_name, user_id, user_password, email_id, email_domain, join_date-->
 <!--        from members-->
@@ -62,10 +109,5 @@
 <!--        </trim>-->
 <!--        where user_id = #{userId}-->
 <!--    </update>-->
-
-<!--    <delete id="deleteMember" parameterType="String">-->
-<!--        delete from members-->
-<!--        where user_id = #{userId}-->
-<!--    </delete>-->
 
 </mapper>

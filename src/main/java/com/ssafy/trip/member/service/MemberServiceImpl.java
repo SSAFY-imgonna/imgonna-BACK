@@ -4,7 +4,8 @@ import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.ssafy.trip.member.model.Member;
+import com.ssafy.trip.member.model.dto.Member;
+import com.ssafy.trip.member.model.dto.MemberFind;
 import com.ssafy.trip.member.model.mapper.MemberMapper;
 import com.ssafy.trip.util.PasswordUtils;
 import org.springframework.stereotype.Service;
@@ -18,13 +19,25 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public int createMember(Member memberDto) {
+    public int createMember(Map<String, String> map) {
 
+        Member member = new Member();
+        member.setId(map.get("registerId"));
+        String email = map.get("registerEmail") + map.get("registerEmailAdd");
+        member.setEmail(email);
+        member.setName(map.get("registerName"));
+        member.setPhone(map.get("registerPhone"));
+        member.setNickname(map.get("registerNickname"));
+        member.setMbti(map.get("mbti"));
+        member.setIntroduction(map.get("introduction"));
+        member.setRole("general");
+
+        String rawPassword = map.get("registerPw");
         byte[] salt = getSalt();
-        String digest = PasswordUtils.encode(memberDto.getPassword(), salt);
-        memberDto.setPassword(digest);
-        memberDto.setSalt(PasswordUtils.bytesToHex(salt));
-        return memberMapper.createMember(memberDto);
+        String digest = PasswordUtils.encode(rawPassword, salt);
+        member.setPassword(digest);
+        member.setSalt(PasswordUtils.bytesToHex(salt));
+        return memberMapper.createMember(member);
     }
 
     @Override
@@ -52,39 +65,56 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public int getMemberById(String id) {
-        return memberMapper.getMemberById(id);
-    }
-
-    @Override
-    public int getMemberByEmail(String email) {
-        return memberMapper.getMemberByEmail(email);
-    }
-
-    @Override
-    public void delete(String id) {
-        memberMapper.delete(id);
-
+    public int delete(String id) {
+        try {
+            memberMapper.deleteMember(id);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            return 0;
+        }
+        return 1;
     }
 
     @Override
     public int updateMember(Member member) {
-        return memberMapper.updateMember(member);
+        try {
+            memberMapper.updateMember(member);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            return 0;
+        }
+        return 1;
     }
 
     @Override
     public int updateMemberPasswordById(String id, String password) {
-        return memberMapper.updateMemberPasswordById(id, password);
+        Map<String, String> map = new HashMap<>();
+        map.put("id", id);
+        map.put("password", password);
+        try {
+            memberMapper.updateMemberPasswordById(map);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            return 0;
+        }
+        return 1;
     }
 
     @Override
-    public String getMemberIdByEmailAndName(String email, String name) {
-        return memberMapper.getMemberIdByEmailAndName(email, name);
+    public String getMemberIdByEmailAndName(MemberFind member) {
+        Map<String, String> map = new HashMap<>();
+        map.put("email", member.getEmail());
+        map.put("name", member.getName());
+        return memberMapper.getMemberIdByEmailAndName(map);
     }
 
     @Override
-    public String getMemberPasswordByIdAndEmailAndPhone(String id, String email, String phone) {
-        return memberMapper.getMemberPasswordByIdAndEmailAndPhone(id, email, phone);
+    public String getMemberPasswordByIdAndEmailAndPhone(MemberFind member) {
+        Map<String, String> map = new HashMap<>();
+        map.put("id", member.getId());
+        map.put("email", member.getEmail());
+        map.put("phone", member.getPhone());
+        return memberMapper.getMemberPasswordByIdAndEmailAndPhone(map);
     }
 
     private byte[] getSalt() {
