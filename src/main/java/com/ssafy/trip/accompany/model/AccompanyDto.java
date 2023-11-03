@@ -1,6 +1,6 @@
 package com.ssafy.trip.accompany.model;
 
-public class AccompanyDto{
+public class AccompanyDto {
 	private int accompanyNo;
 	private String accompanyTitle;
 	private String accompanyContent;

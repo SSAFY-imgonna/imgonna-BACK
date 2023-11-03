@@ -1,8 +1,8 @@
 package com.ssafy.trip.accompany.model;
 
 public class AccompanyJoinDto {
-	int accompanyNo;
-	String id;
+	private int accompanyNo;
+	private String id;
 	
 	public int getAccompanyNo() {
 		return accompanyNo;
