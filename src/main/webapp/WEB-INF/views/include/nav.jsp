@@ -58,7 +58,7 @@
 				<div class="container mt-3">
 					<form method="post" name="registerForm" id="registerForm">
 
-						<div class="input-group mb-3">
+						<%-- <div class="input-group mb-3">
 							<span class="input-group-text">회원 유형</span> <span class="mx-auto">
 								<input class="form-check-input" type="radio" name="role"
 								value="general" id="general" checked="checked"> <label
@@ -67,7 +67,7 @@
 								id="admin"> <label class="form-check-label" for="admin">
 									관리자 </label>
 							</span>
-						</div>
+						</div> --%>
 
 						<div class="input-group mb-3">
 							<span class="input-group-text">아이디</span> <input type="text"
@@ -105,6 +105,17 @@
 							<span class="input-group-text">연락처</span> <input type="text"
 								class="form-control" id="registerPhone" name="registerPhone">
 						</div>
+
+						<div class="input-group mb-3">
+                        <span class="input-group-text">MBTI</span> <input type="text"
+                        	class="form-control" id="mbti" name="mbti">
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">소개글</span>
+                            <textarea class="form-control" id="introduction"
+                            type="text" maxlength="255" rows="3" cols="30" name="introduction"></textarea>
+                        </div>
 
 						<div class="input-group mb-3" id='input-group'>
 							<span class="input-group-text">이메일</span> <input type="text"

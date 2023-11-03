@@ -1,93 +1,97 @@
 package com.ssafy.trip.member.service;
 
 import java.security.SecureRandom;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.ssafy.trip.member.model.Member;
-import com.ssafy.trip.member.model.dao.MemberDao;
-import com.ssafy.trip.member.model.dao.MemberDaoImpl;
+import com.ssafy.trip.member.model.mapper.MemberMapper;
 import com.ssafy.trip.util.PasswordUtils;
 import org.springframework.stereotype.Service;
 
 @Service
 public class MemberServiceImpl implements MemberService {
-	private static MemberService instance;
-	private MemberDao memberDao = MemberDaoImpl.getInstance();
+    private MemberMapper memberMapper;
 
-	public static MemberService getInstance() {
-		if (instance == null) {
-			instance = new MemberServiceImpl();
-		}
-		return instance;
-	}
+    public MemberServiceImpl(MemberMapper memberMapper) {
+        this.memberMapper = memberMapper;
+    }
 
-	@Override
-	public int createMember(Member member) {
+    @Override
+    public int createMember(Member memberDto) {
 
-		byte[] salt = getSalt();
-		String digest =  PasswordUtils.encode(member.getPassword(), salt);
-		member.setPassword(digest);
-		member.setSalt(PasswordUtils.bytesToHex(salt));
-		System.out.println("[회원가입]");
-		System.out.println("raw password: " + member.getPassword());
-		System.out.println("salt: " + PasswordUtils.bytesToHex(salt));
-		System.out.println("digest: " + digest);
-		return memberDao.createMember(member);
-	}
+        byte[] salt = getSalt();
+        String digest = PasswordUtils.encode(memberDto.getPassword(), salt);
+        memberDto.setPassword(digest);
+        memberDto.setSalt(PasswordUtils.bytesToHex(salt));
+        return memberMapper.createMember(memberDto);
+    }
 
-	@Override
-	public Member getMemberByIdAndPassword(String id, String password) {
-		byte[] salt = PasswordUtils.hexToBytes(memberDao.getSaltById(id));
-		String digest =  PasswordUtils.encode(password, salt);
-		System.out.println("[로그인]");
-		System.out.println("raw password: " + password);
-		System.out.println("salt: " + PasswordUtils.bytesToHex(salt));
-		System.out.println("digest: " + digest);
-		System.out.println("digest from DB: " + memberDao.getMemberByIdAndPassword(id, digest).getPassword());
-		return memberDao.getMemberByIdAndPassword(id, digest);
-	}
+    @Override
+    public Member getMemberByIdAndPassword(String id, String password) {
+        String salt = memberMapper.getSaltById(id);
 
-	@Override
-	public int getMemberById(String id) {
-		return memberDao.getMemberById(id);
-	}
+        if (salt == null) {
+            return null;
+        }
+        byte[] saltBytes = PasswordUtils.hexToBytes(salt);
+        String digest = PasswordUtils.encode(password, saltBytes);
+        System.out.println("[로그인]");
+        System.out.println("raw password: " + password);
+        System.out.println("salt: " + PasswordUtils.bytesToHex(saltBytes));
+        System.out.println("digest: " + digest);
+        Map<String, String> map = new HashMap<>();
+        map.put("id", id);
+        map.put("password", digest);
+        Member member = memberMapper.getMemberByIdAndPassword(map);
+        if (member == null) {
+            return null;
+        }
+        System.out.println("digest from DB: " + member.getPassword());
+        return member;
+    }
 
-	@Override
-	public int getMemberByEmail(String email) {
-		return memberDao.getMemberByEmail(email);
-	}
+    @Override
+    public int getMemberById(String id) {
+        return memberMapper.getMemberById(id);
+    }
 
-	@Override
-	public void delete(String id) {
-		memberDao.delete(id);
+    @Override
+    public int getMemberByEmail(String email) {
+        return memberMapper.getMemberByEmail(email);
+    }
 
-	}
+    @Override
+    public void delete(String id) {
+        memberMapper.delete(id);
 
-	@Override
-	public int updateMember(Member member) {
-		// TODO Auto-generated method stub
-		return memberDao.updateMember(member);
-	}
+    }
 
-	@Override
-	public int updateMemberPasswordById(String id, String password) {
-		return memberDao.updateMemberPasswordById(id, password);
-	}
+    @Override
+    public int updateMember(Member member) {
+        return memberMapper.updateMember(member);
+    }
 
-	@Override
-	public String getMemberIdByEmailAndName(String email, String name) {
-		return memberDao.getMemberIdByEmailAndName(email, name);
-	}
+    @Override
+    public int updateMemberPasswordById(String id, String password) {
+        return memberMapper.updateMemberPasswordById(id, password);
+    }
 
-	@Override
-	public String getMemberPasswordByIdAndEmailAndPhone(String id, String email, String phone) {
-		return memberDao.getMemberPasswordByIdAndEmailAndPhone(id, email, phone);
-	}
+    @Override
+    public String getMemberIdByEmailAndName(String email, String name) {
+        return memberMapper.getMemberIdByEmailAndName(email, name);
+    }
 
-	private byte[] getSalt() {
-		SecureRandom random = new SecureRandom();
-		byte[] salt = new byte[8];
-		random.nextBytes(salt);
-		return salt;
-	}
+    @Override
+    public String getMemberPasswordByIdAndEmailAndPhone(String id, String email, String phone) {
+        return memberMapper.getMemberPasswordByIdAndEmailAndPhone(id, email, phone);
+    }
+
+    private byte[] getSalt() {
+        SecureRandom random = new SecureRandom();
+        byte[] salt = new byte[8];
+        random.nextBytes(salt);
+        return salt;
+    }
 
 }

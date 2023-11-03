@@ -4,6 +4,7 @@ import com.ssafy.trip.file.Table;
 import com.ssafy.trip.member.model.Member;
 import com.ssafy.trip.member.model.MemberFind;
 import com.ssafy.trip.member.service.MemberService;
+import com.ssafy.trip.util.PasswordUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,7 +28,6 @@ import javax.servlet.http.HttpSession;
 @Controller
 @RequestMapping("/members")
 public class MemberController {
-    private static final long serialVersionUID = 1L;
     private final MemberService memberService;
 
     public MemberController(MemberService memberService) {
@@ -193,16 +193,18 @@ public class MemberController {
     }
 
     @PostMapping("/regist")
-    private String regist(Map<String, String> map, Model model) {
+    private String regist(@RequestParam Map<String, String> map, Model model, RedirectAttributes redirect) {
         String email = map.get("registerEmail") + map.get("registerEmailAdd");
         Member member = new Member();
-        member.setRole(map.get("role"));
         member.setId(map.get("registerId"));
         member.setEmail(email);
-        member.setName(map.get(("registerName")));
-        member.setPassword(map.get(("registerPw")));
-        member.setPhone(map.get(("registerPhone")));
-        member.setNickname(map.get(("registerNickname")));
+        member.setName(map.get("registerName"));
+        member.setPassword(map.get("registerPw"));
+        member.setPhone(map.get("registerPhone"));
+        member.setNickname(map.get("registerNickname"));
+        member.setMbti(map.get("mbti"));
+        member.setIntroduction(map.get("introduction"));
+        member.setRole("general");
 
         int statusCode = memberService.createMember(member);
         String msg;
@@ -211,8 +213,8 @@ public class MemberController {
         } else {
             msg = "회원가입에 실패하였습니다. 다시 시도해주세요!";
         }
-        model.addAttribute("msg", msg);
-        return "/index.jsp";
+        redirect.addFlashAttribute("msg", msg);
+        return "redirect:/";
     }
 
     /**

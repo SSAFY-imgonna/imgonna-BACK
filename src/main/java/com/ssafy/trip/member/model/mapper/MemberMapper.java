@@ -1,11 +1,15 @@
-package com.ssafy.trip.member.model.dao;
+package com.ssafy.trip.member.model.mapper;
 
 
 import com.ssafy.trip.member.model.Member;
+import org.apache.ibatis.annotations.Mapper;
 
-public interface MemberDao {
-	int createMember(Member member);
-	Member getMemberByIdAndPassword(String id, String password);
+import java.util.Map;
+
+@Mapper
+public interface MemberMapper {
+	int createMember(Member memberDto);
+    Member getMemberByIdAndPassword(Map<String, String> map);
 	int getMemberById(String id);
 	int getMemberByEmail(String email);
 	String getMemberIdByEmailAndName(String email, String name);

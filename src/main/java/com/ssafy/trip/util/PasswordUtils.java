@@ -13,27 +13,17 @@ public class PasswordUtils {
         throw new IllegalStateException("Utility class");
     }
 
-    public static String simple(String rawPassword) {
-        byte[] digest = null;
-        try {
-            digest = sha256WithoutSaltAndIterations(rawPassword);
-        } catch (NoSuchAlgorithmException ex) {
-            System.out.println(ex);
-        }
-
-        return bytesToHex(digest);
-    }
-
     public static String encode(String rawPassword, byte[] salt) {
         return encode(rawPassword, salt, DEFAULT_ITERATIONS);
     }
 
     public static String encode(String rawPassword, byte[] salt, int iterations) {
+        System.out.println("rawpassword: " + rawPassword);
         byte[] digest = null;
         try {
             digest = sha256(rawPassword, salt, iterations);
         } catch (NoSuchAlgorithmException ex) {
-        	System.out.println(ex);;
+        	System.out.println(ex);
         }
 
         return bytesToHex(digest);
@@ -51,12 +41,6 @@ public class PasswordUtils {
         }
 
         return input;
-    }
-
-    private static byte[] sha256WithoutSaltAndIterations(String rawPassword) throws NoSuchAlgorithmException {
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        digest.reset();
-        return digest.digest(rawPassword.getBytes(StandardCharsets.UTF_8));
     }
 
     public static String bytesToHex(byte[] bytes) {
