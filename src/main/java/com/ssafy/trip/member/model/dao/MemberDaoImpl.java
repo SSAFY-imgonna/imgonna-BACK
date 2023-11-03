@@ -1,13 +1,15 @@
 package com.ssafy.trip.member.model.dao;
 
-import com.ssafy.trip.member.model.MemberDto;
+import com.ssafy.trip.member.model.Member;
 import com.ssafy.trip.util.DBUtil;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Repository
 public class MemberDaoImpl implements MemberDao {
 
 	private DBUtil dbUtil = DBUtil.getInstance();
@@ -21,12 +23,12 @@ public class MemberDaoImpl implements MemberDao {
 	}
 
 	@Override
-	public MemberDto getMemberByIdAndPassword(String id, String password) {
+	public Member getMemberByIdAndPassword(String id, String password) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 
-		MemberDto memberDto = null;
+		Member member = null;
 		try {
 			conn = dbUtil.getConnection();
 
@@ -40,15 +42,15 @@ public class MemberDaoImpl implements MemberDao {
 			rs = pstmt.executeQuery();
 
 			if (rs.next()) {
-				memberDto = new MemberDto();
-				memberDto.setId(rs.getString("id"));
-				memberDto.setEmail(rs.getString("email"));
-				memberDto.setName(rs.getString("name"));
-				memberDto.setPassword(rs.getString("password"));
-				memberDto.setPhone(rs.getString("phone"));
-				memberDto.setNickname(rs.getString("nickname"));
-				memberDto.setJoinDate(rs.getString("join_date"));
-				memberDto.setRole(rs.getString("role"));
+				member = new Member();
+				member.setId(rs.getString("id"));
+				member.setEmail(rs.getString("email"));
+				member.setName(rs.getString("name"));
+				member.setPassword(rs.getString("password"));
+				member.setPhone(rs.getString("phone"));
+				member.setNickname(rs.getString("nickname"));
+				member.setJoinDate(rs.getString("join_date"));
+				member.setRole(rs.getString("role"));
 			}
 
 		} catch (SQLException e) {
@@ -57,7 +59,7 @@ public class MemberDaoImpl implements MemberDao {
 			dbUtil.close(conn, pstmt, rs);
 		}
 
-		return memberDto;
+		return member;
 	}
 
 	@Override
@@ -115,7 +117,7 @@ public class MemberDaoImpl implements MemberDao {
 	}
 
 	@Override
-	public int createMember(MemberDto memberDto) {
+	public int createMember(Member member) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		int cnt = 0;
@@ -125,14 +127,14 @@ public class MemberDaoImpl implements MemberDao {
 			sql.append("insert into members (id, email, name, password, phone, nickname, role, salt) \n");
 			sql.append("values (?, ?, ?, ?, ?, ?, ?, ?)");
 			pstmt = conn.prepareStatement(sql.toString());
-			pstmt.setString(1, memberDto.getId());
-			pstmt.setString(2, memberDto.getEmail());
-			pstmt.setString(3, memberDto.getName());
-			pstmt.setString(4, memberDto.getPassword());
-			pstmt.setString(5, memberDto.getPhone());
-			pstmt.setString(6, memberDto.getNickname());
-			pstmt.setString(7, memberDto.getRole());
-			pstmt.setString(8, memberDto.getSalt());
+			pstmt.setString(1, member.getId());
+			pstmt.setString(2, member.getEmail());
+			pstmt.setString(3, member.getName());
+			pstmt.setString(4, member.getPassword());
+			pstmt.setString(5, member.getPhone());
+			pstmt.setString(6, member.getNickname());
+			pstmt.setString(7, member.getRole());
+			pstmt.setString(8, member.getSalt());
 			cnt = pstmt.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -162,7 +164,7 @@ public class MemberDaoImpl implements MemberDao {
 	}
 
 	@Override
-	public int updateMember(MemberDto memberDto) {
+	public int updateMember(Member member) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		int cnt = 0;
@@ -173,11 +175,11 @@ public class MemberDaoImpl implements MemberDao {
 			sql.append("set email=?, name=?, phone=?, nickname=? \n");
 			sql.append("where id=?");
 			pstmt = conn.prepareStatement(sql.toString());
-			pstmt.setString(1, memberDto.getEmail());
-			pstmt.setString(2, memberDto.getName());
-			pstmt.setString(3, memberDto.getPhone());
-			pstmt.setString(4, memberDto.getNickname());
-			pstmt.setString(5, memberDto.getId());
+			pstmt.setString(1, member.getEmail());
+			pstmt.setString(2, member.getName());
+			pstmt.setString(3, member.getPhone());
+			pstmt.setString(4, member.getNickname());
+			pstmt.setString(5, member.getId());
 			cnt = pstmt.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();

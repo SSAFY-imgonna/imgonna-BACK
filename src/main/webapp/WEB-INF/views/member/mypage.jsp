@@ -255,7 +255,7 @@
       document.getElementById("btnLeave").addEventListener("click",
 				function() {
     	  let form = document.querySelector("#leaveForm");
-			form.setAttribute("action", "${root}/member");
+			form.setAttribute("action", "${root}/member/delete");
 			form.submit();
 				});  
       

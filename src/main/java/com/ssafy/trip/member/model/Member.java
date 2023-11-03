@@ -2,7 +2,7 @@ package com.ssafy.trip.member.model;
 
 import java.io.Serializable;
 
-public class MemberDto implements Serializable{
+public class Member implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	private String id;
@@ -85,12 +85,12 @@ public class MemberDto implements Serializable{
 		return salt;
 	}
 	
-	public MemberDto() {
+	public Member() {
 		super();
 	}
 	
-	public MemberDto(String id, String email, String name, String password, String phone, String nickname,
-			String joinDate, String role, String salt) {
+	public Member(String id, String email, String name, String password, String phone, String nickname,
+				  String joinDate, String role, String salt) {
 		super();
 		this.id = id;
 		this.email = email;
@@ -103,8 +103,8 @@ public class MemberDto implements Serializable{
 		this.salt = salt;
 	}
 	
-	public MemberDto(String id, String email, String name, String password, String phone, String nickname,
-			String mbti, String introduction, String joinDate, String role) {
+	public Member(String id, String email, String name, String password, String phone, String nickname,
+				  String mbti, String introduction, String joinDate, String role) {
 		super();
 		this.id = id;
 		this.email = email;

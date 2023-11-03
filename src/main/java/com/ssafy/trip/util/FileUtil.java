@@ -1,6 +1,5 @@
 package com.ssafy.trip.util;
 
-import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 import org.springframework.web.multipart.MultipartRequest;
 
 import java.io.File;

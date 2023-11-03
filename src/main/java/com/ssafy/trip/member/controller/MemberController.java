@@ -1,292 +1,297 @@
 package com.ssafy.trip.member.controller;
 
-import com.ssafy.trip.member.model.MemberDto;
+import com.ssafy.trip.file.Table;
+import com.ssafy.trip.member.model.Member;
+import com.ssafy.trip.member.model.MemberFind;
 import com.ssafy.trip.member.service.MemberService;
-import com.ssafy.trip.member.service.MemberServiceImpl;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+/**
+ * @author yihoney
+ */
+@Controller
+@RequestMapping("/members")
+public class MemberController {
+    private static final long serialVersionUID = 1L;
+    private final MemberService memberService;
 
-@WebServlet("/member")
-public class MemberController extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-	private MemberService memberService = MemberServiceImpl.getInstance();
+    public MemberController(MemberService memberService) {
+        this.memberService = memberService;
+    }
 
-	private void process(HttpServletRequest request, HttpServletResponse response)
-			throws IOException, ServletException {
-		String action = request.getParameter("action");
+    /**
+     * 회원의 아이디를 찾는 메서드
+     *
+     * @param member 아이디를 찾기 위해 입력 받은 회원의 정보
+     * @param model
+     * @return 찾은 회원의 아이디
+     */
+    @PostMapping("/find/id")
+    public String findId(MemberFind member, Model model) {
 
-		switch (action) {
-		case "regist":
-			regist(request, response);
-			break;
+        String id = memberService.getMemberIdByEmailAndName(member.getEmail(), member.getName());
+        String msg = null;
+        if (id == null) {
+            msg = "해당하는 회원 정보가 없습니다.";
+        }
 
-		case "login":
-			login(request, response);
-			break;
+        if (id != null) {
+            msg = "아이디: " + id;
+        }
+        model.addAttribute("msg", msg);
+        return "index";
 
-		case "findId":
-			findId(request, response);
-			break;
+    }
 
-		case "findPassword":
-			findPassword(request, response);
-			break;
+    /**
+     * 회원의 비밀번호를 찾는 메서드
+     *
+     * @param member 비밀번호를 찾기 위해 입력 받은 회원의 정보
+     * @param model
+     * @return 찾은 회원의 비밀번호
+     */
+    @PostMapping("/find/pw")
+    private String findPassword(MemberFind member, Model model) {
 
-		case "modify":
-			modify(request, response);
-			break;
+        String password = memberService.getMemberPasswordByIdAndEmailAndPhone(member.getId(), member.getEmail(), member.getPhone());
 
-		case "modifyPassword":
-			modifyPassword(request, response);
-			break;
+        String msg = null;
 
-		case "logout":
-			logout(request, response);
-			break;
+        if (password == null) {
+            msg = "해당하는 회원 정보가 없습니다.";
+        }
 
-		case "delete":
-			delete(request, response);
-			break;
+        if (password != null) {
+            msg = "비밀번호: " + password;
+        }
+        model.addAttribute("msg", msg);
+        return "index";
+    }
 
-		default:
-			break;
-		}
-	}
+    /**
+     * 회원의 비밀번호를 수정하는 메서드
+     *
+     * @param map     입력값을 담은 Map
+     * @param model
+     * @param session
+     * @return
+     */
+    @PostMapping("/modify/pw")
+    private String modifyPassword(Map<String, String> map, Model model, HttpSession session) {
+        String oldPassword = map.get("memberPw");
+        String newPassword1 = map.get("newPassword1");
+        String newPassword2 = map.get("newPassword2");
 
-	private void findId(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String email = request.getParameter("findIdEmail");
-		String name = request.getParameter("findIdName");
+        String msg = null;
 
-		String id = memberService.getMemberIdByEmailAndName(email, name);
+        if (oldPassword == null || newPassword1 == null || newPassword2 == null) {
+            msg = "모든 값을 입력해야 비밀번호 변경 가능합니다!";
+        }
 
-		if (id == null) {
-			String msg = "해당하는 회원 정보가 없습니다.";
-			request.setAttribute("msg", msg);
-			request.getRequestDispatcher("/").forward(request, response);
-		}
-		
-		if (id != null) {
-			String msg = "아이디: " + id;
-			request.setAttribute("msg", msg);
-			request.getRequestDispatcher("/").forward(request, response);
-		}
-	}
+        if (!(oldPassword == null || newPassword1 == null || newPassword2 == null)) {
 
-	private void findPassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String id = request.getParameter("findPwId");
-		String email = request.getParameter("findPwEmail");
-		String phone = request.getParameter("findPwPhone");
+            Member member = (Member) session.getAttribute("memberDto");
 
-		String password = memberService.getMemberPasswordByIdAndEmailAndPhone(id, email, phone);
+            if (!oldPassword.equals(member.getPassword())) {
+                msg = "기존 비밀번호가 맞지 않습니다. 비밀번호를 다시 입력해주세요.";
+            }
 
-		if (password == null) {
-			String msg = "해당하는 회원 정보가 없습니다.";
-			request.setAttribute("msg", msg);
-			request.getRequestDispatcher("/").forward(request, response);
-		}
-		
-		if (password != null) {
-			String msg = "비밀번호: " + password;
-			request.setAttribute("msg", msg);
-			request.getRequestDispatcher("/").forward(request, response);
-		}
-	}
+            if (oldPassword.equals(member.getPassword())) {
 
-	private void modifyPassword(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		String oldPassword = request.getParameter("oldPassword");
-		String newPassword1 = request.getParameter("newPassword1");
-		String newPassword2 = request.getParameter("newPassword2");
+                if (!newPassword1.equals(newPassword2)) {
+                    msg = "변경할 비밀번호 재입력을 다시 해주세요. 입력한 비밀번호와 같지 않습니다.";
+                }
 
-		if (oldPassword == null || newPassword1 == null || newPassword2 == null) {
-			String msg = "모든 값을 입력해야 비밀번호 변경 가능합니다!";
-			request.setAttribute("msg", msg);
-			request.getRequestDispatcher("/member/mypage.jsp").forward(request, response);
-		} else {
+                if (newPassword1.equals(newPassword2)) {
 
-			HttpSession session = request.getSession();
-			MemberDto memberDto = (MemberDto) session.getAttribute("memberDto");
+                    String id = member.getId();
+                    int statusCode = memberService.updateMemberPasswordById(id, newPassword2);
 
-			if (!oldPassword.equals(memberDto.getPassword())) {
-				String msg = "기존 비밀번호가 맞지 않습니다. 비밀번호를 다시 입력해주세요.";
-				request.setAttribute("msg", msg);
-				request.getRequestDispatcher("/member/mypage.jsp").forward(request, response);
-			}
+                    if (statusCode == 1) {
+                        msg = "비밀번호 변경에 성공하였습니다!";
+                        member.setPassword(newPassword2);
+                        session.setAttribute("memberDto", member);
+                    } else {
+                        msg = "비밀번호 변경을 실패하였습니다. 비밀번호 변경을 다시 시도해주세요.";
+                    }
+                }
+            }
+        }
 
-			if (oldPassword.equals(memberDto.getPassword())) {
+        model.addAttribute("msg", msg);
+        return "/member/mypage";
+    }
 
-				if (!newPassword1.equals(newPassword2)) {
-					String msg = "변경할 비밀번호 재입력을 다시 해주세요. 입력한 비밀번호와 같지 않습니다.";
-					request.setAttribute("msg", msg);
-					request.getRequestDispatcher("/member/mypage.jsp").forward(request, response);
-				}
+    /**
+     * 회원 탈퇴 처리하는 메서드
+     *
+     * @param inputPwd 입력 받은 기존 비밀번호
+     * @param session
+     * @param model
+     * @return
+     */
+    @PostMapping("/delete")
+    private String delete(@RequestParam("leaveConfirmPwd") String inputPwd, HttpSession session, Model model) {
+        Member member = (Member) session.getAttribute("memberDto");
+        String memberPwd = member.getPassword();
 
-				if (newPassword1.equals(newPassword2)) {
+        if (inputPwd.equals(memberPwd)) {
+            String msg = "회원탈퇴를 정상적으로 처리하였습니다. 이용해주셔서 감사합니다.";
+            memberService.delete(member.getId());
+            session.removeAttribute("memberDto");
+            session.invalidate();
+            model.addAttribute("msg", msg);
+            return "/";
+        } else {
+            String msg = "비밀번호가 맞지 않습니다. 비밀번호를 다시 입력해주세요.";
+            model.addAttribute("msg", msg);
+            return "/member/" + session.getId();
+        }
+    }
 
-					String id = memberDto.getId();
-					int statusCode = memberService.updateMemberPasswordById(id, newPassword2);
+    @GetMapping("/mypage")
+    private String mypage(Model model, HttpSession session) {
+        return "member/mypage";
+    }
 
-					if (statusCode == 1) {
-						String msg = "비밀번호 변경에 성공하였습니다!";
-						request.setAttribute("msg", msg);
-						memberDto.setPassword(newPassword2);
-						session.setAttribute("memberDto", memberDto);
-						request.getRequestDispatcher("/member/mypage.jsp").forward(request, response);
-					} else {
-						String msg = "비밀번호 변경을 실패하였습니다. 비밀번호 변경을 다시 시도해주세요.";
-						request.setAttribute("msg", msg);
-						request.getRequestDispatcher("/member/mypage.jsp").forward(request, response);
-					}
-				}
-			}
-		}
-	}
+    @PostMapping("/modify")
+    private String modify(HttpSession session, Map<String, String> map, Model model) {
+        String email = map.get("registerEmail") + map.get("registerEmailAdd");
+        Member member = (Member) session.getAttribute("memberDto");
+        member.setId(map.get("id"));
+        member.setEmail(email);
+        member.setName(map.get("name"));
+        member.setNickname(map.get("nickname"));
+        member.setPhone(map.get("phone"));
 
-	private void delete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String inputPwd = request.getParameter("leaveConfirmPwd");
-		MemberDto memberDto = (MemberDto) request.getSession().getAttribute("memberDto");
-		String memberPwd = memberDto.getPassword();
+        int statusCode = memberService.updateMember(member);
+        if (statusCode == 1) { // 성공 페이지
+            session.setAttribute("memberDto", member);
+            String msg = "회원수정에 성공하였습니다.";
+            model.addAttribute("msg", msg);
+        } else {
+            String msg = "회원수정에 실패하였습니다. 다시 시도해주세요!";
+            model.addAttribute("msg", msg);
+        }
+        return "index";
 
-		if (inputPwd.equals(memberPwd)) {
-			String msg = "회원탈퇴를 정상적으로 처리하였습니다. 이용해주셔서 감사합니다.";
-			memberService.delete(memberDto.getId());
-			HttpSession session = request.getSession();
-			session.removeAttribute("memberDto");
-			session.invalidate();
-			request.setAttribute("msg", msg);
-			request.getRequestDispatcher("/index.jsp").forward(request, response);
-		} else {
-			String msg = "비밀번호가 맞지 않습니다. 비밀번호를 다시 입력해주세요.";
-			request.setAttribute("msg", msg);
-			request.getRequestDispatcher("/member/mypage.jsp").forward(request, response);
-		}
-	}
+    }
 
-	private void modify(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String email = request.getParameter("email") + request.getParameter("emailAdd");
-		HttpSession session = request.getSession();
-		MemberDto memberDto = (MemberDto) session.getAttribute("memberDto");
-		memberDto.setId(request.getParameter("id"));
-		memberDto.setEmail(email);
-		memberDto.setName(request.getParameter("name"));
-		memberDto.setNickname(request.getParameter("nickname"));
-		memberDto.setPhone(request.getParameter("phone"));
+    @PostMapping("/regist")
+    private String regist(Map<String, String> map, Model model) {
+        String email = map.get("registerEmail") + map.get("registerEmailAdd");
+        Member member = new Member();
+        member.setRole(map.get("role"));
+        member.setId(map.get("registerId"));
+        member.setEmail(email);
+        member.setName(map.get(("registerName")));
+        member.setPassword(map.get(("registerPw")));
+        member.setPhone(map.get(("registerPhone")));
+        member.setNickname(map.get(("registerNickname")));
 
-		int statusCode = memberService.updateMember(memberDto);
-		if (statusCode == 1) { // 성공 페이지
-			session.setAttribute("memberDto", memberDto);
-			String msg = "회원수정에 성공하였습니다.";
-			request.setAttribute("msg", msg);
-		} else {
-			String msg = "회원수정에 실패하였습니다. 다시 시도해주세요!";
-			request.setAttribute("msg", msg);
-		}
-		request.getRequestDispatcher("/index.jsp").forward(request, response);
+        int statusCode = memberService.createMember(member);
+        String msg;
+        if (statusCode == 1) { // 성공 페이지
+            msg = "회원가입에 성공하였습니다. 로그인 해주세요!";
+        } else {
+            msg = "회원가입에 실패하였습니다. 다시 시도해주세요!";
+        }
+        model.addAttribute("msg", msg);
+        return "/index.jsp";
+    }
 
-	}
+    /**
+     * 로그아웃을 처리하는 메서드
+     *
+     * @param session
+     * @param model
+     * @return
+     */
+    @GetMapping("/logout")
+    private String logout(HttpSession session, Model model) {
+        session.removeAttribute("memberDto");
+        session.invalidate();
+        String msg = "로그아웃 되었습니다!";
+        model.addAttribute("msg", msg);
+        return "/";
+    }
 
-	private void regist(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String email = request.getParameter("registerEmail") + request.getParameter("registerEmailAdd");
-		MemberDto memberDto = new MemberDto();
-		memberDto.setRole(request.getParameter("role"));
-		memberDto.setId(request.getParameter("registerId"));
-		memberDto.setEmail(email);
-		memberDto.setName(request.getParameter("registerName"));
-		memberDto.setPassword(request.getParameter("registerPw"));
-		memberDto.setPhone(request.getParameter("registerPhone"));
-		memberDto.setNickname(request.getParameter("registerNickname"));
+    /**
+     * 로그인을 처리하는 메서드
+     *
+     * @param id
+     * @param password
+     * @param session
+     * @param request
+     * @param response
+     * @param redirect
+     * @return
+     */
+    @PostMapping("/login")
+    private String login(@RequestParam("loginId") String id, @RequestParam("loginPwd") String password, HttpSession session, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirect) {
+        System.out.println("id " + id + "pw" + password);
+        Member member = memberService.getMemberByIdAndPassword(id, password);
 
-		int statusCode = memberService.createMember(memberDto);
-		if (statusCode == 1) { // 성공 페이지
-			String msg = "회원가입에 성공하였습니다. 로그인 해주세요!";
-			request.setAttribute("msg", msg);
-		} else {
-			String msg = "회원가입에 실패하였습니다. 다시 시도해주세요!";
-			request.setAttribute("msg", msg);
-		}
-		request.getRequestDispatcher("/index.jsp").forward(request, response);
-	}
+        if (member != null) {
+            session.setAttribute("memberDto", member);
 
-	private void logout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		HttpSession session = request.getSession();
-		session.removeAttribute("memberDto");
-		session.invalidate();
-		String msg = "로그아웃 되었습니다!";
-		request.setAttribute("msg", msg);
-		request.getRequestDispatcher("/index.jsp").forward(request, response);
-	}
+            saveCookieId(request, response, id);
+        } else {
+            String msg = "로그인을 실패하였습니다. 다시 시도해주세요!";
+            redirect.addAttribute("msg", msg);
+        }
+        return "redirect:/";
+    }
 
-	private void login(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		String id = request.getParameter("loginId");
-		String password = request.getParameter("loginPwd");
+    /**
+     * 아이디를 쿠키에 저장하는 메서드
+     *
+     * @param request
+     * @param response
+     * @param id
+     */
+    private void saveCookieId(HttpServletRequest request, HttpServletResponse response, String id) {
 
-		MemberDto memberDto = memberService.getMemberByIdAndPassword(id, password);
+        String[] saveId = request.getParameterValues("saveId");
 
-		System.out.println(memberDto);
+        // 아이디 체크 저장 처리
+        if (saveId != null) {
+            if ("checked".equals(saveId[0])) {
+                Cookie cookie = new Cookie("memberId", id);
+                cookie.setPath(request.getContextPath());
+                cookie.setMaxAge(60 * 60 * 24 * 7); // 일주일간 저장
+                response.addCookie(cookie);
+            }
 
-		if (memberDto != null) {
-			HttpSession session = request.getSession();
-			session.setAttribute("memberDto", memberDto);
+            if (!"checked".equals(saveId[0])) {
+                Cookie cookies[] = request.getCookies();
+                if (cookies != null) {
+                    for (Cookie cookie : cookies) {
+                        if ("memberId".equals(cookie.getName())) {
+                            cookie.setMaxAge(0);
+                            response.addCookie(cookie);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-			saveCookieId(request, response, id);
-
-			response.sendRedirect(request.getContextPath());
-		} else {
-			String msg = "로그인을 실패하였습니다. 다시 시도해주세요!";
-			request.setAttribute("msg", msg);
-			request.getRequestDispatcher("/index.jsp").forward(request, response);
-		}
-	}
-
-	private void saveCookieId(HttpServletRequest request, HttpServletResponse response, String id) {
-
-		String[] saveId = request.getParameterValues("saveId");
-
-		// 아이디 체크 저장 처리
-		if (saveId != null) {
-			if ("checked".equals(saveId[0])) {
-				Cookie cookie = new Cookie("memberId", id);
-				cookie.setPath(request.getContextPath());
-				cookie.setMaxAge(60 * 60 * 24 * 7); // 일주일간 저장
-				response.addCookie(cookie);
-			}
-
-			if (!"checked".equals(saveId[0])) {
-				Cookie cookies[] = request.getCookies();
-				if (cookies != null) {
-					for (Cookie cookie : cookies) {
-						if ("memberId".equals(cookie.getName())) {
-							cookie.setMaxAge(0);
-							response.addCookie(cookie);
-							break;
-						}
-					}
-				}
-			}
-		}
-	}
-
-	public MemberController() {
-	}
-
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		process(request, response);
-	}
-
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		request.setCharacterEncoding("utf-8");
-		doGet(request, response);
-	}
 
 }

@@ -36,9 +36,9 @@
 
 				<c:if test="${not empty sessionScope.memberDto}">
 					<li class="nav-item"><a class="nav-link"
-						href="${root}/member/mypage.jsp">마이페이지</a></li>
+						href="${root}/member/mypage}">마이페이지</a></li>
 					<li class="nav-item"><a class="nav-link"
-						href="${root}/member?action=logout">로그아웃</a></li>
+						href="${root}/member/logout">로그아웃</a></li>
 				</c:if>
 			</ul>
 		</div>
@@ -57,8 +57,6 @@
 			<div class="modal-body">
 				<div class="container mt-3">
 					<form method="post" name="registerForm" id="registerForm">
-
-						<input type="hidden" name="action" value="regist">
 
 						<div class="input-group mb-3">
 							<span class="input-group-text">회원 유형</span> <span class="mx-auto">
@@ -170,7 +168,6 @@
 
 			<div class="modal-body">
 				<form action="" method='post' id="loginForm">
-					<input type="hidden" name="action" value="login">
 					<div class="input-group mb-1" id='input-group'>
 						<span class="input-group-text">아이디</span> <input type="text"
 							class="form-control" id="loginId" placeholder="아이디를 입력하세요"
@@ -216,16 +213,15 @@
 
 			<div class="modal-body">
 				<form action="" method='post' id="findIdForm">
-				<input type="hidden" name="action" value="findId">
 					<div class="input-group mb-1" id='input-group'>
 						<span class="input-group-text">이메일</span> <input type="text"
 							class="form-control" id="findIdEmail" placeholder="이메일을 입력하세요"
-							name="findIdEmail">
+							name="email">
 					</div>
 					<div class="input-group mb-1" id='input-group'>
 						<span class="input-group-text">이름</span> <input type="text"
 							class="form-control" id="findIdName" placeholder="이름을 입력하세요"
-							name="findIdName">
+							name="name">
 					</div>
 					<div id="showMessageElementFindPw" class="mt-5 mb-3"></div>
 				</form>
@@ -258,21 +254,20 @@
 
 			<div class="modal-body">
 				<form action="" method='post' id="findPasswordForm">
-				<input type="hidden" name="action" value="findPassword">
 					<div class="input-group mb-1" id='input-group'>
 						<span class="input-group-text">아이디</span> <input type="text"
 							class="form-control" id="findPwId" placeholder="아이디를 입력하세요"
-							name="findPwId">
+							name="id">
 					</div>
 					<div class="input-group mb-1" id='input-group'>
 						<span class="input-group-text">이메일</span> <input type="text"
 							class="form-control" id="findPwEmail" placeholder="이메일을 입력하세요"
-							name="findPwEmail">
+							name="email">
 					</div>
 					<div class="input-group mb-1" id='input-group'>
 						<span class="input-group-text">전화번호</span> <input type="text"
 							class="form-control" id="findPwPhone" placeholder="전화번호를 입력하세요"
-							name="findPwPhone">
+							name="password">
 					</div>
 					<div id="showMessageElementFindPw" class="mt-5 mb-3"></div>
 				</form>
@@ -298,25 +293,25 @@
 	document.getElementById("loginSubmit").addEventListener("click",
 			function() {
 				let form = document.querySelector("#loginForm");
-				form.setAttribute("action", "${root}/member");
+				form.setAttribute("action", "${root}/members/login");
 				form.submit();
 			});
 	document.getElementById("registerSubmit").addEventListener("click",
 			function() {
 				let form = document.querySelector("#registerForm");
-				form.setAttribute("action", "${root}/member");
+				form.setAttribute("action", "${root}/members/regist");
 				form.submit();
 			});
 	document.getElementById("btnFindId").addEventListener("click",
 			function() {
 				let form = document.querySelector("#findIdForm");
-				form.setAttribute("action", "${root}/member");
+				form.setAttribute("action", "${root}/members/find/id");
 				form.submit();
 			});
 	document.getElementById("btnFindPassword").addEventListener("click",
 			function() {
 				let form = document.querySelector("#findPasswordForm");
-				form.setAttribute("action", "${root}/member");
+				form.setAttribute("action", "${root}/members/find/pw");
 				form.submit();
 			});
 	

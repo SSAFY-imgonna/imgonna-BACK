@@ -15,10 +15,8 @@ import javax.servlet.http.HttpSession;
 import com.ssafy.trip.accompany.model.AccompanyDto;
 import com.ssafy.trip.accompany.service.AccompanyService;
 import com.ssafy.trip.accompany.service.AccompanyServiceImpl;
-import com.ssafy.trip.member.model.MemberDto;
-import com.ssafy.trip.util.FileUtil;
+import com.ssafy.trip.member.model.Member;
 import com.ssafy.trip.util.QuickSort;
-import org.springframework.web.multipart.MultipartRequest;
 
 @WebServlet("/accompany")
 public class AccompanyController extends HttpServlet {
@@ -114,7 +112,7 @@ public class AccompanyController extends HttpServlet {
 		String userId = null;
 		HttpSession session = request.getSession(false);
 		if(session != null && session.getAttribute("memberDto") != null) {
-			MemberDto dto = (MemberDto)session.getAttribute("memberDto");
+			Member dto = (Member)session.getAttribute("memberDto");
 			userId = dto.getId();			
 		}		
 		
@@ -147,7 +145,7 @@ public class AccompanyController extends HttpServlet {
 		String userId = null;
 		HttpSession session = request.getSession(false);
 		if(session != null && session.getAttribute("memberDto") != null) {
-			MemberDto dto = (MemberDto)session.getAttribute("memberDto");
+			Member dto = (Member)session.getAttribute("memberDto");
 			userId = dto.getId();			
 		}	
 

@@ -32,8 +32,6 @@
           <div class="order-md-1 mt-3">
             <form action="#" method="post" id="editForm">
              
-              <input type="hidden" name="action" value="modify">
-              
               <div class="form-floating mb-3">
                 <input type="text" class="form-control" id="name" name="name" value="${memberDto.name}"/>
                 <label for="name" >이름</label>
@@ -169,7 +167,7 @@
       document.getElementById("editSubmit").addEventListener("click",
 				function() {
 					let form = document.querySelector("#editForm");
-					form.setAttribute("action", "${root}/member");
+					form.setAttribute("action", "${root}/member/modify/pw");
 					form.submit();
 				});
       

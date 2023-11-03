@@ -2,11 +2,13 @@ package com.ssafy.trip.member.service;
 
 import java.security.SecureRandom;
 
-import com.ssafy.trip.member.model.MemberDto;
+import com.ssafy.trip.member.model.Member;
 import com.ssafy.trip.member.model.dao.MemberDao;
 import com.ssafy.trip.member.model.dao.MemberDaoImpl;
 import com.ssafy.trip.util.PasswordUtils;
+import org.springframework.stereotype.Service;
 
+@Service
 public class MemberServiceImpl implements MemberService {
 	private static MemberService instance;
 	private MemberDao memberDao = MemberDaoImpl.getInstance();
@@ -19,21 +21,21 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public int createMember(MemberDto memberDto) {
+	public int createMember(Member member) {
 
 		byte[] salt = getSalt();
-		String digest =  PasswordUtils.encode(memberDto.getPassword(), salt);
-		memberDto.setPassword(digest);
-		memberDto.setSalt(PasswordUtils.bytesToHex(salt));
+		String digest =  PasswordUtils.encode(member.getPassword(), salt);
+		member.setPassword(digest);
+		member.setSalt(PasswordUtils.bytesToHex(salt));
 		System.out.println("[회원가입]");
-		System.out.println("raw password: " + memberDto.getPassword());
+		System.out.println("raw password: " + member.getPassword());
 		System.out.println("salt: " + PasswordUtils.bytesToHex(salt));
 		System.out.println("digest: " + digest);
-		return memberDao.createMember(memberDto);
+		return memberDao.createMember(member);
 	}
 
 	@Override
-	public MemberDto getMemberByIdAndPassword(String id, String password) {
+	public Member getMemberByIdAndPassword(String id, String password) {
 		byte[] salt = PasswordUtils.hexToBytes(memberDao.getSaltById(id));
 		String digest =  PasswordUtils.encode(password, salt);
 		System.out.println("[로그인]");
@@ -61,9 +63,9 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public int updateMember(MemberDto memberDto) {
+	public int updateMember(Member member) {
 		// TODO Auto-generated method stub
-		return memberDao.updateMember(memberDto);
+		return memberDao.updateMember(member);
 	}
 
 	@Override
