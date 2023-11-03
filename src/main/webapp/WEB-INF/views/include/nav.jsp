@@ -5,7 +5,7 @@
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
 	<div class="container-fluid px-5">
-		<a class="navbar-brand" href="${root}/index.jsp"> <i
+		<a class="navbar-brand" href="${root}/"> <i
 			class="fa-solid fa-plane-departure"></i> <span id='indexTitle'
 			class='fw-bolder'> EnjoyTrip</span>
 		</a>
@@ -23,10 +23,10 @@
 				<li class="nav-item"><a class="nav-link" href="#">나의여행계획</a></li>
 				<li class="nav-item"><a class="nav-link" href="#">핫플자랑하기</a></li>
 				<li class="nav-item"><a class="nav-link" href="#">여행정보공유</a></li>
-				<li class="nav-item"><a class="nav-link" href="${root}/accompany?action=list">동행구하기</a></li>
+				<li class="nav-item"><a class="nav-link" href="${root}/accompany/list">동행구하기</a></li>
 			</ul>
 			<ul class="navbar-nav mb-2 mb-lg-0 nnav">
-				<c:if test="${empty sessionScope.memberDto }">
+				<c:if test="${empty sessionScope.memberDto}">
 					<li class="nav-item" id="func1"><a class="nav-link"
 						id='register' data-bs-toggle="modal"
 						data-bs-target="#registerModal">회원가입</a></li>

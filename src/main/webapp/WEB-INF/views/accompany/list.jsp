@@ -3,12 +3,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-<%@ include file="/include/head.jsp" %>	
-<link rel="stylesheet" href="${root}/assets/css/accompany.css" />
+<%@ include file="/WEB-INF/views/include/header.jsp"%>
+<link rel="stylesheet" href="/static/assets/css/accompany.css" />
 </head>
 <body>
-<%@ include file="/include/nav.jsp" %>	
-<c:set var="list" value="${list}"/>
+<%@ include file="/WEB-INF/views/include/nav.jsp"%>	
+<%-- <c:set var="list" value="${list}"/> --%>
   <section class="py-5 text-center container">
     <div class="row py-lg-5">
       <div class="col-lg-6 col-md-8 mx-auto">
@@ -22,10 +22,9 @@
         <p class="lead">
        	#동행구하기 #새로운친구 #여행파트너   
         </p>
-        <c:if test="${not empty sessionScope.memberDto}">
+        <c:if test="${not empty memberDto}">
         <p>
-          <a href="${root}/accompany?action=writeForm" class="btn btn-primary my-2">동행 모집글 작성</a>
-          <!-- <a href="#" class="btn btn-secondary my-2">Secondary action</a> -->
+          <a href="${root}/accompany/write" class="btn btn-primary my-2">동행 모집글 작성</a>
         </p>
         </c:if>
       </div>
@@ -35,7 +34,7 @@
   <div class="album py-5 bg-body-tertiary mx-auto">
   	<div class="container mb-4 col-6">
 <!--       <div class="offset-3"> -->
-        <form class="d-flex" method="GET" id="form-search" action="${root}/accompany?action=search">
+        <form class="d-flex" method="GET" id="form-search" action="${root}/accompany/search">
         	<input type="hidden" name="action" value="searchList">
           <select id="keyfield1" class="form-select form-select-sm w-50"
             	aria-label="검색조건" name="keyfield">
@@ -77,11 +76,11 @@
 			  <div class="card shadow-sm">
 			  	<%-- 저장된 이미지가 없는 경우 --%>
 				<c:if test="${empty accompanyDto.accompanyPhoto}">
-					<img src="${root}/assets/img/no_image.jpg" class="card-img-top" alt="...">	
+					<img src="/static/assets/img/no_image.jpg" class="card-img-top" alt="...">	
 				</c:if>
 				<%-- 저장된 이미지가 있는 경우 --%>
 				<c:if test="${not empty accompanyDto.accompanyPhoto}">
-	          		<img src="${root}/upload/${accompanyDto.accompanyPhoto}" class="card-img-top" alt="...">						
+	          		<img src="/static/assets/img/no_image.jpg" class="card-img-top" alt="...">						
 				</c:if>			  	
 	            <div class="card-body">
 	              <div class="card-text">
@@ -99,7 +98,7 @@
 		          <div class="d-flex justify-content-between align-items-center">
 		            <div class="btn-group">
 		              <button type="button" class="btn btn-sm btn-outline-secondary showDetail" 
-		              		onclick="location.href='${root}/accompany?action=updateHit&accompanyNo=${accompanyDto.accompanyNo}'">자세히 보기</button>
+		              		onclick="location.href='${root}/accompany/updateHit&accompanyNo=${accompanyDto.accompanyNo}'">자세히 보기</button>
 		              <!-- <button type="button" class="btn btn-sm btn-outline-secondary">신청하기</button> -->
 		            </div>
 		            <div>
@@ -123,4 +122,4 @@
         location.href = "${root}/accompany?action=sort&keyfield1=" + keyfield1.value;
       });
    </script> 
-<%@ include file="/include/footer.jsp" %>	
+<%@ include file="/WEB-INF/views/include/footer.jsp"%>	
