@@ -15,6 +15,13 @@ public interface AccompanyService {
 	
 	/** 글 상세 */
 	AccompanyDto getAccompanyByAccompanyNo(int accompanyNo);
+
+	/** 글 수정*/
+//	void modifyAccompany(AccompanyDto accompanyDto);
+	
+	/** 글 삭제*/
+	void deleteAccompany(int accompanyNo, String uploadPath);	
+	
 	
 //	/** 조회수 증가 */
 //	int updateHit(int accompanyNo);

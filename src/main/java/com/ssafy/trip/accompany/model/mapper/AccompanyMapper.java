@@ -1,6 +1,7 @@
 package com.ssafy.trip.accompany.model.mapper;
 
 import com.ssafy.trip.accompany.model.AccompanyDto;
+import com.ssafy.trip.accompany.model.FileInfoDto;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -22,8 +23,21 @@ public interface AccompanyMapper {
 	/** 글 상세 */
 	AccompanyDto getAccompanyByAccompanyNo(int accompanyNo);
 	
+	/** 글 수정 */
+//	void modifyAccompany(AccompanyDto accompanyDto) throws SQLException;
+
+	/** 파일 삭제 */
+	void deleteFile(int accompanyNo);
+
+	/** 글 삭제 */
+	void deleteAccompany(int accompanyNo);
+	
+	/** 파일 정보 목록 */
+	List<FileInfoDto> fileInfoList(int accompanyNo);
+	
+	
 //	/** 조회수 증가 */
-//	int updateHit(int accompanyNo);
+//	void updateHit(int accompanyNo);
 //	/** 이미 신청되어있는지 여부 */
 //	int isJoin(int accompanyNo, String userId);
 //	/** 신청 */

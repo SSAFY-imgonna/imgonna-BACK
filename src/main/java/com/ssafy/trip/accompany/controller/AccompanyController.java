@@ -148,7 +148,8 @@ public class AccompanyController{
 //		redirectAttributes.addAttribute("word", "");
 		return "redirect:/accompany/list";
 	}
-
+	
+	/** 글 상세 */
 	@GetMapping("/view")
 	public String view(@RequestParam int accompanyNo, @RequestParam Map<String, String> map, Model model)
 			throws Exception {
@@ -163,5 +164,56 @@ public class AccompanyController{
 //		model.addAttribute("word", map.get("word"));
 		return "accompany/view";
 	}
+
 	
+	/** 글 수정폼 호출 */
+	@GetMapping("/modify")
+	public String modify(@RequestParam int accompanyNo, @RequestParam Map<String, String> map, Model model)
+			throws Exception {
+		logger.debug("modify accompanyNo : {}", accompanyNo);
+		AccompanyDto accompanyDto = accompanyService.getAccompanyByAccompanyNo(accompanyNo);
+		logger.debug("view accompanyDto : {}", accompanyDto);
+		
+		
+		String[] splitDate = accompanyDto.getAccompanyDate().split(" ");
+		String accompanyDate = splitDate[0];
+		String accompanyTime = splitDate[1];
+		
+		logger.debug("accompanyDate : {}, accompanyTime : {}", accompanyDate, accompanyTime);
+		model.addAttribute("accompanyDto", accompanyDto);
+		model.addAttribute("accompanyDate", accompanyDate);
+		model.addAttribute("accompanyTime", accompanyTime);
+		
+//		model.addAttribute("pgno", map.get("pgno"));
+//		model.addAttribute("key", map.get("key"));
+//		model.addAttribute("word", map.get("word"));
+		return "accompany/modify";
+	}
+
+	/** 글 수정 */
+//	@PostMapping("/modify")
+//	public String modify(AccompanyDto accompanyDto, @RequestParam Map<String, String> map,
+//			RedirectAttributes redirectAttributes) throws Exception {
+//		logger.debug("modify AccompanyDto : {}", accompanyDto);
+//		accompanyService.modifyAccompany(accompanyDto);
+//		
+////		redirectAttributes.addAttribute("pgno", map.get("pgno"));
+////		redirectAttributes.addAttribute("key", map.get("key"));
+////		redirectAttributes.addAttribute("word", map.get("word"));
+//		return "redirect:/accompany/list";
+//	}
+
+	/** 글 삭제 */
+	@GetMapping("/delete")
+	public String delete(@RequestParam int accompanyNo, @RequestParam Map<String, String> map,
+			RedirectAttributes redirectAttributes) throws Exception {
+		logger.debug("delete accompanyNo : {}", accompanyNo);
+
+		accompanyService.deleteAccompany(accompanyNo, uploadPath);
+		
+//		redirectAttributes.addAttribute("pgno", map.get("pgno"));
+//		redirectAttributes.addAttribute("key", map.get("key"));
+//		redirectAttributes.addAttribute("word", map.get("word"));
+		return "redirect:/accompany/list";
+	}
 }

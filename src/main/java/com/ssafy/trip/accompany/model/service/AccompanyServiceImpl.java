@@ -1,5 +1,6 @@
 package com.ssafy.trip.accompany.model.service;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,8 +62,28 @@ public class AccompanyServiceImpl implements AccompanyService {
 	public AccompanyDto getAccompanyByAccompanyNo(int accompanyNo) {
 		return accompanyMapper.getAccompanyByAccompanyNo(accompanyNo);
 	}
+
+	/** 글 수정 */
+//	@Override
+//	public void modifyAccompany(AccompanyDto accompanyDto) throws Exception {
+//		// TODO : BoardDaoImpl의 modifyArticle 호출
+//		accompanyMapper.modifyAccompany(accompanyDto);
+//	}
 	
 	
+	/** 글 삭제 */
+	@Override
+	@Transactional
+	public void deleteAccompany(int accompanyNo, String uploadPath) {
+		List<FileInfoDto> fileList = accompanyMapper.fileInfoList(accompanyNo);
+		accompanyMapper.deleteFile(accompanyNo);
+		accompanyMapper.deleteAccompany(accompanyNo);
+		
+		for(FileInfoDto fileInfoDto : fileList) {
+			File file = new File(uploadPath + File.separator + fileInfoDto.getSaveFolder() + File.separator + fileInfoDto.getSaveFile());
+			file.delete();
+		}
+	}
 	
 	
 //	/** 조회수 증가 */

@@ -149,15 +149,15 @@
       <div id="accompanyNo" data-no="${accompanyDto.accompanyNo}"></div>
       <script>
         document.querySelector("#btn-list").addEventListener("click", function () {
-          location.href = "${root}/accompany?action=list";
+          	location.href = "${root}/accompany/list";
         });
         document.querySelector("#btn-mv-modify").addEventListener("click", function () {
-          alert("글수정하자!!!");
-          location.href = "#";
+          	location.href = "${root}/accompany/modify?accompanyNo=${accompanyDto.accompanyNo}";
         });
         document.querySelector("#btn-delete").addEventListener("click", function () {
-          alert("글삭제하자!!!");
-          location.href = "#";
+        	if(confirm("정말로 삭제하시겠습니까?")) {
+	          	location.href = "${root}/accompany/delete?accompanyNo=${accompanyDto.accompanyNo}";
+       		}          
         });
       </script>
       <%-- 댓글 작업과 관련된 js --%>    
