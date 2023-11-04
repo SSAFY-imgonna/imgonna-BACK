@@ -1,6 +1,6 @@
-package com.ssafy.trip.enjoytrip.model;
+package com.ssafy.trip.attraction.model.dto;
 
-public class SidoDto {
+public class Sido {
 
 	private int sidoCode;
 	private String sidoName;
