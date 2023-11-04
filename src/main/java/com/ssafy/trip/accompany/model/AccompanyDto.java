@@ -1,5 +1,7 @@
 package com.ssafy.trip.accompany.model;
 
+import java.util.List;
+
 public class AccompanyDto {
 	private int accompanyNo;
 	private String accompanyTitle;
@@ -8,11 +10,11 @@ public class AccompanyDto {
 	private String accompanyDate;
 	private int accompanyNum;
 	private int accompanyTotal;
-	private String accompanyPhoto; // 업로드된 파일을 저장하는 String 객체
 	private int hit;
 	private String id;
 	private String nickname;
 	private String regDate;
+	private List<FileInfoDto> fileInfos;
 	
 	public int getAccompanyNo() {
 		return accompanyNo;
@@ -56,12 +58,6 @@ public class AccompanyDto {
 	public void setAccompanyTotal(int accompanyTotal) {
 		this.accompanyTotal = accompanyTotal;
 	}
-	public String getAccompanyPhoto() {
-		return accompanyPhoto;
-	}
-	public void setAccompanyPhoto(String accompanyPhoto) {
-		this.accompanyPhoto = accompanyPhoto;
-	}
 	public int getHit() {
 		return hit;
 	}
@@ -71,13 +67,13 @@ public class AccompanyDto {
 	public String getId() {
 		return id;
 	}
-	public void setUserId(String id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 	public String getNickname() {
 		return nickname;
 	}
-	public void setUserNickname(String nickname) {
+	public void setNickname(String nickname) {
 		this.nickname = nickname;
 	}
 	public String getRegDate() {
@@ -86,13 +82,19 @@ public class AccompanyDto {
 	public void setRegDate(String regDate) {
 		this.regDate = regDate;
 	}
+	public List<FileInfoDto> getFileInfos() {
+		return fileInfos;
+	}
+	public void setFileInfos(List<FileInfoDto> fileInfos) {
+		this.fileInfos = fileInfos;
+	}
 	
 	@Override
 	public String toString() {
 		return "AccompanyDto [accompanyNo=" + accompanyNo + ", accompanyTitle=" + accompanyTitle + ", accompanyContent="
 				+ accompanyContent + ", accompanyLoc=" + accompanyLoc + ", accompanyDate=" + accompanyDate
-				+ ", accompanyNum=" + accompanyNum + ", accompanyTotal=" + accompanyTotal + ", accompanyPhoto="
-				+ accompanyPhoto + ", hit=" + hit + ", id=" + id + ", nickname=" + nickname + ", regDate=" + regDate
-				+ "]";
-	}
+				+ ", accompanyNum=" + accompanyNum + ", accompanyTotal=" + accompanyTotal + ", hit=" + hit + ", id="
+				+ id + ", nickname=" + nickname + ", regDate=" + regDate + ", fileInfos=" + fileInfos + "]";
+	}	
+	
 }
