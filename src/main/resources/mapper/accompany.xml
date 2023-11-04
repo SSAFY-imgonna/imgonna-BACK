@@ -55,6 +55,13 @@
 			select last_insert_id()
 		</selectKey>
 	</insert>
+
+	<update id="modifyAccompany" parameterType="accompanyDto">
+		update accompany
+		set accompany_title = #{accompanyTitle}, accompany_content = #{accompanyContent},
+		accompany_loc = #{accompanyLoc}, accompany_date = #{accompanyDate}, accompany_total = #{accompanyTotal}
+		where accompany_no=#{accompanyNo}
+	</update>
 	
 	<insert id="registerFile" parameterType="accompanyDto">
 		insert into file_info (accompany_no, save_folder, original_file, save_file)

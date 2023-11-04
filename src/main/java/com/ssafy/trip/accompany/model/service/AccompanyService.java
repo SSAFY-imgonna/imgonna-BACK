@@ -1,5 +1,6 @@
 package com.ssafy.trip.accompany.model.service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -20,9 +21,11 @@ public interface AccompanyService {
 //	void modifyAccompany(AccompanyDto accompanyDto);
 	
 	/** 글 삭제*/
-	void deleteAccompany(int accompanyNo, String uploadPath);	
-	
-	
+	void deleteAccompany(int accompanyNo, String uploadPath);
+
+    void modifyAccompany(AccompanyDto accompanyDto, Map<String, String> map) throws SQLException;
+
+
 //	/** 조회수 증가 */
 //	int updateHit(int accompanyNo);
 

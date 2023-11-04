@@ -58,16 +58,18 @@
                   <input class="form-control" type="file" id="upfile" name="upfile">
                 </div>
 		        <c:forEach var="file" items="${accompanyDto.fileInfos}">
-		            <div class="file-input ms-1">
+		            <div class="file-input ms-1" id="fileNameDiv">
 		                <i class="bi bi-camera-fill me-1"></i>
 		                ${file.originalFile}
-		                <a class="text-danger ms-1" href="javascript:delete">
+		                <a class="text-danger ms-1" onclick="deleteDiv()">
 			                <i class="bi bi-x-lg"></i>		                
 		                </a>
 		            </div>
-		        </c:forEach>                
+		        </c:forEach>
+		        <input type="hidden" value="${file.originalFile}"
+                		                id="originFile" name="originFile">
                 <div class="text-center">
-                  <button type="button" id="btn-modify" class="btn btn-primary">전송</button>
+                  <button type="button" id="btn-modify" class="btn btn-primary">수정</button>
                   <!-- <button type="reset" class="btn btn-secondary">초기화</button> -->
                   <button type="button" id="btn-list" class="btn btn-secondary">취소</button>
                 </div>
@@ -121,8 +123,17 @@
    		}
     });
     
-    function deleteFile() {
-        remove();
+    function deleteDiv() {
+        let fileNameDiv = document.getElementById("fileNameDiv");
+        fileNameDiv.style.display = "none";
+        let originFile = document.getElementById("originFile");
+        originalFile.value = "";
+        removeFile();
     }
+
+    function removeFile() {
+        let upfile = document.getElementById("upfile");
+        upfile.value = "";
+        }
   </script>  
 <%@ include file="/WEB-INF/views/include/footer.jsp"%>

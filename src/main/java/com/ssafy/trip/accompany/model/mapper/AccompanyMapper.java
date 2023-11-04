@@ -19,12 +19,12 @@ public interface AccompanyMapper {
 	
 	/** 파일 등록 */
 	void registerFile(AccompanyDto accompanyDto);
-	
+
 	/** 글 상세 */
 	AccompanyDto getAccompanyByAccompanyNo(int accompanyNo);
 	
 	/** 글 수정 */
-//	void modifyAccompany(AccompanyDto accompanyDto) throws SQLException;
+	void modifyAccompany(AccompanyDto accompanyDto) throws SQLException;
 
 	/** 파일 삭제 */
 	void deleteFile(int accompanyNo);
