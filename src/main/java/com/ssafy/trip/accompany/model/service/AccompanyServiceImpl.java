@@ -67,6 +67,7 @@ public class AccompanyServiceImpl implements AccompanyService {
         }
     }
 
+    
     /**
      * 글 상세
      */
@@ -75,6 +76,15 @@ public class AccompanyServiceImpl implements AccompanyService {
         return accompanyMapper.getAccompanyByAccompanyNo(accompanyNo);
     }
 
+	/** 
+	 * 조회수 증가 
+	 */
+	@Override
+	public void updateHit(int accompanyNo) {
+		accompanyMapper.updateHit(accompanyNo);
+	}
+
+	
     /**
      * 글 삭제
      */
@@ -130,31 +140,30 @@ public class AccompanyServiceImpl implements AccompanyService {
         }
     }
 
+	/** 이미 신청되어 있는지 여부 */
+	@Override
+	public int isJoin( Map<String, String> map) {
+		return accompanyMapper.isJoin(map);
+	}
+	
+	/** 신청 */
+	@Override
+	public void join( Map<String, String> map) {
+		// accompany_join 테이블에 레코드 추가
+		accompanyMapper.join(map);
+		
+		// accompany 테이블에 accompany_num 업데이트 
+		accompanyMapper.increaseAccompanyNum(map);
+	}
+	
+	/** 신청 취소하기 */
+	@Override
+	public void joinCancel(Map<String, String> map) {
+		accompanyMapper.joinCancel(map);
 
-//	/** 조회수 증가 */
-//	@Override
-//	public int updateHit(int accompanyNo) {
-//		return dao.updateHit(accompanyNo);
-//	}
-//	
-//	/** 이미 신청되어 있는지 여부 */
-//	@Override
-//	public int isJoin(int accompanyNo, String userId) {
-//		return dao.isJoin(accompanyNo, userId);
-//	}
-//	
-//	/** 신청 */
-//	@Override
-//	public int join(int accompanyNo, String userId) {
-//		return dao.join(accompanyNo, userId);
-//	}
-//	
-//	/** 신청 취소하기 */
-//	@Override
-//	public int joinCancel(int accompanyNo, String userId) {
-//		// TODO Auto-generated method stub
-//		return dao.joinCancel(accompanyNo, userId);
-//	}
+		// accompany 테이블에 accompany_num 업데이트 
+		accompanyMapper.decreaseAccompanyNum(map);
+	}
 
 
 //	/** 댓글 목록 */

@@ -5,11 +5,15 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -119,13 +123,36 @@ public class AccompanyController {
      * 글 상세
      */
     @GetMapping("/view")
-    public String view(@RequestParam int accompanyNo, @RequestParam Map<String, String> map, Model model)
-            throws Exception {
+    public String view(@RequestParam int accompanyNo, @RequestParam Map<String, String> map, Model model,
+    		HttpSession session) throws Exception {
         logger.debug("view accompanyNo : {}", accompanyNo);
+        accompanyService.updateHit(accompanyNo); // 조회수 증가
         AccompanyDto accompanyDto = accompanyService.getAccompanyByAccompanyNo(accompanyNo);
         logger.debug("view accompanyDto : {}", accompanyDto);
-//		accompanyService.updateHit(accompanyNo);
         model.addAttribute("accompanyDto", accompanyDto);
+   
+        
+		// 세션에 설정된 아이디 정보 가져오기
+        Member memberDto = (Member) session.getAttribute("memberDto");
+        String userId = memberDto.getId();	
+        
+		Map<String, String> joinInfo = new HashMap<>();
+		joinInfo.put("accompanyNo", String.valueOf(accompanyNo));
+		joinInfo.put("userId", userId);
+		
+		if(userId != null) {
+			// 이미 신청됐는지 여부
+			int cnt = accompanyService.isJoin(joinInfo);
+			
+			// 이미 신청되어있다면
+			if(cnt == 1) {
+				model.addAttribute("isJoin", true);
+			}
+			// 아직 신청되어있지 않다면
+			else {
+				model.addAttribute("isJoin", false);
+			}
+		}
 
 //		model.addAttribute("pgno", map.get("pgno"));
 //		model.addAttribute("key", map.get("key"));
@@ -228,4 +255,84 @@ public class AccompanyController {
             accompanyDto.setFileInfos(fileInfos);
         }
     }
+
+    /**
+     * 동행 신청
+     */
+    @GetMapping("/join")
+	private String join(@RequestParam("accompanyNo") int accompanyNo, @RequestParam Map<String, String> map,
+			HttpSession session, Model model, RedirectAttributes redirectAttributes) {
+		// 세션에 설정된 아이디 정보 가져오기
+        Member memberDto = (Member) session.getAttribute("memberDto");
+        String userId = memberDto.getId();	
+        
+		Map<String, String> joinInfo = new HashMap<>();
+		joinInfo.put("accompanyNo", String.valueOf(accompanyNo));
+		joinInfo.put("userId", userId);
+		
+		if(userId != null) {
+			// 이미 신청됐는지 여부
+			int cnt = accompanyService.isJoin(joinInfo);
+			
+			// 이미 신청되어있다면
+			if(cnt == 1) {
+				redirectAttributes.addAttribute("isJoin", true);
+//				redirectAttributes.addAttribute("msg", "이미 신청되었습니다");
+				return "redirect:/accompany/view";
+			}
+			// 아직 신청되어있지 않다면
+			else {
+				// 신청
+				accompanyService.join(joinInfo);
+				redirectAttributes.addAttribute("msg", "신청 완료되었습니다");
+				redirectAttributes.addAttribute("isJoin", true);
+				redirectAttributes.addAttribute("accompanyNo", accompanyNo);
+				
+				return "redirect:/accompany/view";
+			}
+		}
+		
+		redirectAttributes.addAttribute("pgno", map.get("pgno"));
+		redirectAttributes.addAttribute("key", map.get("key"));
+		redirectAttributes.addAttribute("word", map.get("word"));
+		
+		return "redirect:/accompany/view";
+	} 
+	
+    /**
+     * 동행 취소
+     * @param accompanyNo
+     * @param map
+     * @param session
+     * @param model
+     * @param redirectAttributes
+     * @return
+     */
+    @GetMapping("/joinCancel")
+	private String joinCancel(@RequestParam("accompanyNo") int accompanyNo, @RequestParam Map<String, String> map,
+			HttpSession session, Model model, RedirectAttributes redirectAttributes) {		
+		// 세션에 설정된 아이디 정보 가져오기
+        Member memberDto = (Member) session.getAttribute("memberDto");
+        String userId = memberDto.getId();	
+		
+		Map<String, String> joinInfo = new HashMap<>();
+		joinInfo.put("accompanyNo", String.valueOf(accompanyNo));
+		joinInfo.put("userId", userId);
+		
+		if(userId != null) {
+			// 신청 취소
+			accompanyService.joinCancel(joinInfo);
+			
+			// 신청 취소 성공했다면
+			redirectAttributes.addAttribute("isJoin", false);
+			redirectAttributes.addAttribute("msg", "신청 취소 완료되었습니다");
+			redirectAttributes.addAttribute("accompanyNo", accompanyNo);
+			return "redirect:/accompany/view";	
+		}	
+		
+		redirectAttributes.addAttribute("pgno", map.get("pgno"));
+		redirectAttributes.addAttribute("key", map.get("key"));
+		redirectAttributes.addAttribute("word", map.get("word"));
+		return "redirect:/accompany/view";
+	}
 }

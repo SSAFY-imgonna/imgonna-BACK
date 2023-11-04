@@ -77,7 +77,7 @@
               		<%-- 이미 신청 하였을때 --%>
               		<c:if test="${isJoin == true}">
 		                <button type="button" id="btn-join" class="btn btn-outline-secondary mb-3 ms-1"
-		                	onclick="location.href='${root}/accompany?action=joinCancel&accompanyNo=${accompanyDto.accompanyNo}'"
+		                	onclick="location.href='${root}/accompany/joinCancel?accompanyNo=${accompanyDto.accompanyNo}'"
 		               		>
 		                  	신청취소
 		                </button>                
@@ -87,7 +87,7 @@
               			<%-- 정원 아직 꽉 차지 않았다면 신청하기 버튼 --%>
               			<c:if test="${accompanyDto.accompanyNum != accompanyDto.accompanyTotal}">
 			                <button type="button" id="btn-join" class="btn btn-outline-success mb-3 ms-1"
-			                	onclick="location.href='${root}/accompany?action=join&accompanyNo=${accompanyDto.accompanyNo}'">
+			                	onclick="location.href='${root}/accompany/join?accompanyNo=${accompanyDto.accompanyNo}'">
 			                  	신청하기
 			                </button>                
 		                </c:if>

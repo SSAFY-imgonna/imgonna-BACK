@@ -66,7 +66,7 @@
 	<update id="modifyAccompany" parameterType="accompanyDto">
 		update accompany
 		set accompany_title = #{accompanyTitle}, accompany_content = #{accompanyContent},
-		accompany_loc = #{accompanyLoc}, accompany_date = #{accompanyDate}, accompany_total = #{accompanyTotal}
+			accompany_loc = #{accompanyLoc}, accompany_date = #{accompanyDate}, accompany_total = #{accompanyTotal}
 		where accompany_no=#{accompanyNo}
 	</update>
 
@@ -76,10 +76,44 @@
 		where accompany_no = #{accompanyNo}
 	</select>
 	
+	<update id="updateHit" parameterType="int">
+		update accompany
+		set hit = hit + 1
+		where accompany_no = #{accompanyNo}
+	</update>
+
 	<delete id="deleteAccompany" parameterType="int">
 		delete from accompany
 		where accompany_no = #{accompanyNo}
 	</delete>
+	
+	<select id="isJoin" parameterType="map" resultType="int">
+		select count(*)
+		from accompany_join
+		where accompany_no = #{accompanyNo} and id = #{userId}
+	</select>
+	
+	<insert id="join" parameterType="map">
+		insert into accompany_join (accompany_no, id)
+		values (#{accompanyNo}, #{userId})
+	</insert>	
+	
+	<update id="increaseAccompanyNum" parameterType="map">
+		update accompany
+		set accompany_num = accompany_num + 1
+		where accompany_no = #{accompanyNo}
+	</update>	
+
+	<delete id="joinCancel" parameterType="map">
+		delete from accompany_join
+		where accompany_no = #{accompanyNo} and id = #{userId}
+	</delete>
+
+	<update id="decreaseAccompanyNum" parameterType="map">
+		update accompany
+		set accompany_num = accompany_num - 1
+		where accompany_no = #{accompanyNo}
+	</update>	
 	
 <!--	
 	<select id="getTotalArticleCount" parameterType="map" resultType="int">
@@ -89,20 +123,6 @@
 			<include refid="search"></include>
 		</where>
 	</select>
-	
-	
-	
-	<update id="updateHit" parameterType="int">
-		update board
-		set hit = hit + 1
-		where article_no = #{articleNo}
-	</update>
-	
-	<update id="modifyArticle" parameterType="boardDto">
-		update board
-		set subject = #{subject}, content = #{content}
-		where article_no = #{articleNo}
-	</update>
  -->
 
 </mapper>

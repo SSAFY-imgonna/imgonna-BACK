@@ -19,24 +19,24 @@ public interface AccompanyService {
 	/** 글 상세 */
 	AccompanyDto getAccompanyByAccompanyNo(int accompanyNo);
 
-	/** 글 수정*/
-//	void modifyAccompany(AccompanyDto accompanyDto);
+	/** 조회수 증가 */
+	void updateHit(int accompanyNo);
 	
 	/** 글 삭제*/
 	void deleteAccompany(int accompanyNo, String uploadPath);
 
+	/** 글 수정*/
     void modifyAccompany(AccompanyDto accompanyDto, Map<String, String> map) throws SQLException;
 
+    
+	/** 이미 신청되어있는지 여부 */
+	int isJoin( Map<String, String> map);
 
-//	/** 조회수 증가 */
-//	int updateHit(int accompanyNo);
-
-	//	/** 이미 신청되어있는지 여부 */
-//	int isJoin(int accompanyNo, String userId);
-//	/** 신청 */
-//	int join(int accompanyNo, String userId);
-//	/** 신청 취소하기 */
-//	int joinCancel(int accompanyNo, String userId);
+	/** 신청 */
+	void join(Map<String, String> map);
+	
+	/** 신청 취소하기 */
+	void joinCancel(Map<String, String> map);
 	
 //	/** 댓글 목록 */
 //	List<AccompanyCommDto> getCommList(int accompanyNo);
