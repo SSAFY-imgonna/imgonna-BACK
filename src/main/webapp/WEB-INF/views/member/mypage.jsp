@@ -7,7 +7,6 @@
 </head>
   <body class="bg-light">
 	<%@ include file="/WEB-INF/views/include/nav.jsp"%>
-	<c:set var="memberDto" value="${sessionScope.memberDto}"></c:set>
 
 
     <div class="container">
@@ -33,28 +32,33 @@
             <form action="#" method="post" id="editForm">
              
               <input type="hidden" name="action" value="modify">
-              
               <div class="form-floating mb-3">
-                <input type="text" class="form-control" id="name" name="name" value="${memberDto.name}"/>
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="id"
+                                name="id"
+                                value="${member.id}"
+                               readonly
+                              />
+                              <label for="id">아이디</label>
+                            </div>
+
+              <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="name" name="name" value="${member.name}"/>
                 <label for="name" >이름</label>
               </div>
               
                <div class="form-floating mb-3">
-                <input type="text" class="form-control" id="nickname" name="nickname" value="${memberDto.nickname}"/>
+                <input type="text" class="form-control" id="nickname" name="nickname" value="${member.nickname}"/>
                 <label for="nickname" >닉네임</label>
               </div>
-              
               <div class="form-floating mb-3">
-                <input
-                  type="text"
-                  class="form-control"
-                  id="id"
-                  name="id"
-                  value="${memberDto.id}"
-                 readonly
-                />
-                <label for="id">아이디</label>
+                <input type="text" class="form-control" id="mbti" name="mbti" value="${member.mbti}"/>
+                                <label for="mbti" >mbti</label>
               </div>
+              
+
               <!-- <div class="form-floating mb-3">
                 <input
                   type="password"
@@ -84,9 +88,11 @@
                   class="form-control"
                   id="phone"
                   name="phone"
-                  value="${memberDto.phone}"
+                  value="${member.phone}"
                 />
               </div>
+
+
 
 <div class="input-group mb-3" id="input-group">
                 <span class="input-group-text">이메일</span>
@@ -107,7 +113,11 @@
                 </select>
               </div>
 
-
+<div class="input-group mb-3">
+                            <span class="input-group-text">소개글</span>
+                            <textarea class="form-control" id="introduction"
+                            type="text" maxlength="255" rows="3" cols="30" name="introduction">${member.introduction}</textarea>
+                        </div>
               <div>
                 <button
                   type="button"
@@ -131,14 +141,7 @@
             </form>
           </div>
         </div>
-        <footer class="my-5 pt-5 text-muted text-center text-small">
-          <p class="mb-1">&copy;SSAFY</p>
-          <ul class="list-inline">
-            <li class="list-inline-item"><a href="#">Privacy</a></li>
-            <li class="list-inline-item"><a href="#">Terms</a></li>
-            <li class="list-inline-item"><a href="#">Support</a></li>
-          </ul>
-        </footer>
+
       </div>
     </div>
     
@@ -222,11 +225,11 @@
       
       // 마이페이지 창이 열렸을 때
       window.onload = () => {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
-        document.querySelector("#email").value = "${fn:split(memberDto.email,'@')[0]}";
+        document.querySelector("#email").value = "${fn:split(member.email,'@')[0]}";
 
         const el = document.getElementById("emailAdd");
         const len = el.options.length;
-        const str = "@${fn:split(memberDto.email,'@')[1]}";
+        const str = "@${fn:split(member.email,'@')[1]}";
 
         for (let i = 0; i < len; i++) {
           if (el.options[i].value == str) {
@@ -239,7 +242,7 @@
       document.getElementById("editSubmit").addEventListener("click",
 				function() {
 					let form = document.querySelector("#editForm");
-					form.setAttribute("action", "${root}/member");
+					form.setAttribute("action", "${root}/members/modify");
 					form.submit();
 				});
       
@@ -247,7 +250,7 @@
       document.getElementById("btnModifyPassword").addEventListener("click",
 				function() {
     	  let form = document.querySelector("#modifyPwdForm");
-			form.setAttribute("action", "${root}/member");
+			form.setAttribute("action", "${root}/members/modify/pw");
 			form.submit();
 				});
       
@@ -255,7 +258,7 @@
       document.getElementById("btnLeave").addEventListener("click",
 				function() {
     	  let form = document.querySelector("#leaveForm");
-			form.setAttribute("action", "${root}/member/delete");
+			form.setAttribute("action", "${root}/members/delete");
 			form.submit();
 				});  
       

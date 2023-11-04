@@ -36,9 +36,9 @@
 
 				<c:if test="${not empty sessionScope.memberDto}">
 					<li class="nav-item"><a class="nav-link"
-						href="${root}/member/mypage}">마이페이지</a></li>
+						href="${root}/members/mypage">마이페이지</a></li>
 					<li class="nav-item"><a class="nav-link"
-						href="${root}/member/logout">로그아웃</a></li>
+						href="${root}/members/logout">로그아웃</a></li>
 				</c:if>
 			</ul>
 		</div>

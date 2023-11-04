@@ -17,4 +17,6 @@ public interface MemberMapper {
 
 	void updateMember(Member member);
 	void updateMemberPasswordById(Map<String, String> map);
+
+	Member getMemberById(String id);
 }

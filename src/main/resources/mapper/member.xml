@@ -28,6 +28,12 @@
         values (#{id}, #{email}, #{name}, #{password}, #{phone}, #{nickname}, #{mbti}, #{introduction}, now(), #{role}, #{salt})
     </insert>
 
+    <select id="getMemberById" parameterType="String" resultType="member">
+        select *
+        from members
+        where id = #{id}
+    </select>
+
     <select id="getMemberByIdAndPassword" parameterType="map" resultType="member">
         select id, email, nickname, role
         from members

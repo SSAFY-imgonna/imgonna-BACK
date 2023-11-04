@@ -9,6 +9,10 @@ import com.ssafy.trip.member.model.dto.MemberFind;
 import com.ssafy.trip.member.model.mapper.MemberMapper;
 import com.ssafy.trip.util.PasswordUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.servlet.http.HttpSession;
+import javax.websocket.Session;
 
 @Service
 public class MemberServiceImpl implements MemberService {
@@ -42,6 +46,20 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public Member getMemberByIdAndPassword(String id, String password) {
+        String digest = getDigest(id, password);
+        if (digest == null) return null;
+        Map<String, String> map = new HashMap<>();
+        map.put("id", id);
+        map.put("password", digest);
+        Member member = memberMapper.getMemberByIdAndPassword(map);
+        if (member == null) {
+            return null;
+        }
+        System.out.println("digest from DB: " + member.getPassword());
+        return member;
+    }
+
+    private String getDigest(String id, String password) {
         String salt = memberMapper.getSaltById(id);
 
         if (salt == null) {
@@ -53,15 +71,7 @@ public class MemberServiceImpl implements MemberService {
         System.out.println("raw password: " + password);
         System.out.println("salt: " + PasswordUtils.bytesToHex(saltBytes));
         System.out.println("digest: " + digest);
-        Map<String, String> map = new HashMap<>();
-        map.put("id", id);
-        map.put("password", digest);
-        Member member = memberMapper.getMemberByIdAndPassword(map);
-        if (member == null) {
-            return null;
-        }
-        System.out.println("digest from DB: " + member.getPassword());
-        return member;
+        return digest;
     }
 
     @Override
@@ -76,14 +86,29 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public int updateMember(Member member) {
+    public int updateMember(Map<String, String> map, HttpSession session) {
         try {
+            Member member = getMemberById(map.get("id"));
+            member.setName(map.get("name"));
+            member.setPhone(map.get("phone"));
+            member.setNickname(map.get("nickname"));
+            member.setMbti(map.get("mbti"));
+            member.setIntroduction(map.get("introduction"));
+            System.out.println("##update##\n" + member);
             memberMapper.updateMember(member);
+            updateSession(session, member);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
             return 0;
         }
         return 1;
+    }
+
+
+    private void updateSession(HttpSession session, Member member) {
+        Member memberDto = (Member) session.getAttribute("memberDto");
+        memberDto.setNickname(member.getNickname());
+        session.setAttribute("memberDto", memberDto);
     }
 
     @Override
@@ -98,6 +123,11 @@ public class MemberServiceImpl implements MemberService {
             return 0;
         }
         return 1;
+    }
+
+    @Override
+    public Member getMemberById(String id) {
+        return memberMapper.getMemberById(id);
     }
 
     @Override

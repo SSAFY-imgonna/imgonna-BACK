@@ -161,23 +161,19 @@ public class MemberController {
     }
 
     @GetMapping("/mypage")
-    private String mypage(Model model, HttpSession session) {
+    private String mypage(HttpSession session, Model model) {
+        Member memberDto = (Member) session.getAttribute("memberDto");
+        String id = memberDto.getId();
+        Member member = memberService.getMemberById(id);
+        model.addAttribute("member", member);
         return "member/mypage";
     }
 
     @PostMapping("/modify")
-    private String modify(HttpSession session, Map<String, String> map, Model model) {
-        String email = map.get("registerEmail") + map.get("registerEmailAdd");
-        Member member = (Member) session.getAttribute("memberDto");
-        member.setId(map.get("id"));
-        member.setEmail(email);
-        member.setName(map.get("name"));
-        member.setNickname(map.get("nickname"));
-        member.setPhone(map.get("phone"));
+    private String modify(HttpSession session, @RequestParam Map<String, String> map, Model model) {
 
-        int statusCode = memberService.updateMember(member);
+        int statusCode = memberService.updateMember(map, session);
         if (statusCode == 1) { // 성공 페이지
-            session.setAttribute("memberDto", member);
             String msg = "회원수정에 성공하였습니다.";
             model.addAttribute("msg", msg);
         } else {
@@ -187,6 +183,7 @@ public class MemberController {
         return "index";
 
     }
+
 
     @PostMapping("/regist")
     private String regist(@RequestParam Map<String, String> map, Model model, RedirectAttributes redirect) {
@@ -211,7 +208,9 @@ public class MemberController {
      */
     @GetMapping("/logout")
     private String logout(HttpSession session, Model model, RedirectAttributes redirectAttributes) {
-        session.removeAttribute("memberDto");
+        if (session.getAttribute("memberDto") != null) {
+            session.removeAttribute("memberDto");
+        }
         session.invalidate();
         String msg = "로그아웃 되었습니다!";
         redirectAttributes.addFlashAttribute("msg", msg);
