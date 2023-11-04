@@ -19,7 +19,7 @@
 			<!-- <ul class="navbar-nav ms-auto mb-2 mb-lg-0 nnav"> -->
 			<ul class="navbar-nav me-auto mb-2 mb-lg-0 nnav">
 				<li class="nav-item"><a class="nav-link"
-					href="${root}/attraction?action=view">지역별여행지</a></li>
+					href="${root}/attraction">지역별여행지</a></li>
 				<li class="nav-item"><a class="nav-link" href="#">나의여행계획</a></li>
 				<li class="nav-item"><a class="nav-link" href="#">핫플자랑하기</a></li>
 				<li class="nav-item"><a class="nav-link" href="#">여행정보공유</a></li>

@@ -1,6 +1,6 @@
-package com.ssafy.trip.enjoytrip.model;
+package com.ssafy.trip.attraction.model.dto;
 
-public class AttractionDetailDto {
+public class AttractionDetail {
 
 	private int contentId;
 	private String cat1;

@@ -54,7 +54,7 @@
 				</form>
 				<!-- kakao map start -->
 				<div class="d-flex flex-row" id="map_attraction_div">
-					<div id="map" class="mt-3 ml-5 p-2" style="width: 60%; height: 500px"></div>
+					<div id="map" class="mt-3 ml-5 p-2" style="width: 80%; height: 500px"></div>
 					<!-- kakao map end -->
 					<!-- 관광지 검색 end -->
 					
@@ -72,16 +72,17 @@
     // 시도가 바뀌면 구군정보 얻기.
     document.querySelector("#sido").addEventListener("change", function () {
        let sidoCode = this[this.selectedIndex].value;
-       let url =
-         "${root}/attraction?action=gugun&sidoCode=" + sidoCode;
+       let url = `${root}/attraction/gugun?sidoCode=`+sidoCode;
+       console.log(url);
        fetch(url, { method: "GET" })
          .then((response) => response.json())
          .then((data) => optionJSON(data));
     });
     
     function optionJSON(data) {
+
     	sel.innerHTML = `<option value="0" selected>검색 할 시군구 선택</option>`;
-    	data.gugunList.forEach((gugun) => {
+    	data.forEach((gugun) => {
     		let opt = document.createElement("option");
     		opt.setAttribute("value", gugun.gugunCode);
     		opt.appendChild(document.createTextNode(gugun.gugunName));
@@ -103,7 +104,7 @@
       let gugunCode = document.getElementById("gugun").value;
       let contentTypeId = document.getElementById("search-content-id").value;
       
-      let url = "${root}/attraction?action=list&sidoCode=" + areaCode  + "&gugunCode=" + gugunCode + "&contentTypeId=" + contentTypeId;
+      let url = "${root}/attraction/list?sidoCode=" + areaCode  + "&gugunCode=" + gugunCode + "&contentTypeId=" + contentTypeId;
 
       fetch(url)
         .then((response) => response.json())
@@ -114,7 +115,7 @@
     function makeList(data) {
       positions = [];
       attractionList = [];
-      data.attractionList.forEach((area) => {
+      data.forEach((area) => {
     	  let markerInfo = {
     			  title: area.title,
     	          latlng: new kakao.maps.LatLng(area.latitude, area.longitude),
@@ -132,7 +133,7 @@
 	      positions.push(markerInfo);
       console.log(listInfo);
       })
-      displayList();
+      // displayList();
       displayMarker();
     }
 
