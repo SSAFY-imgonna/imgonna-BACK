@@ -1,5 +1,7 @@
 package com.ssafy.trip.accompany.model;
 
+import com.ssafy.trip.file.model.dto.FileInfoDto;
+
 import java.util.List;
 
 public class AccompanyDto {

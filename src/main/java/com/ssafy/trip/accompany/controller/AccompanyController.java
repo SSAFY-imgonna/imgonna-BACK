@@ -1,23 +1,15 @@
 package com.ssafy.trip.accompany.controller;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -34,15 +26,10 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.fasterxml.jackson.core.exc.StreamWriteException;
-import com.fasterxml.jackson.databind.DatabindException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.trip.accompany.model.AccompanyCommDto;
 import com.ssafy.trip.accompany.model.AccompanyDto;
-import com.ssafy.trip.accompany.model.FileInfoDto;
+import com.ssafy.trip.file.model.dto.FileInfoDto;
 import com.ssafy.trip.member.model.dto.Member;
 import com.ssafy.trip.accompany.model.service.AccompanyService;
-import com.ssafy.trip.accompany.model.service.AccompanyServiceImpl;
 //import com.ssafy.util.FileUtil;
 //import com.ssafy.util.QuickSort;
 
@@ -175,20 +162,16 @@ public class AccompanyController {
 
     /**
      * 동행 글 수정 메서드
-     * @param accompanyDto
-     * @param files
-     * @param map
-     * @param session
-     * @param redirectAttributes
-     * @return
+     * @param accompanyDto 수정할 동행 글 dto
+     * @param files 수정할 파일
+     * @param map accompanyDate, accompanyTime, originFile
+     * @return redirect URL
      * @throws Exception
      */
     @PostMapping("/modify")
     public String modify(AccompanyDto accompanyDto, @RequestParam("upfile") MultipartFile[] files,
-                         @RequestParam Map<String, String> map, HttpSession session,
-                         RedirectAttributes redirectAttributes) throws Exception {
+                         @RequestParam Map<String, String> map) throws Exception {
         logger.debug("modify AccompanyDto : {}", accompanyDto);
-        Member memberDto = (Member) session.getAttribute("memberDto");
         uploadFiles(accompanyDto, files);
         accompanyService.modifyAccompany(accompanyDto, map);
 

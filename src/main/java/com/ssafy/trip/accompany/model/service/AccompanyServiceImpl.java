@@ -6,25 +6,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.ssafy.trip.member.model.dto.Member;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.ssafy.trip.file.model.service.FileService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ssafy.trip.accompany.model.AccompanyCommDto;
 import com.ssafy.trip.accompany.model.AccompanyDto;
-import com.ssafy.trip.accompany.model.FileInfoDto;
+import com.ssafy.trip.file.model.dto.FileInfoDto;
 import com.ssafy.trip.accompany.model.mapper.AccompanyMapper;
 
 @Service
 public class AccompanyServiceImpl implements AccompanyService {
 
     private AccompanyMapper accompanyMapper;
+    private FileService fileService;
 
-    @Autowired
-    public AccompanyServiceImpl(AccompanyMapper accompanyMapper) {
-        super();
+    public AccompanyServiceImpl(AccompanyMapper accompanyMapper, FileService fileService) {
         this.accompanyMapper = accompanyMapper;
+        this.fileService = fileService;
     }
 
     /**
@@ -47,6 +45,12 @@ public class AccompanyServiceImpl implements AccompanyService {
         return accompanyMapper.list(map);
     }
 
+    @Override
+    public List<FileInfoDto> fileInfoList(int accompanyNo) {
+        return accompanyMapper.fileInfoList(accompanyNo);
+    }
+
+
     /**
      * 글 작성
      */
@@ -59,7 +63,7 @@ public class AccompanyServiceImpl implements AccompanyService {
 
         List<FileInfoDto> fileInfos = accompanyDto.getFileInfos();
         if (fileInfos != null && !fileInfos.isEmpty()) {
-            accompanyMapper.registerFile(accompanyDto);
+            fileService.registerFile(accompanyDto);
         }
     }
 
@@ -71,30 +75,38 @@ public class AccompanyServiceImpl implements AccompanyService {
         return accompanyMapper.getAccompanyByAccompanyNo(accompanyNo);
     }
 
-    /** 글 수정 */
-//	@Override
-//	public void modifyAccompany(AccompanyDto accompanyDto) throws Exception {
-//		// TODO : BoardDaoImpl의 modifyArticle 호출
-//		accompanyMapper.modifyAccompany(accompanyDto);
-//	}
-
-
     /**
      * 글 삭제
      */
     @Override
     @Transactional
     public void deleteAccompany(int accompanyNo, String uploadPath) {
-        List<FileInfoDto> fileList = accompanyMapper.fileInfoList(accompanyNo);
-        accompanyMapper.deleteFile(accompanyNo);
+        fileService.deleteFile(accompanyNo);
         accompanyMapper.deleteAccompany(accompanyNo);
 
+        deleteFiles(accompanyNo, uploadPath);
+    }
+
+    /**
+     * 동행 글 번호를 기준으로 파일 목록들을 얻어와, 얻어온 파일들을 로컬 컴퓨터에서 삭제
+     * @param accompanyNo 기준 동행 글 번호
+     * @param uploadPath
+     */
+    private void deleteFiles(int accompanyNo, String uploadPath) {
+        List<FileInfoDto> fileList = this.fileInfoList(accompanyNo);
         for (FileInfoDto fileInfoDto : fileList) {
             File file = new File(uploadPath + File.separator + fileInfoDto.getSaveFolder() + File.separator + fileInfoDto.getSaveFile());
             file.delete();
         }
     }
 
+    /**
+     * 글 수정 (파일 수정도 함께)
+     *
+     * @param accompanyDto
+     * @param map
+     * @throws SQLException
+     */
     @Override
     public void modifyAccompany(AccompanyDto accompanyDto, Map<String, String> map) throws SQLException {
         accompanyDto.setAccompanyNo(Integer.parseInt(map.get("accompanyNo")));
@@ -106,16 +118,15 @@ public class AccompanyServiceImpl implements AccompanyService {
         accompanyMapper.modifyAccompany(accompanyDto);
 
         List<FileInfoDto> fileInfos = accompanyDto.getFileInfos();
-
         // 기존 파일도 존재하지 않고, 수정하고자 하는 파일이 존재하지 않다면 파일 삭제
         if ((fileInfos == null || fileInfos.isEmpty()) && map.get("originFile").isEmpty()) {
-            accompanyMapper.deleteFile(accompanyDto.getAccompanyNo());
+            fileService.deleteFile(accompanyDto.getAccompanyNo());
         }
 
         // 수정하고자 하는 파일이 존재한다면 -> 기존 파일 삭제 후 수정 파일 등록
         if (fileInfos != null && !fileInfos.isEmpty()) {
-            accompanyMapper.deleteFile(accompanyDto.getAccompanyNo());
-            accompanyMapper.registerFile(accompanyDto);
+            fileService.deleteFile(accompanyDto.getAccompanyNo());
+            fileService.registerFile(accompanyDto);
         }
     }
 

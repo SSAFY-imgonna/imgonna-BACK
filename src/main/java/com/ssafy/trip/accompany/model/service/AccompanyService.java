@@ -4,13 +4,15 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-import com.ssafy.trip.accompany.model.AccompanyCommDto;
 import com.ssafy.trip.accompany.model.AccompanyDto;
+import com.ssafy.trip.file.model.dto.FileInfoDto;
 
 public interface AccompanyService {
 	/** 글 목록 */
 	List<AccompanyDto> list(Map<String, String> map);
-		
+
+	List<FileInfoDto> fileInfoList(int accompanyNo);
+
 	/** 글 작성 */
 	void write(AccompanyDto accompanyDto);
 	
