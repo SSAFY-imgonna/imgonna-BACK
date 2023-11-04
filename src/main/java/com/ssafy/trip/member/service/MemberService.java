@@ -12,7 +12,7 @@ public interface MemberService {
 	Member getMemberByIdAndPassword(String id, String password);
 	String getMemberIdByEmailAndName(MemberFind member);
 	String getMemberPasswordByIdAndEmailAndPhone(MemberFind member);
-	int delete(String id);
+	boolean delete(String id, String password);
 
 	int updateMember(Map<String, String> map, HttpSession session);
 

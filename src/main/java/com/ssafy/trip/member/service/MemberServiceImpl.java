@@ -75,14 +75,18 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public int delete(String id) {
+    public boolean delete(String id, String password) {
         try {
+            Member member = getMemberById(id);
+            if (!getDigest(id, password).equals(member.getPassword())) {
+                return false;
+            }
             memberMapper.deleteMember(id);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
-            return 0;
+            return false;
         }
-        return 1;
+        return true;
     }
 
     @Override

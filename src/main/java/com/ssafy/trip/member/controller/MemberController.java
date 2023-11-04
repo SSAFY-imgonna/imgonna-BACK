@@ -3,6 +3,7 @@ package com.ssafy.trip.member.controller;
 import com.ssafy.trip.member.model.dto.Member;
 import com.ssafy.trip.member.model.dto.MemberFind;
 import com.ssafy.trip.member.service.MemberService;
+import com.ssafy.trip.util.PasswordUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -142,22 +143,23 @@ public class MemberController {
      * @return
      */
     @PostMapping("/delete")
-    private String delete(@RequestParam("leaveConfirmPwd") String inputPwd, HttpSession session, Model model) {
-        Member member = (Member) session.getAttribute("memberDto");
-        String memberPwd = member.getPassword();
+    private String delete(@RequestParam("leaveConfirmPwd") String inputPwd, HttpSession session, RedirectAttributes redirectAttributes) {
+        Member memberDto = (Member) session.getAttribute("memberDto");
 
-        if (inputPwd.equals(memberPwd)) {
-            String msg = "회원탈퇴를 정상적으로 처리하였습니다. 이용해주셔서 감사합니다.";
-            memberService.delete(member.getId());
+        String msg = null;
+        String url = null;
+        if (memberService.delete(memberDto.getId(), inputPwd)) {
+            msg = "회원탈퇴를 정상적으로 처리하였습니다. 이용해주셔서 감사합니다.";
             session.removeAttribute("memberDto");
             session.invalidate();
-            model.addAttribute("msg", msg);
-            return "/";
+            url = "redirect:/";
         } else {
-            String msg = "비밀번호가 맞지 않습니다. 비밀번호를 다시 입력해주세요.";
-            model.addAttribute("msg", msg);
-            return "/member/" + session.getId();
+            msg = "비밀번호가 맞지 않습니다. 비밀번호를 다시 입력해주세요.";
+            url = "redirect:/members/mypage";
         }
+        redirectAttributes.addFlashAttribute("msg", msg);
+        return url;
+
     }
 
     @GetMapping("/mypage")
