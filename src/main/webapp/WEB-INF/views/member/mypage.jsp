@@ -195,14 +195,10 @@
 						</div>
 						<div class="input-group mb-1" id='input-group'>
 							<span class="input-group-text"> 변경할 비밀번호 </span> <input type="password"
-								class="form-control" id="newPassword1" placeholder="변경할 비밀번호를 입력하세요"
-								name="newPassword1" required>
+								class="form-control" id="newPassword" placeholder="변경할 비밀번호를 입력하세요"
+								name="newPassword" required>
 						</div>
-						<div class="input-group mb-1" id='input-group'>
-							<span class="input-group-text"> 변경할 비밀번호 재입력 </span> <input type="password"
-								class="form-control" id="newPassword2" placeholder="변경할 비밀번호를 재입력하세요"
-								name="newPassword2" required>
-						</div>
+                        <p id="showRes" style="color:red"></p>
 					</form>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-outline-danger" id="btnModifyPassword">변경
@@ -249,10 +245,19 @@
       // 비밀번호 변경 클릭 시 
       document.getElementById("btnModifyPassword").addEventListener("click",
 				function() {
-    	  let form = document.querySelector("#modifyPwdForm");
+    	  if (!document.querySelector("#oldPassword").value) {
+            alert("기존 비밀번호를 입력해주세요");
+            return;
+    	  }
+    	  else if (!document.querySelector("#newPassword").value) {
+            alert("변경할 비밀번호를 입력해주세요");
+            return;
+		  } else {
+    	    let form = document.querySelector("#modifyPwdForm");
 			form.setAttribute("action", "${root}/members/modify/pw");
 			form.submit();
-				});
+		    }
+		  });
       
       // 회원 탈퇴 클릭 시 
       document.getElementById("btnLeave").addEventListener("click",
@@ -262,26 +267,7 @@
 			form.submit();
 				});  
       
-      
 
-// 비밀번호 동일 확인
-document.getElementById("memberPwCheck").addEventListener("blur", function() {
-          let memberPw = document.querySelector("#memberPw").value;
-          let memberPwCheck = document.querySelector("#memberPwCheck").value;
-          let showMemberPwCheck = document.querySelector("#showMessageElementPw");
-
-          if (memberPw == memberPwCheck) {
-              showMemberPwCheck.innerText = "비밀번호가 일치합니다.";
-              showMemberPwCheck.style.color = "green";
-              showMemberPwCheck.setAttribute("class", "success mb-3");
-          } else {
-              showMemberPwCheck.innerText = "비밀번호가 일치하지 않습니다. 다시 확인하시기 바랍니다.";
-              showMemberPwCheck.style.color = "red";
-              
-              document.querySelector("#memberPw").focus();
-              showMemberPwCheck.setAttribute("class", "error mb-3");
-          }
-      });
       
     </script>
 

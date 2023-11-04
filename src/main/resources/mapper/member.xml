@@ -79,6 +79,7 @@
         update members
         <trim prefix="set" suffixOverrides=",">
             <if test="password != null">password = #{password},</if>
+            <if test="salt != null">salt = #{salt},</if>
         </trim>
         where id = #{id}
     </update>

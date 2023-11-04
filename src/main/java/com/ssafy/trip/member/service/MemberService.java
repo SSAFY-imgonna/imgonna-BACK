@@ -12,10 +12,11 @@ public interface MemberService {
 	Member getMemberByIdAndPassword(String id, String password);
 	String getMemberIdByEmailAndName(MemberFind member);
 	String getMemberPasswordByIdAndEmailAndPhone(MemberFind member);
-	boolean delete(String id, String password);
+	int delete(String id, String password);
 
 	int updateMember(Map<String, String> map, HttpSession session);
 
-	int updateMemberPasswordById(String id, String password);
-    Member getMemberById(String id);
+	int updateMemberPasswordById(String id, Map<String, String> map);
+
+	Member getMemberById(String id);
 }

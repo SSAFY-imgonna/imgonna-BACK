@@ -18,7 +18,6 @@ public class PasswordUtils {
     }
 
     public static String encode(String rawPassword, byte[] salt, int iterations) {
-        System.out.println("rawpassword: " + rawPassword);
         byte[] digest = null;
         try {
             digest = sha256(rawPassword, salt, iterations);

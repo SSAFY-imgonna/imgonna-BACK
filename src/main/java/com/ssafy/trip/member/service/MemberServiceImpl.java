@@ -9,10 +9,8 @@ import com.ssafy.trip.member.model.dto.MemberFind;
 import com.ssafy.trip.member.model.mapper.MemberMapper;
 import com.ssafy.trip.util.PasswordUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
-import javax.websocket.Session;
 
 @Service
 public class MemberServiceImpl implements MemberService {
@@ -52,10 +50,6 @@ public class MemberServiceImpl implements MemberService {
         map.put("id", id);
         map.put("password", digest);
         Member member = memberMapper.getMemberByIdAndPassword(map);
-        if (member == null) {
-            return null;
-        }
-        System.out.println("digest from DB: " + member.getPassword());
         return member;
     }
 
@@ -75,18 +69,18 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public boolean delete(String id, String password) {
+    public int delete(String id, String password) {
         try {
             Member member = getMemberById(id);
             if (!getDigest(id, password).equals(member.getPassword())) {
-                return false;
+                return 0;
             }
             memberMapper.deleteMember(id);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
-            return false;
+            return 0;
         }
-        return true;
+        return 1;
     }
 
     @Override
@@ -116,11 +110,23 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public int updateMemberPasswordById(String id, String password) {
-        Map<String, String> map = new HashMap<>();
-        map.put("id", id);
-        map.put("password", password);
+    public int updateMemberPasswordById(String id, Map<String, String> map) {
+        String oldPassword = map.get("oldPassword");
+        String newPassword = map.get("newPassword");
         try {
+            String digest = getDigest(id, oldPassword);
+            if (!digest.equals(getMemberById(id).getPassword())) {
+                return 0;
+            }
+
+            map = new HashMap<>();
+            map.put("id", id);
+            byte[] saltBytes = getSalt();
+            String password = PasswordUtils.encode(newPassword, saltBytes);
+            String salt = PasswordUtils.bytesToHex(saltBytes);
+            map.put("password", password);
+            map.put("salt", salt);
+
             memberMapper.updateMemberPasswordById(map);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());

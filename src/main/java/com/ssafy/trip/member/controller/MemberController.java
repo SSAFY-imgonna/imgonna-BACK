@@ -84,62 +84,32 @@ public class MemberController {
      * 회원의 비밀번호를 수정하는 메서드
      *
      * @param map     입력값을 담은 Map
-     * @param model
      * @param session
      * @return
      */
     @PostMapping("/modify/pw")
-    private String modifyPassword(Map<String, String> map, Model model, HttpSession session) {
-        String oldPassword = map.get("memberPw");
-        String newPassword1 = map.get("newPassword1");
-        String newPassword2 = map.get("newPassword2");
+    private String modifyPassword(@RequestParam Map<String, String> map, RedirectAttributes redirectAttributes, HttpSession session) {
 
+        String id = ((Member) session.getAttribute("memberDto")).getId();
+        int statusCode = memberService.updateMemberPasswordById(id, map);
         String msg = null;
-
-        if (oldPassword == null || newPassword1 == null || newPassword2 == null) {
-            msg = "모든 값을 입력해야 비밀번호 변경 가능합니다!";
+        if (statusCode == 1) { // 성공 페이지
+            msg = "비밀번호 변경에 성공하였습니다!";
         }
-
-        if (!(oldPassword == null || newPassword1 == null || newPassword2 == null)) {
-
-            Member member = (Member) session.getAttribute("memberDto");
-
-            if (!oldPassword.equals(member.getPassword())) {
-                msg = "기존 비밀번호가 맞지 않습니다. 비밀번호를 다시 입력해주세요.";
-            }
-
-            if (oldPassword.equals(member.getPassword())) {
-
-                if (!newPassword1.equals(newPassword2)) {
-                    msg = "변경할 비밀번호 재입력을 다시 해주세요. 입력한 비밀번호와 같지 않습니다.";
-                }
-
-                if (newPassword1.equals(newPassword2)) {
-
-                    String id = member.getId();
-                    int statusCode = memberService.updateMemberPasswordById(id, newPassword2);
-
-                    if (statusCode == 1) {
-                        msg = "비밀번호 변경에 성공하였습니다!";
-                        member.setPassword(newPassword2);
-                        session.setAttribute("memberDto", member);
-                    } else {
-                        msg = "비밀번호 변경을 실패하였습니다. 비밀번호 변경을 다시 시도해주세요.";
-                    }
-                }
-            }
+        if (statusCode == 0) {
+            msg = "기존 비밀번호와 일치하지 않습니다. 비밀번호 변경을 다시 시도해주세요.";
         }
-
-        model.addAttribute("msg", msg);
-        return "/member/mypage";
+        redirectAttributes.addFlashAttribute("msg", msg);
+        return "redirect:/members/mypage";
     }
+
 
     /**
      * 회원 탈퇴 처리하는 메서드
      *
-     * @param inputPwd 입력 받은 기존 비밀번호
+     * @param inputPwd           입력 받은 기존 비밀번호
      * @param session
-     * @param model
+     * @param redirectAttributes
      * @return
      */
     @PostMapping("/delete")
@@ -148,12 +118,14 @@ public class MemberController {
 
         String msg = null;
         String url = null;
-        if (memberService.delete(memberDto.getId(), inputPwd)) {
+        int statusCode = memberService.delete(memberDto.getId(), inputPwd);
+        if (statusCode == 1) {
             msg = "회원탈퇴를 정상적으로 처리하였습니다. 이용해주셔서 감사합니다.";
             session.removeAttribute("memberDto");
             session.invalidate();
             url = "redirect:/";
-        } else {
+        }
+        if (statusCode == 0) {
             msg = "비밀번호가 맞지 않습니다. 비밀번호를 다시 입력해주세요.";
             url = "redirect:/members/mypage";
         }
@@ -171,18 +143,27 @@ public class MemberController {
         return "member/mypage";
     }
 
+    /**
+     * 회원 정보를 수정하는 메서드
+     *
+     * @param session
+     * @param map                이름, 전화번호, 닉네임, mbti, 소개글
+     * @param redirectAttributes
+     * @return
+     */
     @PostMapping("/modify")
-    private String modify(HttpSession session, @RequestParam Map<String, String> map, Model model) {
+    private String modify(HttpSession session, @RequestParam Map<String, String> map, RedirectAttributes redirectAttributes) {
 
         int statusCode = memberService.updateMember(map, session);
+        String msg = null;
         if (statusCode == 1) { // 성공 페이지
-            String msg = "회원수정에 성공하였습니다.";
-            model.addAttribute("msg", msg);
-        } else {
-            String msg = "회원수정에 실패하였습니다. 다시 시도해주세요!";
-            model.addAttribute("msg", msg);
+            msg = "회원수정에 성공하였습니다.";
         }
-        return "index";
+        if (statusCode == 0) {
+            msg = "회원수정에 실패하였습니다. 다시 시도해주세요!";
+        }
+        redirectAttributes.addFlashAttribute("msg", msg);
+        return "redirect:/members/mypage";
 
     }
 
@@ -191,10 +172,11 @@ public class MemberController {
     private String regist(@RequestParam Map<String, String> map, Model model, RedirectAttributes redirect) {
 
         int statusCode = memberService.createMember(map);
-        String msg;
+        String msg = null;
         if (statusCode == 1) { // 성공 페이지
             msg = "회원가입에 성공하였습니다. 로그인 해주세요!";
-        } else {
+        }
+        if (statusCode == 0) {
             msg = "회원가입에 실패하였습니다. 다시 시도해주세요!";
         }
         redirect.addFlashAttribute("msg", msg);
@@ -231,7 +213,8 @@ public class MemberController {
      * @return
      */
     @PostMapping("/login")
-    private String login(@RequestParam("loginId") String id, @RequestParam("loginPwd") String password, HttpSession session, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirect) {
+    private String login(@RequestParam("loginId") String id, @RequestParam("loginPwd") String password, HttpSession
+            session, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirect) {
         System.out.println("id " + id + "pw" + password);
         Member member = memberService.getMemberByIdAndPassword(id, password);
 
