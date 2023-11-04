@@ -24,7 +24,7 @@
           <div class="card shadow-sm">
             <div class="card-body">
               <!-- Vertical Form -->
-              <form id="form-register" class="row g-3" action="" method="post" enctype="multipart/form-data">
+              <form id="form-register" class="row g-3" method="post" enctype="multipart/form-data">
 	          	<input type="hidden" name="pgno" value="1">
 			    <input type="hidden" name="key" value="">
 			    <input type="hidden" name="word" value="">              
@@ -53,11 +53,11 @@
                   <input type="number" class="form-control" min="1" max="10" value='1' id="accompanyTotal" name="accompanyTotal">
                 </div>
                 <div class="col-12">
-                  <label for="accompanyPhoto" class="form-label">사진</label>
-                  <input class="form-control" type="file" id="accompanyPhoto" name="accompanyPhoto">
+                  <label for="upfile" class="form-label">사진</label>
+                  <input class="form-control" type="file" id="upfile" name="upfile" >
                 </div>
                 <div class="text-center">
-                  <button type="submit" id="btn-register" class="btn btn-primary">전송</button>
+                  <button type="button" id="btn-register" class="btn btn-primary">전송</button>
                   <!-- <button type="reset" class="btn btn-secondary">초기화</button> -->
                   <button type="button" id="btn-list" class="btn btn-secondary">취소</button>
                 </div>

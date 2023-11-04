@@ -6,9 +6,11 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.trip.accompany.model.AccompanyCommDto;
 import com.ssafy.trip.accompany.model.AccompanyDto;
+import com.ssafy.trip.accompany.model.FileInfoDto;
 import com.ssafy.trip.accompany.model.mapper.AccompanyMapper;
 
 @Service
@@ -40,19 +42,29 @@ public class AccompanyServiceImpl implements AccompanyService {
 		return accompanyMapper.list(map);
 	}
 
-//	/** 글 작성 */
-//	@Override
-//	public int write(AccompanyDto accompanyDto) {
-//		return dao.write(accompanyDto);
-//	}
-//	
-//	
-//	/** 글 상세 */
-//	@Override
-//	public AccompanyDto view(int accompanyNo) {
-//		return dao.view(accompanyNo);
-//	}
-//	
+	/** 글 작성 */
+	@Override
+	@Transactional
+	public void write(AccompanyDto accompanyDto) {
+		System.out.println("글 입력 전 AccompanyDto : " + accompanyDto);
+		accompanyMapper.write(accompanyDto);
+		System.out.println("글 입력 후 AccompanyDto : " + accompanyDto);
+		
+		List<FileInfoDto> fileInfos = accompanyDto.getFileInfos();
+		if (fileInfos != null && !fileInfos.isEmpty()) {
+			accompanyMapper.registerFile(accompanyDto);
+		}
+	}
+		
+	/** 글 상세 */
+	@Override
+	public AccompanyDto getAccompanyByAccompanyNo(int accompanyNo) {
+		return accompanyMapper.getAccompanyByAccompanyNo(accompanyNo);
+	}
+	
+	
+	
+	
 //	/** 조회수 증가 */
 //	@Override
 //	public int updateHit(int accompanyNo) {

@@ -22,6 +22,7 @@ import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,6 +39,7 @@ import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.trip.accompany.model.AccompanyCommDto;
 import com.ssafy.trip.accompany.model.AccompanyDto;
+import com.ssafy.trip.accompany.model.FileInfoDto;
 import com.ssafy.trip.member.model.Member;
 import com.ssafy.trip.accompany.model.service.AccompanyService;
 import com.ssafy.trip.accompany.model.service.AccompanyServiceImpl;
@@ -48,7 +50,19 @@ import com.ssafy.trip.accompany.model.service.AccompanyServiceImpl;
 @RequestMapping("/accompany")
 public class AccompanyController{
 	private final Logger logger = LoggerFactory.getLogger(AccompanyController.class);
-
+	
+	@Value("${file.path}")
+	private String uploadPath;
+	
+	@Value("${file.path.upload-images}")
+	private String uploadImagePath;
+	
+	@Value("${file.path.upload-files}")
+	private String uploadFilePath;
+	
+	@Autowired
+	private ServletContext servletContext;
+	
 	private AccompanyService accompanyService;
 	
 	public AccompanyController(AccompanyService accompanyService) {
@@ -86,48 +100,68 @@ public class AccompanyController{
 	}
 
 	/** 글 작성 */
-//	@PostMapping("/write")
-//	public String write(BoardDto boardDto, @RequestParam("upfile") MultipartFile[] files, HttpSession session,
-//			RedirectAttributes redirectAttributes) throws Exception {
-//		logger.debug("write boardDto : {}", boardDto);
-//		MemberDto memberDto = (MemberDto) session.getAttribute("userinfo");
-//		boardDto.setUserId(memberDto.getUserId());
-//
-////		FileUpload 관련 설정.
-//		logger.debug("uploadPath : {}, uploadImagePath : {}, uploadFilePath : {}", uploadPath, uploadImagePath, uploadFilePath);
-//		logger.debug("MultipartFile.isEmpty : {}", files[0].isEmpty());
-//		if (!files[0].isEmpty()) {
-////			String realPath = servletContext.getRealPath(UPLOAD_PATH);
-////			String realPath = servletContext.getRealPath("/resources/img");
-//			String today = new SimpleDateFormat("yyMMdd").format(new Date());
-//			String saveFolder = uploadPath + File.separator + today;
-//			logger.debug("저장 폴더 : {}", saveFolder);
-//			File folder = new File(saveFolder);
-//			if (!folder.exists())
-//				folder.mkdirs();
-//			List<FileInfoDto> fileInfos = new ArrayList<FileInfoDto>();
-//			for (MultipartFile mfile : files) {
-//				FileInfoDto fileInfoDto = new FileInfoDto();
-//				String originalFileName = mfile.getOriginalFilename();
-//				if (!originalFileName.isEmpty()) {
-//					String saveFileName = UUID.randomUUID().toString()
-//							+ originalFileName.substring(originalFileName.lastIndexOf('.'));
-//					fileInfoDto.setSaveFolder(today);
-//					fileInfoDto.setOriginalFile(originalFileName);
-//					fileInfoDto.setSaveFile(saveFileName);
-//					logger.debug("원본 파일 이름 : {}, 실제 저장 파일 이름 : {}", mfile.getOriginalFilename(), saveFileName);
-//					mfile.transferTo(new File(folder, saveFileName));
-//				}
-//				fileInfos.add(fileInfoDto);
-//			}
-//			boardDto.setFileInfos(fileInfos);
-//		}
-//
-//		boardService.writeArticle(boardDto);
+	@PostMapping("/write")
+	public String write(AccompanyDto accompanyDto, @RequestParam String accompanyDate, @RequestParam String accompanyTime,
+			@RequestParam("upfile") MultipartFile[] files, HttpSession session,
+			RedirectAttributes redirectAttributes) throws Exception {
+		Member memberDto = (Member) session.getAttribute("memberDto");
+		accompanyDto.setId(memberDto.getId());
+		accompanyDto.setNickname(memberDto.getNickname());
+		
+		accompanyDate = accompanyDate + " " + accompanyTime + ":00"; // 초를 "00"으로 초기화
+		accompanyDto.setAccompanyDate(accompanyDate);
+		logger.debug("write AccompanyDto : {}", accompanyDto);
+		
+		// FileUpload 관련 설정
+		logger.debug("uploadPath : {}, uploadImagePath : {}, uploadFilePath : {}", uploadPath, uploadImagePath, uploadFilePath);
+		logger.debug("MultipartFile.isEmpty : {}", files[0].isEmpty());
+		if (!files[0].isEmpty()) { // 파일 1개라도 업로드했다면
+			String realPath = servletContext.getRealPath("/upload");
+			String today = new SimpleDateFormat("yyMMdd").format(new Date());
+			String saveFolder = uploadPath + File.separator + today;
+			logger.debug("저장 폴더 : {}", saveFolder);
+			File folder = new File(saveFolder);
+			if (!folder.exists()) // 해당 폴더(upload 및 날짜별 폴더)가 존재하지 않을경우, 생성해줌
+				folder.mkdirs();
+			List<FileInfoDto> fileInfos = new ArrayList<FileInfoDto>();
+			for (MultipartFile mfile : files) {
+				FileInfoDto fileInfoDto = new FileInfoDto();
+				String originalFileName = mfile.getOriginalFilename(); // 원본 파일 이름
+				if (!originalFileName.isEmpty()) {
+					// java.util.UUID 클래스를 사용하여 UUID(Universally Unique Identifier)를 생성하고 문자열로 반환
+					String saveFileName = UUID.randomUUID().toString()
+							+ originalFileName.substring(originalFileName.lastIndexOf('.')); // 파일 확장자([ex].jpg)만 가져옴
+					fileInfoDto.setSaveFolder(today); // 해당 날짜별 폴더에 저장되어있음
+					fileInfoDto.setOriginalFile(originalFileName);
+					fileInfoDto.setSaveFile(saveFileName);
+					logger.debug("원본 파일 이름 : {}, 실제 저장 파일 이름 : {}", mfile.getOriginalFilename(), saveFileName);
+					mfile.transferTo(new File(folder, saveFileName));
+				}
+				fileInfos.add(fileInfoDto);
+			}
+			accompanyDto.setFileInfos(fileInfos);
+		}
+
+		accompanyService.write(accompanyDto);
 //		redirectAttributes.addAttribute("pgno", "1");
 //		redirectAttributes.addAttribute("key", "");
 //		redirectAttributes.addAttribute("word", "");
-//		return "redirect:/article/list";
-//	}
+		return "redirect:/accompany/list";
+	}
 
+	@GetMapping("/view")
+	public String view(@RequestParam int accompanyNo, @RequestParam Map<String, String> map, Model model)
+			throws Exception {
+		logger.debug("view accompanyNo : {}", accompanyNo);
+		AccompanyDto accompanyDto = accompanyService.getAccompanyByAccompanyNo(accompanyNo);
+		logger.debug("view accompanyDto : {}", accompanyDto);
+//		accompanyService.updateHit(accompanyNo);
+		model.addAttribute("accompanyDto", accompanyDto);
+		
+//		model.addAttribute("pgno", map.get("pgno"));
+//		model.addAttribute("key", map.get("key"));
+//		model.addAttribute("word", map.get("word"));
+		return "accompany/view";
+	}
+	
 }

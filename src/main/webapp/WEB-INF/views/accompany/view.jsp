@@ -2,11 +2,11 @@
 <!DOCTYPE html>
 <html lang="ko">
   <head>
-	<%@ include file="/include/head.jsp" %>
-	<link rel="stylesheet" href="${root}/assets/css/accompany.css" />
+	<%@ include file="/WEB-INF/views/include/header.jsp"%>
+	<link rel="stylesheet" href="/static/assets/css/accompany.css" />
   </head>
   <body>
-  <%@ include file="/include/nav.jsp" %>
+  <%@ include file="/WEB-INF/views/include/nav.jsp"%>
     <div class="container">
         <div class="row justify-content-center mt-4 mt-lg-5">
           <div class="col-lg-8 col-md-10 col-sm-12">
@@ -34,12 +34,15 @@
               <hr class="hr-style col-12" size="1" width="100%">
               <div class="divider mb-3"></div>
               <div>
-                <%-- 이미지가 있을 때만 보여지게 --%>
-                <c:if test="${not empty accompanyDto.accompanyPhoto}">
-	                <div>
-	                	<img src="${root}/upload/${accompanyDto.accompanyPhoto}" alt="..." class="col-8">
-	                </div>
-                </c:if>
+                <%-- 이미지가 있을 때만 보여지게 --%>                
+	            <c:if test="${!empty accompanyDto.fileInfos}">
+				<div class="mt-3">
+					<c:forEach var="file" items="${accompanyDto.fileInfos}">
+						<img src="/upload/${file.saveFolder}/${file.saveFile}" alt="..." class="col-8">						
+						<%-- <li>${file.originalFile} <a href="${root}/file/download/${file.saveFolder}/${file.originalFile}/${file.saveFile}">[다운로드]</a> --%>
+					</c:forEach>
+				</div>
+				</c:if>                
                 <div class="mb-4">
 	                <div class="d-flex align-items-center my-2">
 		              <i class="bi bi-geo-alt-fill me-2"></i> 장소 : ${accompanyDto.accompanyLoc}
@@ -158,5 +161,5 @@
         });
       </script>
       <%-- 댓글 작업과 관련된 js --%>    
-	  <script src="${root}/assets/js/accompany_comment.js"></script>
-<%@ include file="/include/footer.jsp" %>	
+	  <script src="$/static/assets/js/accompany_comment.js"></script>
+<%@ include file="/WEB-INF/views/include/footer.jsp"%>

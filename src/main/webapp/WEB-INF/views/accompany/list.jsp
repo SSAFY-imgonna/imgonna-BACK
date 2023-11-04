@@ -74,14 +74,15 @@
 	  	<c:forEach var="accompanyDto" items="${list}">
 			<div class="col">
 			  <div class="card shadow-sm">
-			  	<%-- 저장된 이미지가 없는 경우 --%>
-				<c:if test="${empty accompanyDto.accompanyPhoto}">
-					<img src="/static/assets/img/no_image.jpg" class="card-img-top" alt="...">	
-				</c:if>
-				<%-- 저장된 이미지가 있는 경우 --%>
-				<c:if test="${not empty accompanyDto.accompanyPhoto}">
-	          		<img src="/static/assets/img/no_image.jpg" class="card-img-top" alt="...">						
-				</c:if>			  	
+			  	<%-- 저장된 이미지가 없는 경우!!! --%>
+			  	<c:if test="${empty accompanyDto.fileInfos}">
+					<img src="/static/assets/img/no_image.png" class="card-img-top" alt="...">	
+				</c:if>    					
+				<%-- 저장된 이미지가 있는 경우!!! --%>
+	            <c:if test="${!empty accompanyDto.fileInfos}">
+					<c:set var="file" value="${accompanyDto.fileInfos[0]}" />
+					<img src="/upload/${file.saveFolder}/${file.saveFile}" class="card-img-top" alt="...">						
+				</c:if>    
 	            <div class="card-body">
 	              <div class="card-text">
 	              	<b>${accompanyDto.accompanyTitle}</b>
@@ -98,7 +99,7 @@
 		          <div class="d-flex justify-content-between align-items-center">
 		            <div class="btn-group">
 		              <button type="button" class="btn btn-sm btn-outline-secondary showDetail" 
-		              		onclick="location.href='${root}/accompany/updateHit&accompanyNo=${accompanyDto.accompanyNo}'">자세히 보기</button>
+		              		onclick="location.href='${root}/accompany/view?accompanyNo=${accompanyDto.accompanyNo}'">자세히 보기</button>
 		              <!-- <button type="button" class="btn btn-sm btn-outline-secondary">신청하기</button> -->
 		            </div>
 		            <div>
