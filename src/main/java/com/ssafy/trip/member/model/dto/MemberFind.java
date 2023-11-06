@@ -1,4 +1,4 @@
-package com.ssafy.trip.member.model;
+package com.ssafy.trip.member.model.dto;
 
 public class MemberFind {
     private String id;

@@ -2,11 +2,11 @@
 <!DOCTYPE html>
 <html lang="ko">
   <head>
-	<%@ include file="/include/head.jsp" %>
-	<link rel="stylesheet" href="${root}/assets/css/accompany.css" />
+	<%@ include file="/WEB-INF/views/include/header.jsp"%>
+	<link rel="stylesheet" href="/static/assets/css/accompany.css" />
   </head>
   <body>
-  <%@ include file="/include/nav.jsp" %>
+  <%@ include file="/WEB-INF/views/include/nav.jsp"%>
     <div class="container">
         <div class="row justify-content-center mt-4 mt-lg-5">
           <div class="col-lg-8 col-md-10 col-sm-12">
@@ -34,12 +34,15 @@
               <hr class="hr-style col-12" size="1" width="100%">
               <div class="divider mb-3"></div>
               <div>
-                <%-- 이미지가 있을 때만 보여지게 --%>
-                <c:if test="${not empty accompanyDto.accompanyPhoto}">
-	                <div>
-	                	<img src="${root}/upload/${accompanyDto.accompanyPhoto}" alt="..." class="col-8">
-	                </div>
-                </c:if>
+                <%-- 이미지가 있을 때만 보여지게 --%>                
+	            <c:if test="${!empty accompanyDto.fileInfos}">
+				<div class="mt-3">
+					<c:forEach var="file" items="${accompanyDto.fileInfos}">
+						<img src="/upload/${file.saveFolder}/${file.saveFile}" alt="..." class="col-8">						
+						<%-- <li>${file.originalFile} <a href="${root}/file/download/${file.saveFolder}/${file.originalFile}/${file.saveFile}">[다운로드]</a> --%>
+					</c:forEach>
+				</div>
+				</c:if>                
                 <div class="mb-4">
 	                <div class="d-flex align-items-center my-2">
 		              <i class="bi bi-geo-alt-fill me-2"></i> 장소 : ${accompanyDto.accompanyLoc}
@@ -74,7 +77,7 @@
               		<%-- 이미 신청 하였을때 --%>
               		<c:if test="${isJoin == true}">
 		                <button type="button" id="btn-join" class="btn btn-outline-secondary mb-3 ms-1"
-		                	onclick="location.href='${root}/accompany?action=joinCancel&accompanyNo=${accompanyDto.accompanyNo}'"
+		                	onclick="location.href='${root}/accompany/joinCancel?accompanyNo=${accompanyDto.accompanyNo}'"
 		               		>
 		                  	신청취소
 		                </button>                
@@ -84,7 +87,7 @@
               			<%-- 정원 아직 꽉 차지 않았다면 신청하기 버튼 --%>
               			<c:if test="${accompanyDto.accompanyNum != accompanyDto.accompanyTotal}">
 			                <button type="button" id="btn-join" class="btn btn-outline-success mb-3 ms-1"
-			                	onclick="location.href='${root}/accompany?action=join&accompanyNo=${accompanyDto.accompanyNo}'">
+			                	onclick="location.href='${root}/accompany/join?accompanyNo=${accompanyDto.accompanyNo}'">
 			                  	신청하기
 			                </button>                
 		                </c:if>
@@ -146,17 +149,17 @@
       <div id="accompanyNo" data-no="${accompanyDto.accompanyNo}"></div>
       <script>
         document.querySelector("#btn-list").addEventListener("click", function () {
-          location.href = "${root}/accompany?action=list";
+          	location.href = "${root}/accompany/list";
         });
         document.querySelector("#btn-mv-modify").addEventListener("click", function () {
-          alert("글수정하자!!!");
-          location.href = "#";
+          	location.href = "${root}/accompany/modify?accompanyNo=${accompanyDto.accompanyNo}";
         });
         document.querySelector("#btn-delete").addEventListener("click", function () {
-          alert("글삭제하자!!!");
-          location.href = "#";
+        	if(confirm("정말로 삭제하시겠습니까?")) {
+	          	location.href = "${root}/accompany/delete?accompanyNo=${accompanyDto.accompanyNo}";
+       		}          
         });
       </script>
       <%-- 댓글 작업과 관련된 js --%>    
-	  <script src="${root}/assets/js/accompany_comment.js"></script>
-<%@ include file="/include/footer.jsp" %>	
+	  <script src="$/static/assets/js/accompany_comment.js"></script>
+<%@ include file="/WEB-INF/views/include/footer.jsp"%>

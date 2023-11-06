@@ -1,10 +1,8 @@
-package com.ssafy.trip.member.model;
+package com.ssafy.trip.member.model.dto;
 
 import java.io.Serializable;
 
-public class Member implements Serializable{
-	private static final long serialVersionUID = 1L;
-	
+public class Member {
 	private String id;
 	private String email;
 	private String name;
@@ -88,36 +86,7 @@ public class Member implements Serializable{
 	public Member() {
 		super();
 	}
-	
-	public Member(String id, String email, String name, String password, String phone, String nickname,
-				  String joinDate, String role, String salt) {
-		super();
-		this.id = id;
-		this.email = email;
-		this.name = name;
-		this.password = password;
-		this.phone = phone;
-		this.nickname = nickname;
-		this.joinDate = joinDate;
-		this.role = role;
-		this.salt = salt;
-	}
-	
-	public Member(String id, String email, String name, String password, String phone, String nickname,
-				  String mbti, String introduction, String joinDate, String role) {
-		super();
-		this.id = id;
-		this.email = email;
-		this.name = name;
-		this.password = password;
-		this.phone = phone;
-		this.nickname = nickname;
-		this.mbti = mbti;
-		this.introduction = introduction;
-		this.joinDate = joinDate;
-		this.role = role;
-	}
-	
+
 	@Override
 	public String toString() {
 		return "MemberDto [id=" + id + ", email=" + email + ", name=" + name + ", password=" + password + ", phone="

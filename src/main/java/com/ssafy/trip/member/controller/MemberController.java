@@ -1,8 +1,7 @@
 package com.ssafy.trip.member.controller;
 
-import com.ssafy.trip.file.Table;
-import com.ssafy.trip.member.model.Member;
-import com.ssafy.trip.member.model.MemberFind;
+import com.ssafy.trip.member.model.dto.Member;
+import com.ssafy.trip.member.model.dto.MemberFind;
 import com.ssafy.trip.member.service.MemberService;
 import com.ssafy.trip.util.PasswordUtils;
 import org.springframework.stereotype.Controller;
@@ -13,10 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.IOException;
 import java.util.Map;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,7 +41,7 @@ public class MemberController {
     @PostMapping("/find/id")
     public String findId(MemberFind member, Model model) {
 
-        String id = memberService.getMemberIdByEmailAndName(member.getEmail(), member.getName());
+        String id = memberService.getMemberIdByEmailAndName(member);
         String msg = null;
         if (id == null) {
             msg = "해당하는 회원 정보가 없습니다.";
@@ -68,7 +65,7 @@ public class MemberController {
     @PostMapping("/find/pw")
     private String findPassword(MemberFind member, Model model) {
 
-        String password = memberService.getMemberPasswordByIdAndEmailAndPhone(member.getId(), member.getEmail(), member.getPhone());
+        String password = memberService.getMemberPasswordByIdAndEmailAndPhone(member);
 
         String msg = null;
 
@@ -87,130 +84,99 @@ public class MemberController {
      * 회원의 비밀번호를 수정하는 메서드
      *
      * @param map     입력값을 담은 Map
-     * @param model
      * @param session
      * @return
      */
     @PostMapping("/modify/pw")
-    private String modifyPassword(Map<String, String> map, Model model, HttpSession session) {
-        String oldPassword = map.get("memberPw");
-        String newPassword1 = map.get("newPassword1");
-        String newPassword2 = map.get("newPassword2");
+    private String modifyPassword(@RequestParam Map<String, String> map, RedirectAttributes redirectAttributes, HttpSession session) {
 
+        String id = ((Member) session.getAttribute("memberDto")).getId();
+        int statusCode = memberService.updateMemberPasswordById(id, map);
         String msg = null;
-
-        if (oldPassword == null || newPassword1 == null || newPassword2 == null) {
-            msg = "모든 값을 입력해야 비밀번호 변경 가능합니다!";
+        if (statusCode == 1) { // 성공 페이지
+            msg = "비밀번호 변경에 성공하였습니다!";
         }
-
-        if (!(oldPassword == null || newPassword1 == null || newPassword2 == null)) {
-
-            Member member = (Member) session.getAttribute("memberDto");
-
-            if (!oldPassword.equals(member.getPassword())) {
-                msg = "기존 비밀번호가 맞지 않습니다. 비밀번호를 다시 입력해주세요.";
-            }
-
-            if (oldPassword.equals(member.getPassword())) {
-
-                if (!newPassword1.equals(newPassword2)) {
-                    msg = "변경할 비밀번호 재입력을 다시 해주세요. 입력한 비밀번호와 같지 않습니다.";
-                }
-
-                if (newPassword1.equals(newPassword2)) {
-
-                    String id = member.getId();
-                    int statusCode = memberService.updateMemberPasswordById(id, newPassword2);
-
-                    if (statusCode == 1) {
-                        msg = "비밀번호 변경에 성공하였습니다!";
-                        member.setPassword(newPassword2);
-                        session.setAttribute("memberDto", member);
-                    } else {
-                        msg = "비밀번호 변경을 실패하였습니다. 비밀번호 변경을 다시 시도해주세요.";
-                    }
-                }
-            }
+        if (statusCode == 0) {
+            msg = "기존 비밀번호와 일치하지 않습니다. 비밀번호 변경을 다시 시도해주세요.";
         }
-
-        model.addAttribute("msg", msg);
-        return "/member/mypage";
+        redirectAttributes.addFlashAttribute("msg", msg);
+        return "redirect:/members/mypage";
     }
+
 
     /**
      * 회원 탈퇴 처리하는 메서드
      *
-     * @param inputPwd 입력 받은 기존 비밀번호
+     * @param inputPwd           입력 받은 기존 비밀번호
      * @param session
-     * @param model
+     * @param redirectAttributes
      * @return
      */
     @PostMapping("/delete")
-    private String delete(@RequestParam("leaveConfirmPwd") String inputPwd, HttpSession session, Model model) {
-        Member member = (Member) session.getAttribute("memberDto");
-        String memberPwd = member.getPassword();
+    private String delete(@RequestParam("leaveConfirmPwd") String inputPwd, HttpSession session, RedirectAttributes redirectAttributes) {
+        Member memberDto = (Member) session.getAttribute("memberDto");
 
-        if (inputPwd.equals(memberPwd)) {
-            String msg = "회원탈퇴를 정상적으로 처리하였습니다. 이용해주셔서 감사합니다.";
-            memberService.delete(member.getId());
+        String msg = null;
+        String url = null;
+        int statusCode = memberService.delete(memberDto.getId(), inputPwd);
+        if (statusCode == 1) {
+            msg = "회원탈퇴를 정상적으로 처리하였습니다. 이용해주셔서 감사합니다.";
             session.removeAttribute("memberDto");
             session.invalidate();
-            model.addAttribute("msg", msg);
-            return "/";
-        } else {
-            String msg = "비밀번호가 맞지 않습니다. 비밀번호를 다시 입력해주세요.";
-            model.addAttribute("msg", msg);
-            return "/member/" + session.getId();
+            url = "redirect:/";
         }
+        if (statusCode == 0) {
+            msg = "비밀번호가 맞지 않습니다. 비밀번호를 다시 입력해주세요.";
+            url = "redirect:/members/mypage";
+        }
+        redirectAttributes.addFlashAttribute("msg", msg);
+        return url;
+
     }
 
     @GetMapping("/mypage")
-    private String mypage(Model model, HttpSession session) {
+    private String mypage(HttpSession session, Model model) {
+        Member memberDto = (Member) session.getAttribute("memberDto");
+        String id = memberDto.getId();
+        Member member = memberService.getMemberById(id);
+        model.addAttribute("member", member);
         return "member/mypage";
     }
 
+    /**
+     * 회원 정보를 수정하는 메서드
+     *
+     * @param session
+     * @param map                이름, 전화번호, 닉네임, mbti, 소개글
+     * @param redirectAttributes
+     * @return
+     */
     @PostMapping("/modify")
-    private String modify(HttpSession session, Map<String, String> map, Model model) {
-        String email = map.get("registerEmail") + map.get("registerEmailAdd");
-        Member member = (Member) session.getAttribute("memberDto");
-        member.setId(map.get("id"));
-        member.setEmail(email);
-        member.setName(map.get("name"));
-        member.setNickname(map.get("nickname"));
-        member.setPhone(map.get("phone"));
+    private String modify(HttpSession session, @RequestParam Map<String, String> map, RedirectAttributes redirectAttributes) {
 
-        int statusCode = memberService.updateMember(member);
+        int statusCode = memberService.updateMember(map, session);
+        String msg = null;
         if (statusCode == 1) { // 성공 페이지
-            session.setAttribute("memberDto", member);
-            String msg = "회원수정에 성공하였습니다.";
-            model.addAttribute("msg", msg);
-        } else {
-            String msg = "회원수정에 실패하였습니다. 다시 시도해주세요!";
-            model.addAttribute("msg", msg);
+            msg = "회원수정에 성공하였습니다.";
         }
-        return "index";
+        if (statusCode == 0) {
+            msg = "회원수정에 실패하였습니다. 다시 시도해주세요!";
+        }
+        redirectAttributes.addFlashAttribute("msg", msg);
+        return "redirect:/members/mypage";
 
     }
 
+
     @PostMapping("/regist")
     private String regist(@RequestParam Map<String, String> map, Model model, RedirectAttributes redirect) {
-        String email = map.get("registerEmail") + map.get("registerEmailAdd");
-        Member member = new Member();
-        member.setId(map.get("registerId"));
-        member.setEmail(email);
-        member.setName(map.get("registerName"));
-        member.setPassword(map.get("registerPw"));
-        member.setPhone(map.get("registerPhone"));
-        member.setNickname(map.get("registerNickname"));
-        member.setMbti(map.get("mbti"));
-        member.setIntroduction(map.get("introduction"));
-        member.setRole("general");
 
-        int statusCode = memberService.createMember(member);
-        String msg;
+        int statusCode = memberService.createMember(map);
+        String msg = null;
         if (statusCode == 1) { // 성공 페이지
             msg = "회원가입에 성공하였습니다. 로그인 해주세요!";
-        } else {
+        }
+        if (statusCode == 0) {
             msg = "회원가입에 실패하였습니다. 다시 시도해주세요!";
         }
         redirect.addFlashAttribute("msg", msg);
@@ -225,12 +191,14 @@ public class MemberController {
      * @return
      */
     @GetMapping("/logout")
-    private String logout(HttpSession session, Model model) {
-        session.removeAttribute("memberDto");
+    private String logout(HttpSession session, Model model, RedirectAttributes redirectAttributes) {
+        if (session.getAttribute("memberDto") != null) {
+            session.removeAttribute("memberDto");
+        }
         session.invalidate();
         String msg = "로그아웃 되었습니다!";
-        model.addAttribute("msg", msg);
-        return "/";
+        redirectAttributes.addFlashAttribute("msg", msg);
+        return "redirect:/";
     }
 
     /**
@@ -245,17 +213,17 @@ public class MemberController {
      * @return
      */
     @PostMapping("/login")
-    private String login(@RequestParam("loginId") String id, @RequestParam("loginPwd") String password, HttpSession session, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirect) {
+    private String login(@RequestParam("loginId") String id, @RequestParam("loginPwd") String password, HttpSession
+            session, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirect) {
         System.out.println("id " + id + "pw" + password);
         Member member = memberService.getMemberByIdAndPassword(id, password);
 
         if (member != null) {
             session.setAttribute("memberDto", member);
-
             saveCookieId(request, response, id);
         } else {
             String msg = "로그인을 실패하였습니다. 다시 시도해주세요!";
-            redirect.addAttribute("msg", msg);
+            redirect.addFlashAttribute("msg", msg);
         }
         return "redirect:/";
     }
