@@ -9,13 +9,20 @@
 <!--        <result column="user_name" property="userName"/>-->
 <!--    </resultMap>-->
 
-<!--    &lt;!&ndash; ADMIN &ndash;&gt;-->
-<!--    <resultMap type="memberDto" id="memberAll" extends="member">-->
-<!--        <result column="user_password" property="userPwd"/>-->
-<!--        <result column="email_id" property="emailId"/>-->
-<!--        <result column="email_domain" property="emailDomain"/>-->
-<!--        <result column="join_date" property="joinDate"/>-->
-<!--    </resultMap>-->
+    <!-- ADMIN -->
+    <resultMap type="member" id="member" >
+        <result column="id" property="id"></result>
+        <result column="email" property="email"></result>
+        <result column="name" property="name"></result>
+        <result column="password" property="password"></result>
+        <result column="phone" property="phone"></result>
+        <result column="nickname" property="nickname"></result>
+        <result column="mbti" property="mbti"></result>
+        <result column="introduction" property="introduction"></result>
+        <result column="joinDate" property="joinDate"></result>
+        <result column="role" property="role" typeHandler="com.ssafy.trip.enumhandlers.handlers.MemberRoleEnumHandler"></result>
+        <result column="salt" property="salt"></result>
+    </resultMap>
 
 <!--    <select id="idCheck" parameterType="String" resultType="int">-->
 <!--        select count(user_id)-->
@@ -28,7 +35,7 @@
         values (#{id}, #{email}, #{name}, #{password}, #{phone}, #{nickname}, #{mbti}, #{introduction}, now(), #{role}, #{salt})
     </insert>
 
-    <select id="getMemberById" parameterType="String" resultType="member">
+    <select id="getMemberById" parameterType="String" resultMap="member">
         select *
         from members
         where id = #{id}
