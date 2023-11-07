@@ -1,6 +1,6 @@
 package com.ssafy.trip.file.model.service;
 
-import com.ssafy.trip.accompany.model.AccompanyDto;
+import com.ssafy.trip.accompany.model.Accompany;
 import com.ssafy.trip.file.model.mapper.FileMapper;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +17,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public void registerFile(AccompanyDto accompanyDto) {
+    public void registerFile(Accompany accompanyDto) {
         Map<String, Object> map = new HashMap<>();
         map.put("fileInfos", accompanyDto.getFileInfos());
         map.put("accompanyNo", accompanyDto.getAccompanyNo());

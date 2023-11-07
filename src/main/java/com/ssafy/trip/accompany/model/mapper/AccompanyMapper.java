@@ -1,6 +1,6 @@
 package com.ssafy.trip.accompany.model.mapper;
 
-import com.ssafy.trip.accompany.model.AccompanyDto;
+import com.ssafy.trip.accompany.model.Accompany;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -11,38 +11,39 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface AccompanyMapper {
-	/** 글 목록 */
-	List<AccompanyDto> list(Map<String, String> map);
+	// 동행 글 목록
+	List<Accompany> getAccompanyList(Map<String, String> map);
 
+	// 동행 글 작성
+	void createAccompany(Accompany accompany);
+
+	// 업로드 파일 목록
 	public List<FileInfoDto> fileInfoList(int accompanyNo);
-
-	/** 글 작성 */
-	int write(AccompanyDto accompanyDto);
-
-	/** 글 상세 */
-	AccompanyDto getAccompanyByAccompanyNo(int accompanyNo);
 	
-	/** 글 수정 */
-	void modifyAccompany(AccompanyDto accompanyDto) throws SQLException;
-
-	/** 글 삭제 */
-	void deleteAccompany(int accompanyNo);
-
-	/** 조회수 증가 */
-	void updateHit(int accompanyNo);
-	
-	/** 이미 신청되어있는지 여부 */
-	int isJoin(Map<String, String> map);
-	
-	/** 신청 */
-	int join(Map<String, String> map);	
-	
-	/** 현재 모집인원 증가 */
-	void increaseAccompanyNum(Map<String, String> map);
-	
-	/** 신청 취소하기 */
-	int joinCancel(Map<String, String> map);
-	
-	/** 현재 모집인원 감소 */
-	void decreaseAccompanyNum(Map<String, String> map);
+//	/** 글 상세 */
+//	Accompany getAccompanyByAccompanyNo(int accompanyNo);
+//	
+//	/** 글 수정 */
+//	void modifyAccompany(Accompany accompanyDto) throws SQLException;
+//
+//	/** 글 삭제 */
+//	void deleteAccompany(int accompanyNo);
+//
+//	/** 조회수 증가 */
+//	void updateHit(int accompanyNo);
+//	
+//	/** 이미 신청되어있는지 여부 */
+//	int isJoin(Map<String, String> map);
+//	
+//	/** 신청 */
+//	int join(Map<String, String> map);	
+//	
+//	/** 현재 모집인원 증가 */
+//	void increaseAccompanyNum(Map<String, String> map);
+//	
+//	/** 신청 취소하기 */
+//	int joinCancel(Map<String, String> map);
+//	
+//	/** 현재 모집인원 감소 */
+//	void decreaseAccompanyNum(Map<String, String> map);
 }

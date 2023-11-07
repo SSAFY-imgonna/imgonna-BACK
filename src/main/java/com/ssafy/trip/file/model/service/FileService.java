@@ -1,9 +1,9 @@
 package com.ssafy.trip.file.model.service;
 
-import com.ssafy.trip.accompany.model.AccompanyDto;
+import com.ssafy.trip.accompany.model.Accompany;
 
 public interface FileService {
-    void registerFile(AccompanyDto accompanyDto);
+    void registerFile(Accompany accompanyDto);
 
     void deleteFile(int accompanyNo);
 

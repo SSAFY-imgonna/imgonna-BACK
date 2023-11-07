@@ -1,8 +1,9 @@
 package com.ssafy.trip.accompany.model;
 
-public class AccompanyJoinDto {
+public class AccompanyJoin {
 	private int accompanyNo;
 	private String id;
+	
 	
 	public int getAccompanyNo() {
 		return accompanyNo;
@@ -17,8 +18,10 @@ public class AccompanyJoinDto {
 		this.id = id;
 	}
 	
+	
 	@Override
 	public String toString() {
-		return "AccompanyJoinDto [accompanyNo=" + accompanyNo + ", id=" + id + "]";
+		return "AccompanyJoin [accompanyNo=" + accompanyNo + ", id=" + id + "]";
 	}
+	
 }

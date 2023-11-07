@@ -71,42 +71,42 @@
     <div class="container">
 	  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
 	  	<%-- 제목 길어지거나 하면 truncate 처리해줘야될거같음!!!!!!!!!!!!!!!!!!!!!! --%>
-	  	<c:forEach var="accompanyDto" items="${list}">
+	  	<c:forEach var="accompany" items="${list}">
 			<div class="col">
 			  <div class="card shadow-sm">
 			  	<%-- 저장된 이미지가 없는 경우!!! --%>
-			  	<c:if test="${empty accompanyDto.fileInfos}">
+			  	<c:if test="${empty accompany.fileInfos}">
 					<img src="/static/assets/img/no_image.png" class="card-img-top" alt="...">	
 				</c:if>    					
 				<%-- 저장된 이미지가 있는 경우!!! --%>
-	            <c:if test="${!empty accompanyDto.fileInfos}">
-					<c:set var="file" value="${accompanyDto.fileInfos[0]}" />
+	            <c:if test="${!empty accompany.fileInfos}">
+					<c:set var="file" value="${accompany.fileInfos[0]}" />
 					<img src="/upload/${file.saveFolder}/${file.saveFile}" class="card-img-top" alt="...">						
 				</c:if>    
 	            <div class="card-body">
 	              <div class="card-text">
-	              	<b>${accompanyDto.accompanyTitle}</b>
+	              	<b>${accompany.title}</b>
 	              </div>
 	              <div class="d-flex align-items-center my-2">
-		            <i class="bi bi-geo-alt-fill me-2"></i>${accompanyDto.accompanyLoc}
+		            <i class="bi bi-geo-alt-fill me-2"></i>${accompany.addr}
 	              </div>
 	              <div class="d-flex align-items-center my-2">
-					<i class="bi bi-calendar2-week me-2"></i>${accompanyDto.accompanyDate}
+					<i class="bi bi-calendar2-week me-2"></i>${accompany.joinTime}
 				  </div>
 	              <div class="d-flex align-items-center my-2">
-		            <i class="bi bi-people-fill me-2"></i>${accompanyDto.accompanyNum} / ${accompanyDto.accompanyTotal}명 (<i class="bi bi-eye-fill me-1"></i>${accompanyDto.hit})
+		            <i class="bi bi-people-fill me-2"></i>${accompany.currentNum} / ${accompany.limitNum}명 (<i class="bi bi-eye-fill me-1"></i>${accompany.hit})
 	              </div>
 		          <div class="d-flex justify-content-between align-items-center">
 		            <div class="btn-group">
 		              <button type="button" class="btn btn-sm btn-outline-secondary showDetail" 
-		              		onclick="location.href='${root}/accompany/view?accompanyNo=${accompanyDto.accompanyNo}'">자세히 보기</button>
+		              		onclick="location.href='${root}/accompany/view?accompanyNo=${accompany.accompanyNo}'">자세히 보기</button>
 		              <!-- <button type="button" class="btn btn-sm btn-outline-secondary">신청하기</button> -->
 		            </div>
 		            <div>
-		              <c:if test="${sessionScope.memberDto.id == accompanyDto.id}">
+		              <c:if test="${sessionScope.memberDto.id == accompany.id}">
 				        <span class="text-danger me-2"><b>내가 쓴 글</b></span>
 		              </c:if>
-			          <span class="text-body-secondary"><i class="bi bi-person-circle"></i> ${accompanyDto.id}</span>		            
+			          <span class="text-body-secondary"><i class="bi bi-person-circle"></i> ${accompany.id}</span>		            
 		            </div>
 		          </div>
 	            </div>
