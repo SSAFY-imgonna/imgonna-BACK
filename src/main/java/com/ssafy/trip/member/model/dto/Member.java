@@ -1,6 +1,6 @@
 package com.ssafy.trip.member.model.dto;
 
-import java.io.Serializable;
+import com.ssafy.trip.member.model.roleenum.MemberRoleEnum;
 
 public class Member {
 	private String id;
@@ -12,7 +12,7 @@ public class Member {
 	private String mbti;
 	private String introduction;
 	private String joinDate;
-	private String role;
+	private MemberRoleEnum role;
 	private String salt;
 	
 	public String getId() {
@@ -72,13 +72,15 @@ public class Member {
 	public void setJoinDate(String joinDate) {
 		this.joinDate = joinDate;
 	}
-	public String getRole() {
+
+	public MemberRoleEnum getRole() {
 		return role;
 	}
-	public void setRole(String role) {
+
+	public void setRole(MemberRoleEnum role) {
 		this.role = role;
 	}
-	
+
 	public String getSalt() {
 		return salt;
 	}

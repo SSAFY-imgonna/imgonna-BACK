@@ -1,16 +1,16 @@
 package com.ssafy.trip.member.service;
 
-import java.security.SecureRandom;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.ssafy.trip.member.model.dto.Member;
 import com.ssafy.trip.member.model.dto.MemberFind;
 import com.ssafy.trip.member.model.mapper.MemberMapper;
+import com.ssafy.trip.member.model.roleenum.MemberRoleEnum;
 import com.ssafy.trip.util.PasswordUtils;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
+import java.security.SecureRandom;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class MemberServiceImpl implements MemberService {
@@ -32,7 +32,7 @@ public class MemberServiceImpl implements MemberService {
         member.setNickname(map.get("registerNickname"));
         member.setMbti(map.get("mbti"));
         member.setIntroduction(map.get("introduction"));
-        member.setRole("general");
+        member.setRole(MemberRoleEnum.GENERAL);
 
         String rawPassword = map.get("registerPw");
         byte[] salt = getSalt();
