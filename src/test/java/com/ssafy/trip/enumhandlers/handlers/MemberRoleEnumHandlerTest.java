@@ -7,16 +7,12 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-
+//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE) // 실데이터베이스 사용 시
 class MemberRoleEnumHandlerTest {
 
-//    @Autowired
-//    private SqlSessionFactory sqlSessionFactory;
     Member dummyMember;
 
     @Autowired
@@ -35,20 +31,14 @@ class MemberRoleEnumHandlerTest {
         dummyMember.setMbti("esfj");
         dummyMember.setSalt("salt");
         dummyMember.setRole(MemberRoleEnum.GENERAL);
-
-//        sqlSessionFactory.getConfiguration().getTypeHandlerRegistry().register(MemberRoleEnumHandler.class);
     }
 
 
     @Test
     public void handlingEnumTest() {
-//        try(SqlSession sqlSession = sqlSessionFactory.openSession()){
-//            sqlSessionFactory.getConfiguration().addMapper(MemberMapper.class);
-//            Member member = sqlSession.selectOne("com.ssafy.trip.member.model.mapper.MemberMapper.getMemberById", dummyMember.getId());
-//            System.out.println(member);
-//        }
-
+        mapper.createMember(dummyMember);
         Member actualMember = mapper.getMemberById("ssafy");
+        Assertions.assertThatNoException();
         Assertions.assertThat(actualMember.getRole()).isEqualTo(MemberRoleEnum.GENERAL);
     }
 

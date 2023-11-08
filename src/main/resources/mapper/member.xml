@@ -32,7 +32,9 @@
 
     <insert id="createMember" parameterType="member">
         insert into members (id, email, name, password, phone, nickname, mbti, introduction, join_date, role, salt)
-        values (#{id}, #{email}, #{name}, #{password}, #{phone}, #{nickname}, #{mbti}, #{introduction}, now(), #{role}, #{salt})
+        values (#{id}, #{email}, #{name}, #{password}, #{phone}, #{nickname}, #{mbti}, #{introduction}, now(),
+        #{role, javaType=com.ssafy.trip.member.model.roleenum.MemberRoleEnum,
+							 typeHandler=com.ssafy.trip.enumhandlers.handlers.MemberRoleEnumHandler}, #{salt})
     </insert>
 
     <select id="getMemberById" parameterType="String" resultMap="member">
