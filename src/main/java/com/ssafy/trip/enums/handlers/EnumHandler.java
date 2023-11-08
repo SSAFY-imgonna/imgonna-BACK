@@ -1,4 +1,4 @@
-package com.ssafy.trip.enumhandlers;
+package com.ssafy.trip.enums.handlers;
 
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;

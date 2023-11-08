@@ -3,7 +3,7 @@ package com.ssafy.trip.member.service;
 import com.ssafy.trip.member.model.dto.Member;
 import com.ssafy.trip.member.model.dto.MemberFind;
 import com.ssafy.trip.member.model.mapper.MemberMapper;
-import com.ssafy.trip.member.model.roleenum.MemberRoleEnum;
+import com.ssafy.trip.member.model.enums.MemberTypeEnum;
 import com.ssafy.trip.util.PasswordUtils;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +32,7 @@ public class MemberServiceImpl implements MemberService {
         member.setNickname(map.get("registerNickname"));
         member.setMbti(map.get("mbti"));
         member.setIntroduction(map.get("introduction"));
-        member.setRole(MemberRoleEnum.GENERAL);
+        member.setType(MemberTypeEnum.GENERAL);
 
         String rawPassword = map.get("registerPw");
         byte[] salt = getSalt();

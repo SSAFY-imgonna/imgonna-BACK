@@ -1,20 +1,21 @@
 package com.ssafy.trip.member.model.dto;
 
-import com.ssafy.trip.member.model.roleenum.MemberRoleEnum;
+import com.ssafy.trip.member.model.enums.MemberTypeEnum;
 
 public class Member {
 	private String id;
-	private String email;
 	private String name;
 	private String password;
 	private String phone;
 	private String nickname;
-	private String mbti;
 	private String introduction;
 	private String joinDate;
-	private MemberRoleEnum role;
+	private String email;
 	private String salt;
-	
+	private String mbti;
+	private MemberTypeEnum type;
+	private String photo;
+
 	public String getId() {
 		return id;
 	}
@@ -73,26 +74,45 @@ public class Member {
 		this.joinDate = joinDate;
 	}
 
-	public MemberRoleEnum getRole() {
-		return role;
+	public MemberTypeEnum getType() {
+		return type;
 	}
 
-	public void setRole(MemberRoleEnum role) {
-		this.role = role;
+	public void setType(MemberTypeEnum type) {
+		this.type = type;
 	}
 
 	public String getSalt() {
 		return salt;
 	}
-	
+
+	public String getPhoto() {
+		return photo;
+	}
+
+	public void setPhoto(String photo) {
+		this.photo = photo;
+	}
+
 	public Member() {
 		super();
 	}
 
 	@Override
 	public String toString() {
-		return "MemberDto [id=" + id + ", email=" + email + ", name=" + name + ", password=" + password + ", phone="
-				+ phone + ", nickname=" + nickname + ", mbti=" + mbti + ", introduction=" + introduction + ", joinDate="
-				+ joinDate + ", role=" + role + ", salt=" + salt + "]";
+		return "Member{" +
+				"id='" + id + '\'' +
+				", name='" + name + '\'' +
+				", password='" + password + '\'' +
+				", phone='" + phone + '\'' +
+				", nickname='" + nickname + '\'' +
+				", introduction='" + introduction + '\'' +
+				", joinDate='" + joinDate + '\'' +
+				", email='" + email + '\'' +
+				", salt='" + salt + '\'' +
+				", mbti='" + mbti + '\'' +
+				", type=" + type +
+				", photo='" + photo + '\'' +
+				'}';
 	}
 }

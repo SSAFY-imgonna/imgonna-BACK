@@ -1,7 +1,7 @@
 package com.ssafy.trip.member.model.mapper;
 
 import com.ssafy.trip.member.model.dto.Member;
-import com.ssafy.trip.member.model.roleenum.MemberRoleEnum;
+import com.ssafy.trip.member.model.enums.MemberTypeEnum;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,19 +30,24 @@ class MemberMapperTest {
         dummyMember.setEmail("test@email.com");
         dummyMember.setMbti("esfj");
         dummyMember.setSalt("salt");
-        dummyMember.setRole(MemberRoleEnum.GENERAL);
+        dummyMember.setType(MemberTypeEnum.GENERAL);
     }
     @Test
     void createMember() {
         memberMapper.createMember(dummyMember);
 
-        Member actualMember = memberMapper.getMemberById("testuser");
+        Member actualMember = memberMapper.getMemberById(dummyMember.getId());
 
-        Assertions.assertThat(actualMember.getRole()).isEqualTo(dummyMember.getRole());
+        Assertions.assertThat(actualMember.getType()).isEqualTo(dummyMember.getType());
         Assertions.assertThat(actualMember.getEmail()).isEqualTo(dummyMember.getEmail());
     }
 
     @Test
     void getMemberById() {
+
+        Member actualMember = memberMapper.getMemberById(dummyMember.getId());
+
+        Assertions.assertThat(actualMember.getType()).isEqualTo(dummyMember.getType());
+        Assertions.assertThat(actualMember.getEmail()).isEqualTo(dummyMember.getEmail());
     }
 }

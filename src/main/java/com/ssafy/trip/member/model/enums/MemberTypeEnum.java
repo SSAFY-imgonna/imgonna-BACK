@@ -1,6 +1,6 @@
-package com.ssafy.trip.member.model.roleenum;
+package com.ssafy.trip.member.model.enums;
 
-import com.ssafy.trip.enumhandlers.CodeEnum;
+import com.ssafy.trip.enums.handlers.CodeEnum;
 
 /**
  * 회원 유형에 대한 Enum 클래스
@@ -11,7 +11,7 @@ import com.ssafy.trip.enumhandlers.CodeEnum;
  *
  * @author yihoney
  */
-public enum MemberRoleEnum implements CodeEnum {
+public enum MemberTypeEnum implements CodeEnum {
     ADMIN(9),
     GENERAL(1),
     DORMANT(2),
@@ -19,7 +19,7 @@ public enum MemberRoleEnum implements CodeEnum {
 
     private final int roleNum;
 
-    MemberRoleEnum(int roleNum) {
+    MemberTypeEnum(int roleNum) {
         this.roleNum = roleNum;
     }
 

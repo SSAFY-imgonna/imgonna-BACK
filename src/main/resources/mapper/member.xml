@@ -20,8 +20,9 @@
         <result column="mbti" property="mbti"></result>
         <result column="introduction" property="introduction"></result>
         <result column="joinDate" property="joinDate"></result>
-        <result column="role" property="role" typeHandler="com.ssafy.trip.enumhandlers.handlers.MemberRoleEnumHandler"></result>
+        <result column="type_no" property="type" typeHandler="com.ssafy.trip.enums.handlers.MemberTypeEnumHandler"></result>
         <result column="salt" property="salt"></result>
+        <result column="photo" property="photo"></result>
     </resultMap>
 
 <!--    <select id="idCheck" parameterType="String" resultType="int">-->
@@ -31,10 +32,10 @@
 <!--    </select>-->
 
     <insert id="createMember" parameterType="member">
-        insert into members (id, email, name, password, phone, nickname, mbti, introduction, join_date, role, salt)
+        insert into members (id, email, name, password, phone, nickname, mbti, introduction, join_date, type_no, salt)
         values (#{id}, #{email}, #{name}, #{password}, #{phone}, #{nickname}, #{mbti}, #{introduction}, now(),
-        #{role, javaType=com.ssafy.trip.member.model.roleenum.MemberRoleEnum,
-							 typeHandler=com.ssafy.trip.enumhandlers.handlers.MemberRoleEnumHandler}, #{salt})
+        #{type, javaType=com.ssafy.trip.member.model.enums.MemberTypeEnum,
+							 typeHandler=com.ssafy.trip.enums.handlers.MemberTypeEnumHandler}, #{salt})
     </insert>
 
     <select id="getMemberById" parameterType="String" resultMap="member">
