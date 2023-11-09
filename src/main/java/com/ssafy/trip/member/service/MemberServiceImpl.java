@@ -6,10 +6,12 @@ import com.ssafy.trip.member.model.mapper.MemberMapper;
 import com.ssafy.trip.member.model.enums.MemberTypeEnum;
 import com.ssafy.trip.util.PasswordUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
 import java.security.SecureRandom;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -21,6 +23,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    @Transactional
     public int createMember(Map<String, String> map) {
 
         Member member = new Member();
@@ -84,15 +87,15 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public int updateMember(Map<String, String> map, HttpSession session) {
+    @Transactional
+    public int updateMember(String id, Map<String, String> map, HttpSession session) {
         try {
-            Member member = getMemberById(map.get("id"));
+            Member member = getMemberById(id);
             member.setName(map.get("name"));
             member.setPhone(map.get("phone"));
             member.setNickname(map.get("nickname"));
             member.setMbti(map.get("mbti"));
             member.setIntroduction(map.get("introduction"));
-            System.out.println("##update##\n" + member);
             memberMapper.updateMember(member);
             updateSession(session, member);
         } catch (Exception ex) {
@@ -110,6 +113,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    @Transactional
     public int updateMemberPasswordById(String id, Map<String, String> map) {
         String oldPassword = map.get("oldPassword");
         String newPassword = map.get("newPassword");
@@ -138,6 +142,11 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public Member getMemberById(String id) {
         return memberMapper.getMemberById(id);
+    }
+
+    @Override
+    public List<Member> getMemberList(Map<String, Object> map) {
+        return memberMapper.getMemberList(map);
     }
 
     @Override

@@ -19,7 +19,7 @@
         <result column="nickname" property="nickname"></result>
         <result column="mbti" property="mbti"></result>
         <result column="introduction" property="introduction"></result>
-        <result column="joinDate" property="joinDate"></result>
+        <result column="join_date" property="joinDate"></result>
         <result column="type_no" property="type" typeHandler="com.ssafy.trip.enums.handlers.MemberTypeEnumHandler"></result>
         <result column="salt" property="salt"></result>
         <result column="photo" property="photo"></result>
@@ -40,6 +40,12 @@
 <!--        where user_id = #{userid}-->
 <!--    </select>-->
 
+    <select id="getMemberList" resultMap="member">
+        select id, email, name, password, nickname, mbti, introduction, join_date, type_no, salt,photo
+        from members
+        order by join_date
+    </select>
+
     <insert id="createMember" parameterType="member">
         insert into members (id, email, name, password, phone, nickname, mbti, introduction, join_date, type_no, salt)
         values (#{id}, #{email}, #{name}, #{password}, #{phone}, #{nickname}, #{mbti}, #{introduction}, now(),
@@ -48,7 +54,7 @@
     </insert>
 
     <select id="getMemberById" parameterType="String" resultMap="member">
-        select *
+        select id, email, name, password, nickname, mbti, introduction, join_date, type_no, salt,photo
         from members
         where id = #{id}
     </select>
