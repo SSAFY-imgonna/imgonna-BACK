@@ -25,6 +25,15 @@
         <result column="photo" property="photo"></result>
     </resultMap>
 
+    <resultMap type="member" id="sessionMember" >
+        <result column="id" property="id"></result>
+        <result column="email" property="email"></result>
+        <result column="name" property="name"></result>
+        <result column="nickname" property="nickname"></result>
+        <result column="type_no" property="type" typeHandler="com.ssafy.trip.enums.handlers.MemberTypeEnumHandler"></result>
+        <result column="photo" property="photo"></result>
+    </resultMap>
+
 <!--    <select id="idCheck" parameterType="String" resultType="int">-->
 <!--        select count(user_id)-->
 <!--        from members-->
@@ -44,8 +53,8 @@
         where id = #{id}
     </select>
 
-    <select id="getMemberByIdAndPassword" parameterType="map" resultType="member">
-        select id, email, nickname, role
+    <select id="getMemberByIdAndPassword" parameterType="map" resultType="sessionMember">
+        select id, email, name, nickname, type_no, photo
         from members
         where id = #{id} and password = #{password}
     </select>
