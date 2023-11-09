@@ -1,7 +1,7 @@
 package com.ssafy.trip.member.model.mapper;
 
+import com.ssafy.trip.member.MemberDummy;
 import com.ssafy.trip.member.model.dto.Member;
-import com.ssafy.trip.member.model.enums.MemberTypeEnum;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,16 +21,7 @@ class MemberMapperTest {
     // 각 테스트 메서드 실행 시 매번 실행되는 메서드 (주로 초기 데이터 설정 시  사용)
     @BeforeEach
     void setup() {
-        dummyMember = new Member();
-        dummyMember.setId("testuser");
-        dummyMember.setPassword("1234");
-        dummyMember.setName("user");
-        dummyMember.setPhone("01012345678");
-        dummyMember.setNickname("user");
-        dummyMember.setEmail("test@email.com");
-        dummyMember.setMbti("esfj");
-        dummyMember.setSalt("salt");
-        dummyMember.setType(MemberTypeEnum.GENERAL);
+        dummyMember = MemberDummy.getDummyMember();
     }
     @Test
     void createMember() {
