@@ -4,6 +4,7 @@ package com.ssafy.trip.member.model.mapper;
 import com.ssafy.trip.member.model.dto.Member;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
 import java.util.Map;
 
 @Mapper
@@ -19,4 +20,6 @@ public interface MemberMapper {
 	void updateMemberPasswordById(Map<String, String> map);
 
 	Member getMemberById(String id);
+
+	List<Member> getMemberList(Map<String, Object> map);
 }

@@ -4,6 +4,7 @@ import com.ssafy.trip.member.model.dto.Member;
 import com.ssafy.trip.member.model.dto.MemberFind;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 import java.util.Map;
 
 public interface MemberService {
@@ -14,9 +15,11 @@ public interface MemberService {
 	String getMemberPasswordByIdAndEmailAndPhone(MemberFind member);
 	int delete(String id, String password);
 
-	int updateMember(Map<String, String> map, HttpSession session);
+	int updateMember(String id, Map<String, String> map, HttpSession session);
 
 	int updateMemberPasswordById(String id, Map<String, String> map);
 
 	Member getMemberById(String id);
+
+	List<Member> getMemberList(Map<String, Object> map);
 }
