@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.trip.qna.inquiry.model.mapper.InquiryMapper">
+
+    <resultMap type="inquiryResponseDto" id="inquiryResponseDto" >
+        <result column="qna_no" property="inquiryNo"></result>
+        <result column="title" property="title"></result>
+        <result column="content" property="content"></result>
+        <result column="created_time" property="createdTime"></result>
+        <result column="modified_time" property="modifiedTime"></result>
+        <result column="id" property="id"></result>
+        <result column="nickname" property="nickname"></result>
+    </resultMap>
+
+    <sql id="search">
+        <if test="word != null and word != ''">
+            <if test="key == 'title'">
+                and title like concat('%', #{word}, '%')
+            </if>
+            <if test="key != 'title'">
+                and ${key} = #{word}
+            </if>
+        </if>
+    </sql>
+
+    <insert id="createInquiry" parameterType="inquiryRequestDto">
+        insert into qna (qna_no, title, content, created_time, modified_time, id)
+        values (null, #{title}, #{content}, now(), null, #{id})
+    </insert>
+
+    <select id="getInquiryByInquiryNo" parameterType="Integer" resultMap="inquiryResponseDto">
+        select q.qna_no, q.title, q.content, q.created_time, q.modified_time, m.id, m.nickname
+        from qna q inner join members m on q.id = m.id
+        where qna_no = #{inquiryNo}
+    </select>
+
+    <select id="getInquiryList" parameterType="map" resultMap="inquiryResponseDto">
+        select q.qna_no, q.title, q.content, q.created_time, q.modified_time, m.id, m.nickname
+        from qna q inner join members m on q.id = m.id
+        <include refid="search"></include>
+        order by q.qna_no desc
+        limit #{start}, #{listsize}
+    </select>
+
+    <select id="getTotalInquiresCount" parameterType="map" resultType="int">
+        select count(qna_no)
+        from qna
+        <where>
+            <include refid="search"></include>
+        </where>
+    </select>
+
+    <update id="modifyInquiry" parameterType="inquiryRequestDto">
+        update qna
+        set title=#{title}, content=#{content}, modified_time = now()
+        where qna_no = #{inquiryNo}
+    </update>
+
+    <delete id="deleteInquiry" parameterType="int">
+        delete from qna
+        where qna_no = #{inquiryNo}
+    </delete>
+
+</mapper>

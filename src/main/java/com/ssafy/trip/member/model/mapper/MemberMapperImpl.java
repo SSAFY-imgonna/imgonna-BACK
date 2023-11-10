@@ -1,4 +1,4 @@
-//package com.ssafy.trip.member.model.dao;
+//package com.ssafy.trip.member.model.mapper;
 //
 //import com.ssafy.trip.member.model.mapper.MemberMapper;
 //import com.ssafy.trip.util.DBUtil;
