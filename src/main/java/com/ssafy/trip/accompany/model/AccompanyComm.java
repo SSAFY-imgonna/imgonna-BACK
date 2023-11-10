@@ -2,7 +2,7 @@ package com.ssafy.trip.accompany.model;
 
 import java.io.Serializable;
 
-public class AccompanyCommDto implements Serializable{
+public class AccompanyComm implements Serializable{
 	private int commentNo;
 	private int accompanyNo;
 	private String id;

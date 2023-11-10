@@ -11,10 +11,10 @@
 	</resultMap>
 
 	<insert id="registerFile" parameterType="map">
-		insert into file_info (accompany_no, save_folder, original_file, save_file)
+		insert into file_info (table_name, pk_no, save_folder, original_file, save_file)
 		values
 		<foreach collection="fileInfos" item="fileinfo" separator=" , ">
-			(#{accompanyNo}, #{fileinfo.saveFolder}, #{fileinfo.originalFile}, #{fileinfo.saveFile})
+			(1, #{accompanyNo}, #{fileinfo.saveFolder}, #{fileinfo.originalFile}, #{fileinfo.saveFile})
 		</foreach>
 	</insert>
 

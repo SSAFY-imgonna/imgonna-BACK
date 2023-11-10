@@ -4,39 +4,40 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-import com.ssafy.trip.accompany.model.AccompanyDto;
+import com.ssafy.trip.accompany.model.Accompany;
 import com.ssafy.trip.file.model.dto.FileInfoDto;
 
 public interface AccompanyService {
-	/** 글 목록 */
-	List<AccompanyDto> list(Map<String, String> map);
-
-	List<FileInfoDto> fileInfoList(int accompanyNo);
-
-	/** 글 작성 */
-	void write(AccompanyDto accompanyDto);
+	// 동행 글 목록
+	List<Accompany> getAccompanyList(Map<String, String> map);
 	
-	/** 글 상세 */
-	AccompanyDto getAccompanyByAccompanyNo(int accompanyNo);
+	// 업로드 파일 목록
+//	List<FileInfoDto> fileInfoList(int accompanyNo);
 
-	/** 조회수 증가 */
-	void updateHit(int accompanyNo);
+	// 동행 글 작성
+	void createAccompany(Accompany accompany);
 	
-	/** 글 삭제*/
-	void deleteAccompany(int accompanyNo, String uploadPath);
-
-	/** 글 수정*/
-    void modifyAccompany(AccompanyDto accompanyDto, Map<String, String> map) throws SQLException;
-
-    
-	/** 이미 신청되어있는지 여부 */
-	int isJoin( Map<String, String> map);
-
-	/** 신청 */
-	void join(Map<String, String> map);
-	
-	/** 신청 취소하기 */
-	void joinCancel(Map<String, String> map);
+//	// 동행 글 상세
+//	Accompany getAccompanyByAccompanyNo(int accompanyNo);
+//
+//	// 동행 글 조회수 증가
+//	void updateHit(int accompanyNo);
+//	
+//	// 동행 글 삭제
+//	void deleteAccompany(int accompanyNo, String uploadPath);
+//
+//	// 동행 글 수정
+//    void modifyAccompany(Accompany accompanyDto, Map<String, String> map) throws SQLException;
+//
+//    
+//	/** 이미 신청되어있는지 여부 */
+//	int isJoin( Map<String, String> map);
+//
+//	/** 신청 */
+//	void join(Map<String, String> map);
+//	
+//	/** 신청 취소하기 */
+//	void joinCancel(Map<String, String> map);
 	
 //	/** 댓글 목록 */
 //	List<AccompanyCommDto> getCommList(int accompanyNo);
