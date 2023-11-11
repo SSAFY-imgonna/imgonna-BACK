@@ -22,6 +22,7 @@
 		select comment_no, qna_no, content, created_time, modified_time, id
 		from qna_comment 
 		where qna_no = #{qnaNo}
+		order by comment_no desc
 		<!-- 	댓글 목록 관련 부분 주석 처리
 				order by comment_no desc
 				limit #{start}, #{listsize} 
