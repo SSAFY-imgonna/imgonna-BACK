@@ -2,6 +2,7 @@ package com.ssafy.trip.accompany.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,12 +21,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -37,7 +44,7 @@ import com.ssafy.trip.accompany.model.service.AccompanyService;
 //import com.ssafy.util.FileUtil;
 //import com.ssafy.util.QuickSort;
 
-@Controller
+@RestController
 @RequestMapping("/accompany")
 public class AccompanyController {
     private final Logger logger = LoggerFactory.getLogger(AccompanyController.class);
@@ -45,11 +52,11 @@ public class AccompanyController {
     @Value("${file.path}")
     private String uploadPath;
 
-    @Value("${file.path.upload-images}")
-    private String uploadImagePath;
-
-    @Value("${file.path.upload-files}")
-    private String uploadFilePath;
+//    @Value("${file.path.upload-images}")
+//    private String uploadImagePath;
+//
+//    @Value("${file.path.upload-files}")
+//    private String uploadFilePath;
 
     @Autowired
     private ServletContext servletContext;
@@ -67,38 +74,23 @@ public class AccompanyController {
      * @return data("list") + viewName
      * @throws Exception
      */
-    @GetMapping("/list")
-    private ModelAndView getAccompanyList(@RequestParam Map<String, String> map) throws Exception {
+    @GetMapping
+    private ResponseEntity<?> getAccompanyList(@RequestParam Map<String, String> map) throws Exception {
         logger.debug("getAccompanyList parameter pgno : {}", map.get("pgno"));
-        List<Accompany> list = accompanyService.getAccompanyList(map);
-
-//		PageNavigation pageNavigation = boardService.makePageNavigation(map);
-//		mav.addObject("navigation", pageNavigation);
-//		mav.addObject("pgno", map.get("pgno"));
-//		mav.addObject("key", map.get("key"));
-//		mav.addObject("word", map.get("word"));
-
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("list", list);
-        mav.setViewName("accompany/list");
-        return mav;
-    }
-
-    /**
-     * 동행 글 작성 폼 호출
-     * @param map(pgno, key, word)
-     * @param model
-     * @return viewName
-     */
-    @GetMapping("/write")
-    public String write(@RequestParam Map<String, String> map, Model model) {
-        logger.debug("write call parameter {}", map);
+         
+        try {
+        	List<Accompany> AccompanyList = accompanyService.getAccompanyList(map);
+        	HttpHeaders header = new HttpHeaders();
+        	header.setContentType(MediaType.APPLICATION_JSON);
+        	return ResponseEntity
+        			.status(HttpStatus.OK)
+        			.headers(header)
+        			.body(AccompanyList);        	
+        } catch (Exception e) {
+        	return exceptionHandling(e);
+        }
         
-//		model.addAttribute("pgno", map.get("pgno"));
-//		model.addAttribute("key", map.get("key"));
-//		model.addAttribute("word", map.get("word"));
-
-        return "accompany/write";
+//        페이지 네이션 관련 처리 나중에 하자!!!
     }
 
     /**
@@ -112,29 +104,34 @@ public class AccompanyController {
      * @return redirect URL
      * @throws Exception
      */
-    @PostMapping("/write")
-    public String createAccompany(Accompany accompany, @RequestParam String date, @RequestParam String time,
-                        @RequestParam("upfile") MultipartFile[] files, HttpSession session,
-                        RedirectAttributes redirectAttributes) throws Exception {
-        Member member = (Member) session.getAttribute("memberDto");
-        accompany.setId(member.getId());
-
-        String joinTime = date + " " + time + ":00"; // 초를 "00"으로 초기화(TIMESTAMP로 저장됨)
-        accompany.setJoinTime(joinTime);
-        logger.debug("createAccompany Accompany : {}", accompany);
-
-        // 이미지 업로드
-        uploadFiles(accompany, files);
-        
-        // 동행 글 추가
-        accompanyService.createAccompany(accompany);
-        
-//		redirectAttributes.addAttribute("pgno", "1");
-//		redirectAttributes.addAttribute("key", "");
-//		redirectAttributes.addAttribute("word", "");
-        
-        return "redirect:/accompany/list";
-    }
+//    @PostMapping
+//    public ResponseEntity<?> createAccompany(@RequestBody Accompany accompany, 
+//    		@RequestBody String date, @RequestBody String time,
+//    		@RequestBody MultipartFile[] files, HttpSession session,
+//            RedirectAttributes redirectAttributes) throws Exception {
+////    	   나중에 로그인 완료되면 하드코딩된거 바꿔야!!
+////        Member member = (Member) session.getAttribute("memberDto");
+////        accompany.setId(member.getId());
+//    	accompany.setId("ssafy");
+//    	logger.debug("date: {}, time: {}",date, time);
+//        String joinTime = date + " " + time + ":00"; // 초를 "00"으로 초기화(TIMESTAMP로 저장됨)
+//        accompany.setJoinTime(joinTime);
+//        logger.debug("createAccompany Accompany : {}", accompany);
+//        
+//        try {
+//        	// 이미지 업로드
+//        	uploadFiles(accompany, files);
+//        	// 동행 글 추가
+//        	accompanyService.createAccompany(accompany);
+//        	return ResponseEntity
+//        			.status(HttpStatus.OK)
+//        			.build();
+//        } catch (Exception e) {
+//        	return exceptionHandling(e);
+//        }
+//        
+////      페이지 네이션 관련 처리 나중에 하자!!!
+//    }
 
 
 //    /**
@@ -359,4 +356,16 @@ public class AccompanyController {
 //		redirectAttributes.addAttribute("word", map.get("word"));
 //		return "redirect:/accompany/view";
 //	}
+    
+    /**
+     * 예외처리
+     * @param e 예외객체
+     * @return 예외메세지
+     */
+    private ResponseEntity<String> exceptionHandling(Exception e) {
+        e.printStackTrace();
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error : " + e.getMessage());
+    }    
 }
