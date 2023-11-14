@@ -4,7 +4,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-import com.ssafy.trip.accompany.model.Accompany;
+import com.ssafy.trip.accompany.model.dto.Accompany;
+import com.ssafy.trip.accompany.model.dto.AccompanyRequestDto;
 import com.ssafy.trip.file.model.dto.FileInfoDto;
 
 public interface AccompanyService {
@@ -15,7 +16,7 @@ public interface AccompanyService {
 //	List<FileInfoDto> fileInfoList(int accompanyNo);
 
 	// 동행 글 작성
-	void createAccompany(Accompany accompany);
+	void createAccompany(AccompanyRequestDto accompanyRequestDto);
 	
 //	// 동행 글 상세
 //	Accompany getAccompanyByAccompanyNo(int accompanyNo);

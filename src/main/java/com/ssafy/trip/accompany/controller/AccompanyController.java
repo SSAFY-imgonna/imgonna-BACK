@@ -32,14 +32,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.ssafy.trip.accompany.model.Accompany;
 import com.ssafy.trip.file.model.dto.FileInfoDto;
 import com.ssafy.trip.member.model.dto.Member;
+import com.ssafy.trip.accompany.model.dto.Accompany;
+import com.ssafy.trip.accompany.model.dto.AccompanyRequestDto;
 import com.ssafy.trip.accompany.model.service.AccompanyService;
 //import com.ssafy.util.FileUtil;
 //import com.ssafy.util.QuickSort;
@@ -104,34 +106,36 @@ public class AccompanyController {
      * @return redirect URL
      * @throws Exception
      */
-//    @PostMapping
-//    public ResponseEntity<?> createAccompany(@RequestBody Accompany accompany, 
-//    		@RequestBody String date, @RequestBody String time,
-//    		@RequestBody MultipartFile[] files, HttpSession session,
-//            RedirectAttributes redirectAttributes) throws Exception {
-////    	   나중에 로그인 완료되면 하드코딩된거 바꿔야!!
-////        Member member = (Member) session.getAttribute("memberDto");
-////        accompany.setId(member.getId());
-//    	accompany.setId("ssafy");
-//    	logger.debug("date: {}, time: {}",date, time);
-//        String joinTime = date + " " + time + ":00"; // 초를 "00"으로 초기화(TIMESTAMP로 저장됨)
-//        accompany.setJoinTime(joinTime);
-//        logger.debug("createAccompany Accompany : {}", accompany);
-//        
-//        try {
-//        	// 이미지 업로드
-//        	uploadFiles(accompany, files);
-//        	// 동행 글 추가
-//        	accompanyService.createAccompany(accompany);
-//        	return ResponseEntity
-//        			.status(HttpStatus.OK)
-//        			.build();
-//        } catch (Exception e) {
-//        	return exceptionHandling(e);
-//        }
-//        
-////      페이지 네이션 관련 처리 나중에 하자!!!
-//    }
+    @PostMapping
+    public ResponseEntity<?> createAccompany(@RequestPart AccompanyRequestDto accompanyRequestDto,
+    		@RequestParam MultipartFile[] upfile, HttpSession session, RedirectAttributes redirectAttributes) throws Exception {
+//    	   나중에 로그인 완료되면 하드코딩된거 바꿔야!!
+//        Member member = (Member) session.getAttribute("memberDto");
+//        accompany.setId(member.getId());
+    	accompanyRequestDto.setId("ssafy");
+    	
+    	String date = accompanyRequestDto.getDate();
+    	String time = accompanyRequestDto.getTime();
+        String joinTime = date + " " + time + ":00"; // 초를 "00"으로 초기화(TIMESTAMP로 저장됨)
+        accompanyRequestDto.setJoinTime(joinTime);
+        
+    	logger.debug("AccompanyRequestDto : {}", accompanyRequestDto);
+    	logger.debug("upfile : {}", upfile[0]);
+        
+        try {
+        	// 이미지 업로드
+        	uploadFiles(accompanyRequestDto, upfile);
+        	// 동행 글 추가
+        	accompanyService.createAccompany(accompanyRequestDto);
+        	return ResponseEntity
+        			.status(HttpStatus.OK)
+        			.build();
+        } catch (Exception e) {
+        	return exceptionHandling(e);
+        }
+        
+//      페이지 네이션 관련 처리 나중에 하자!!!
+    }
 
 
 //    /**
@@ -245,7 +249,7 @@ public class AccompanyController {
      * @param files
      * @throws IOException
      */
-    private void uploadFiles(Accompany accompany, MultipartFile[] files) throws IOException {
+    private void uploadFiles(AccompanyRequestDto accompanyRequestDto, MultipartFile[] files) throws IOException {
         // FileUpload 관련 설정
 //        logger.debug("uploadPath : {}, uploadImagePath : {}, uploadFilePath : {}", uploadPath, uploadImagePath, uploadFilePath);
         logger.debug("MultipartFile.isEmpty : {}", files[0].isEmpty());
@@ -273,7 +277,7 @@ public class AccompanyController {
                 }
                 fileInfos.add(fileInfoDto);
             }
-            accompany.setFileInfos(fileInfos);
+            accompanyRequestDto.setFileInfos(fileInfos);
         }
     }
 

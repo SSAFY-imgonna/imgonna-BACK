@@ -10,8 +10,9 @@ import com.ssafy.trip.file.model.service.FileService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ssafy.trip.accompany.model.Accompany;
 import com.ssafy.trip.file.model.dto.FileInfoDto;
+import com.ssafy.trip.accompany.model.dto.Accompany;
+import com.ssafy.trip.accompany.model.dto.AccompanyRequestDto;
 import com.ssafy.trip.accompany.model.mapper.AccompanyMapper;
 
 @Service
@@ -47,16 +48,16 @@ public class AccompanyServiceImpl implements AccompanyService {
     // 동행 글 작성
     @Override
     @Transactional
-    public void createAccompany(Accompany accompany) {
+    public void createAccompany(AccompanyRequestDto accompanyRequestDto) {
     	// 동행 글 작성
-    	System.out.println("글 입력 전 Accompany : " + accompany);
-    	accompanyMapper.createAccompany(accompany);
-    	System.out.println("글 입력 후 AccompanyDto : " + accompany);
+    	System.out.println("글 입력 전 Accompany : " + accompanyRequestDto);
+    	accompanyMapper.createAccompany(accompanyRequestDto);
+    	System.out.println("글 입력 후 AccompanyDto : " + accompanyRequestDto);
     	
     	// 이미지 저장
-    	List<FileInfoDto> fileInfos = accompany.getFileInfos();
+    	List<FileInfoDto> fileInfos = accompanyRequestDto.getFileInfos();
     	if (fileInfos != null && !fileInfos.isEmpty()) { // 파일 정보가 있다면
-    		fileService.registerFile(accompany);
+    		fileService.registerFile(accompanyRequestDto);
     	}
     }
     
