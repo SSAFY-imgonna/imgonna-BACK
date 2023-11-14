@@ -59,10 +59,16 @@
         where id = #{id}
     </select>
 
-    <select id="getMemberByIdAndPassword" parameterType="map" resultMap="sessionMember">
+    <select id="getMemberByIdAndPassword" parameterType="memberLoginRequestDto" resultMap="sessionMember">
         select id, email, name, nickname, type_no, photo
         from members
         where id = #{id} and password = #{password}
+    </select>
+
+    <select id="getMemberCountById" parameterType="String" resultType="int">
+        select count(id)
+        from members
+        where id = #{id}
     </select>
 
     <select id="getSaltById" parameterType="String" resultType="String">

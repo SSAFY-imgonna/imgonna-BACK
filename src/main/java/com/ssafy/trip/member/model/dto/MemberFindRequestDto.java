@@ -1,6 +1,6 @@
 package com.ssafy.trip.member.model.dto;
 
-public class MemberFind {
+public class MemberFindRequestDto {
     private String id;
     private String email;
     private String name;

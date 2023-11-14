@@ -1,7 +1,9 @@
 package com.ssafy.trip.member.controller;
 
 import com.ssafy.trip.member.model.dto.Member;
-import com.ssafy.trip.member.model.dto.MemberFind;
+import com.ssafy.trip.member.model.dto.MemberFindRequestDto;
+import com.ssafy.trip.member.model.dto.MemberLoginRequestDto;
+import com.ssafy.trip.member.model.dto.MemberSignUpRequestDto;
 import com.ssafy.trip.member.service.MemberService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +20,29 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/members")
+@CrossOrigin("*")
 public class MemberController {
     private final MemberService memberService;
 
     public MemberController(MemberService memberService) {
         this.memberService = memberService;
+    }
+
+    /**
+     * 회원 아이디 중복 체크를 하는 메서드
+     * @param id 중복 체크를 할 아이디 입력값
+     * @return
+     */
+    @GetMapping("/check/id")
+    public ResponseEntity<String> checkDuplicateMemberId(@RequestParam String id) {
+
+        int cnt = memberService.getMemberCountById(id);
+
+        if (cnt != 0) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(id);
     }
 
     /**
@@ -32,9 +52,13 @@ public class MemberController {
      * @return 찾은 회원의 아이디
      */
     @PostMapping("/find/id")
-    public ResponseEntity<String> findMemberId(MemberFind member) {
+    public ResponseEntity<String> findMemberId(MemberFindRequestDto member) {
 
         String id = memberService.getMemberIdByEmailAndName(member);
+
+        if (id == null) {
+            ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
 
         return ResponseEntity.status(HttpStatus.OK).body(id);
     }
@@ -46,7 +70,7 @@ public class MemberController {
      * @return 찾은 회원의 비밀번호
      */
     @PostMapping("/find/pw")
-    private ResponseEntity<String> findMemberPassword(MemberFind member, Model model) {
+    private ResponseEntity<String> findMemberPassword(MemberFindRequestDto member, Model model) {
 
         String password = memberService.getMemberPasswordByIdAndEmailAndPhone(member);
 
@@ -57,8 +81,8 @@ public class MemberController {
     /**
      * 회원의 비밀번호를 수정하는 메서드
      *
-     * @param id 수정할 회원의 id
-     * @param map  수정할 정보를 담은 Map
+     * @param id                 수정할 회원의 id
+     * @param map                수정할 정보를 담은 Map
      * @param redirectAttributes
      * @param session
      * @return
@@ -74,17 +98,16 @@ public class MemberController {
     }
 
 
-
     /**
      * 회원 탈퇴 처리하는 메서드
      *
-     * @param id 탈퇴 처리할 회원
- * @param inputPwd  입력 받은 기존 비밀번호
+     * @param id                 탈퇴 처리할 회원
+     * @param inputPwd           입력 받은 기존 비밀번호
      * @param session
      * @param redirectAttributes
      * @return
      */
-    @DeleteMapping("/{id}}")
+    @DeleteMapping("/{id}")
     private ResponseEntity<List<Member>> deleteMember(@PathVariable String id, @RequestParam("leaveConfirmPwd") String inputPwd, HttpSession session, RedirectAttributes redirectAttributes) {
         memberService.delete(id, inputPwd);
         List<Member> list = memberService.getMemberList(null);
@@ -93,6 +116,12 @@ public class MemberController {
 
     }
 
+    /**
+     * 회원 정보 조회하는 메서드
+     *
+     * @param id
+     * @return
+     */
     @GetMapping("/{id}")
     private ResponseEntity<Member> getMemberById(@PathVariable String id) {
         Member member = memberService.getMemberById(id);
@@ -106,7 +135,7 @@ public class MemberController {
      *
      * @param id
      * @param session
-     * @param map 이름, 전화번호, 닉네임, mbti, 소개글
+     * @param map     이름, 전화번호, 닉네임, mbti, 소개글
      * @return
      */
     @PutMapping("/{id}")
@@ -122,16 +151,41 @@ public class MemberController {
 
     /**
      * 회원 가입
-     * @param map 가입할 회원이 입력한 정보
+     *
+     * @param requestDto 가입할 회원이 입력한 정보
      * @return
      */
-    @PostMapping("/regist")
-    private ResponseEntity<List<Member>> registMember(@RequestParam Map<String, String> map) {
+    @PostMapping
+    private ResponseEntity<Member> registMember(@RequestBody MemberSignUpRequestDto requestDto) {
+        System.out.println(requestDto.toString());
+       Member member = memberService.createMember(requestDto);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(member);
+    }
 
-        memberService.createMember(map);
-        List<Member> list = memberService.getMemberList(null);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(list);
+    /**
+     * 로그인을 처리하는 메서드
+     *
+     * @param requestDto
+     * @param session
+     * @return
+     */
+    @PostMapping("/login")
+    private ResponseEntity<Member> login(@RequestBody MemberLoginRequestDto requestDto, HttpSession session) {
+        Member member = memberService.getMemberByIdAndPassword(requestDto);
+
+        if (member == null) {
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .build();
+        }
+
+        session.setAttribute("member", member);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(member);
     }
 
 //    /**

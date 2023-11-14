@@ -1,7 +1,9 @@
 package com.ssafy.trip.member.service;
 
 import com.ssafy.trip.member.model.dto.Member;
-import com.ssafy.trip.member.model.dto.MemberFind;
+import com.ssafy.trip.member.model.dto.MemberFindRequestDto;
+import com.ssafy.trip.member.model.dto.MemberLoginRequestDto;
+import com.ssafy.trip.member.model.dto.MemberSignUpRequestDto;
 import com.ssafy.trip.member.model.mapper.MemberMapper;
 import com.ssafy.trip.member.model.enums.MemberTypeEnum;
 import com.ssafy.trip.util.PasswordUtils;
@@ -24,35 +26,38 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public int createMember(Map<String, String> map) {
+    public Member createMember(MemberSignUpRequestDto requestDto) {
 
         Member member = new Member();
-        member.setId(map.get("registerId"));
-        String email = map.get("registerEmail") + map.get("registerEmailAdd");
-        member.setEmail(email);
-        member.setName(map.get("registerName"));
-        member.setPhone(map.get("registerPhone"));
-        member.setNickname(map.get("registerNickname"));
-        member.setMbti(map.get("mbti"));
-        member.setIntroduction(map.get("introduction"));
+        member.setId(requestDto.getId());
+        member.setEmail(requestDto.getEmail());
+        member.setName(requestDto.getName());
+        member.setPhone(requestDto.getPhone());
+        member.setNickname(requestDto.getNickname());
+        member.setMbti(requestDto.getMbti());
+        member.setIntroduction(requestDto.getIntroduction());
         member.setType(MemberTypeEnum.GENERAL);
-
-        String rawPassword = map.get("registerPw");
         byte[] salt = getSalt();
-        String digest = PasswordUtils.encode(rawPassword, salt);
+        String digest = PasswordUtils.encode(requestDto.getPassword(), salt);
         member.setPassword(digest);
         member.setSalt(PasswordUtils.bytesToHex(salt));
-        return memberMapper.createMember(member);
+        int result = memberMapper.createMember(member);
+        if (result == 0) {
+            return null;
+        } else {
+            MemberLoginRequestDto loginRequestDto = new MemberLoginRequestDto();
+            loginRequestDto.setId(requestDto.getId());
+            loginRequestDto.setPassword(requestDto.getPassword());
+            return getMemberByIdAndPassword(loginRequestDto);
+        }
     }
 
     @Override
-    public Member getMemberByIdAndPassword(String id, String password) {
-        String digest = getDigest(id, password);
+    public Member getMemberByIdAndPassword(MemberLoginRequestDto requestDto) {
+        String digest = getDigest(requestDto.getId(), requestDto.getPassword());
         if (digest == null) return null;
-        Map<String, String> map = new HashMap<>();
-        map.put("id", id);
-        map.put("password", digest);
-        Member member = memberMapper.getMemberByIdAndPassword(map);
+        requestDto.setPassword(digest);
+        Member member = memberMapper.getMemberByIdAndPassword(requestDto);
         return member;
     }
 
@@ -150,7 +155,12 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public String getMemberIdByEmailAndName(MemberFind member) {
+    public int getMemberCountById(String id) {
+        return memberMapper.getMemberCountById(id);
+    }
+
+    @Override
+    public String getMemberIdByEmailAndName(MemberFindRequestDto member) {
         Map<String, String> map = new HashMap<>();
         map.put("email", member.getEmail());
         map.put("name", member.getName());
@@ -158,7 +168,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public String getMemberPasswordByIdAndEmailAndPhone(MemberFind member) {
+    public String getMemberPasswordByIdAndEmailAndPhone(MemberFindRequestDto member) {
         Map<String, String> map = new HashMap<>();
         map.put("id", member.getId());
         map.put("email", member.getEmail());
