@@ -22,7 +22,7 @@
 
 	<delete id="deleteFile" parameterType="int">
 		delete from file_info
-		where accompany_no = #{accompanyNo}
+		where table_name = 1 and pk_no = #{accompanyNo}
 	</delete>
 
 </mapper>
