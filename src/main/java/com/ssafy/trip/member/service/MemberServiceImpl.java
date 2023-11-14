@@ -1,9 +1,6 @@
 package com.ssafy.trip.member.service;
 
-import com.ssafy.trip.member.model.dto.Member;
-import com.ssafy.trip.member.model.dto.MemberFindRequestDto;
-import com.ssafy.trip.member.model.dto.MemberLoginRequestDto;
-import com.ssafy.trip.member.model.dto.MemberSignUpRequestDto;
+import com.ssafy.trip.member.model.dto.*;
 import com.ssafy.trip.member.model.mapper.MemberMapper;
 import com.ssafy.trip.member.model.enums.MemberTypeEnum;
 import com.ssafy.trip.util.PasswordUtils;
@@ -93,7 +90,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public int updateMember(String id, Map<String, String> map, HttpSession session) {
+    public Member updateMember(String id, Map<String, String> map, HttpSession session) {
         try {
             Member member = getMemberById(id);
             member.setName(map.get("name"));
@@ -105,9 +102,11 @@ public class MemberServiceImpl implements MemberService {
             updateSession(session, member);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
-            return 0;
         }
-        return 1;
+        MemberLoginRequestDto loginRequestDto = new MemberLoginRequestDto();
+        loginRequestDto.setId(id);
+        loginRequestDto.setPassword(requestDto.getNewPassword());
+        return getMemberByIdAndPassword(loginRequestDto);
     }
 
 
@@ -119,29 +118,31 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public int updateMemberPasswordById(String id, Map<String, String> map) {
-        String oldPassword = map.get("oldPassword");
-        String newPassword = map.get("newPassword");
+    public Member updateMemberPasswordById(String id, MemberModifyPwRequestDto requestDto) {
         try {
-            String digest = getDigest(id, oldPassword);
+            String digest = getDigest(id, requestDto.getOldPassword());
             if (!digest.equals(getMemberById(id).getPassword())) {
-                return 0;
+                return null;
             }
 
-            map = new HashMap<>();
+            HashMap map = new HashMap<>();
             map.put("id", id);
             byte[] saltBytes = getSalt();
-            String password = PasswordUtils.encode(newPassword, saltBytes);
+            String password = PasswordUtils.encode(requestDto.getNewPassword(), saltBytes);
             String salt = PasswordUtils.bytesToHex(saltBytes);
             map.put("password", password);
             map.put("salt", salt);
 
             memberMapper.updateMemberPasswordById(map);
-        } catch (Exception ex) {
+
+        } catch (
+                Exception ex) {
             System.out.println(ex.getMessage());
-            return 0;
         }
-        return 1;
+        MemberLoginRequestDto loginRequestDto = new MemberLoginRequestDto();
+        loginRequestDto.setId(id);
+        loginRequestDto.setPassword(requestDto.getNewPassword());
+        return getMemberByIdAndPassword(loginRequestDto);
     }
 
     @Override

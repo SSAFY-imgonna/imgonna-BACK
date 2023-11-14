@@ -1,13 +1,9 @@
 package com.ssafy.trip.member.controller;
 
-import com.ssafy.trip.member.model.dto.Member;
-import com.ssafy.trip.member.model.dto.MemberFindRequestDto;
-import com.ssafy.trip.member.model.dto.MemberLoginRequestDto;
-import com.ssafy.trip.member.model.dto.MemberSignUpRequestDto;
+import com.ssafy.trip.member.model.dto.*;
 import com.ssafy.trip.member.service.MemberService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -30,6 +26,7 @@ public class MemberController {
 
     /**
      * 회원 아이디 중복 체크를 하는 메서드
+     *
      * @param id 중복 체크를 할 아이디 입력값
      * @return
      */
@@ -52,7 +49,7 @@ public class MemberController {
      * @return 찾은 회원의 아이디
      */
     @PostMapping("/find/id")
-    public ResponseEntity<String> findMemberId(MemberFindRequestDto member) {
+    public ResponseEntity<String> findMemberId(@RequestBody MemberFindRequestDto member) {
 
         String id = memberService.getMemberIdByEmailAndName(member);
 
@@ -70,7 +67,7 @@ public class MemberController {
      * @return 찾은 회원의 비밀번호
      */
     @PostMapping("/find/pw")
-    private ResponseEntity<String> findMemberPassword(MemberFindRequestDto member, Model model) {
+    private ResponseEntity<String> findMemberPassword(@RequestBody MemberFindRequestDto member) {
 
         String password = memberService.getMemberPasswordByIdAndEmailAndPhone(member);
 
@@ -82,18 +79,16 @@ public class MemberController {
      * 회원의 비밀번호를 수정하는 메서드
      *
      * @param id                 수정할 회원의 id
-     * @param map                수정할 정보를 담은 Map
-     * @param redirectAttributes
-     * @param session
+     * @param requestDto                수정할 정보
      * @return
      */
     @PutMapping("/{id}/pw")
-    private ResponseEntity<List<Member>> modifyMemberPassword(@PathVariable String id, @RequestParam Map<String, String> map, RedirectAttributes redirectAttributes, HttpSession session) {
+    private ResponseEntity<Member> modifyMemberPassword(@PathVariable String id,
+                                                              @RequestBody MemberModifyPwRequestDto requestDto) {
 
-        memberService.updateMemberPasswordById(id, map);
-        List<Member> list = memberService.getMemberList(null);
+        Member member = memberService.updateMemberPasswordById(id, requestDto);
 
-        return ResponseEntity.status(HttpStatus.OK).body(list);
+        return ResponseEntity.status(HttpStatus.OK).body(member);
 
     }
 
@@ -110,9 +105,8 @@ public class MemberController {
     @DeleteMapping("/{id}")
     private ResponseEntity<List<Member>> deleteMember(@PathVariable String id, @RequestParam("leaveConfirmPwd") String inputPwd, HttpSession session, RedirectAttributes redirectAttributes) {
         memberService.delete(id, inputPwd);
-        List<Member> list = memberService.getMemberList(null);
 
-        return ResponseEntity.status(HttpStatus.OK).body(list);
+        return ResponseEntity.status(HttpStatus.OK).body(id);
 
     }
 
@@ -139,12 +133,11 @@ public class MemberController {
      * @return
      */
     @PutMapping("/{id}")
-    private ResponseEntity<List<Member>> modifyMember(@PathVariable String id, HttpSession session, @RequestParam Map<String, String> map) {
+    private ResponseEntity<Member> modifyMember(@PathVariable String id, HttpSession session, @RequestParam Map<String, String> map) {
 
-        memberService.updateMember(id, map, session);
-        List<Member> list = memberService.getMemberList(null);
+        Member member = memberService.updateMember(id, map, session);
 
-        return ResponseEntity.status(HttpStatus.OK).body(list);
+        return ResponseEntity.status(HttpStatus.OK).body(member);
 
     }
 
@@ -158,7 +151,7 @@ public class MemberController {
     @PostMapping
     private ResponseEntity<Member> registMember(@RequestBody MemberSignUpRequestDto requestDto) {
         System.out.println(requestDto.toString());
-       Member member = memberService.createMember(requestDto);
+        Member member = memberService.createMember(requestDto);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(member);

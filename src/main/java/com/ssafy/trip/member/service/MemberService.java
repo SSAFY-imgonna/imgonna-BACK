@@ -1,9 +1,6 @@
 package com.ssafy.trip.member.service;
 
-import com.ssafy.trip.member.model.dto.Member;
-import com.ssafy.trip.member.model.dto.MemberFindRequestDto;
-import com.ssafy.trip.member.model.dto.MemberLoginRequestDto;
-import com.ssafy.trip.member.model.dto.MemberSignUpRequestDto;
+import com.ssafy.trip.member.model.dto.*;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
@@ -17,9 +14,9 @@ public interface MemberService {
 	String getMemberPasswordByIdAndEmailAndPhone(MemberFindRequestDto member);
 	int delete(String id, String password);
 
-	int updateMember(String id, Map<String, String> map, HttpSession session);
+	Member updateMember(String id, Map<String, String> map, HttpSession session);
 
-	int updateMemberPasswordById(String id, Map<String, String> map);
+	Member updateMemberPasswordById(String id, MemberModifyPwRequestDto requestDto);
 
 	Member getMemberById(String id);
 
