@@ -1,31 +1,64 @@
 package com.ssafy.trip.attraction.controller;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.ssafy.trip.attraction.model.dto.AttractionInfo;
+import com.ssafy.trip.attraction.model.dto.AttractionRequestDto;
+import com.ssafy.trip.attraction.model.dto.Gugun;
 import com.ssafy.trip.attraction.model.dto.Sido;
 import com.ssafy.trip.attraction.model.service.AttractionService;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import javax.servlet.http.HttpServlet;
-import java.util.List;
 
 /**
  * @author yihoney
  */
-@Controller
-@RequestMapping("/attraction")
-public class AttractionController extends HttpServlet {
+@RestController
+@RequestMapping("/attractions")
+@CrossOrigin("*")
+public class AttractionController {
     private AttractionService attractionService;
 
     public AttractionController(AttractionService attractionService) {
         this.attractionService = attractionService;
     }
 
+    
     @GetMapping
-    private String view(Model model) {
-        List<Sido> sidoList = attractionService.getSidoList();
-        model.addAttribute("sidoList", sidoList);
-        return "attraction/view";
+    private ResponseEntity<List<AttractionInfo>> getAttractionList(AttractionRequestDto attractionRequestDto) {
+        Map<String, Integer> map = new HashMap<>();
+        map.put("sidoCode", attractionRequestDto.getSidoCode());
+        map.put("gugunCode", attractionRequestDto.getGugunCode());
+        map.put("contentTypeId", attractionRequestDto.getContentTypeId());
+
+        return ResponseEntity
+        		.status(HttpStatus.OK)
+        		.body(attractionService.getAttractionInfo(map));
     }
+    
+    @GetMapping("/gugun")
+    private ResponseEntity<?> gugun(@RequestParam(name = "sido") int sidoCode) {
+        return ResponseEntity
+        		.status(HttpStatus.OK)
+        		.body(attractionService.getGugunBySidoCode(sidoCode));
+    }
+
+    @GetMapping("/sido")
+	public ResponseEntity<List<Sido>> sido() throws Exception {
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(attractionService.getSidoList());
+	}
+    
+
+
 }
