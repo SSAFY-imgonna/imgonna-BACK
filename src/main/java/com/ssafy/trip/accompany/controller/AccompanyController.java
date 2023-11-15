@@ -85,7 +85,7 @@ public class AccompanyController {
      */
     @PostMapping
     public ResponseEntity<?> createAccompany(AccompanyRequestDto accompanyRequestDto,
-    		@RequestPart MultipartFile[] upfile, HttpSession session) throws Exception {
+    		@RequestPart(required=false) MultipartFile[] upfile, HttpSession session) throws Exception {
 //    	   나중에 로그인 완료되면 하드코딩된거 바꿔야!!
 //        Member member = (Member) session.getAttribute("memberDto");
 //        accompany.setId(member.getId());
@@ -97,11 +97,12 @@ public class AccompanyController {
         accompanyRequestDto.setJoinTime(joinTime);
         
     	logger.debug("AccompanyRequestDto : {}", accompanyRequestDto);
-    	logger.debug("upfile : {}", upfile[0]);
         
         try {
-        	// 이미지 업로드
-        	uploadFiles(accompanyRequestDto, upfile);
+        	if(upfile != null) {
+	        	// 이미지 업로드
+	        	uploadFiles(accompanyRequestDto, upfile);
+        	}
         	// 동행 글 추가
         	accompanyService.createAccompany(accompanyRequestDto);
         	return ResponseEntity
@@ -153,15 +154,12 @@ public class AccompanyController {
     	accompanyService.updateHit(accompanyNo);
     	// 동행 글 상세
     	AccompanyResponseDto accompanyResponseDto = accompanyService.getAccompanyByAccompanyNo(accompanyNo);
-    	//
     	String joinTime = accompanyResponseDto.getJoinTime();
     	String date = joinTime.split(" ")[0];
     	String time = joinTime.split(" ")[1].substring(0, 5);
     	accompanyResponseDto.setDate(date);
     	accompanyResponseDto.setTime(time);
-//    	String joinTime = date + " " + time + ":00"; // 초를 "00"으로 초기화(TIMESTAMP로 저장됨)   	
-//    	String date = accompanyRequestDto.getDate();
-//    	String time = accompanyRequestDto.getTime();
+
     	logger.debug("getAccompanyByAccompanNo accompanyDto : {}", accompanyResponseDto);
     	
     	// 세션에 설정된 아이디 정보 가져오기
@@ -199,22 +197,30 @@ public class AccompanyController {
      * @param accompanyNo 동행 글 번호
      * @param accompanyRequestDto 수정할 동행 글 dto
      * @param upfile
-     * @param map(originFile)
+     * @param originFile
      * @return ResponseEntity
      * @throws Exception
      */
     @PutMapping("/{accompanyNo}")
-    public ResponseEntity<String> modifyAccompany(@PathVariable int accompanyNo, @RequestPart AccompanyRequestDto accompanyRequestDto, 
-    		@RequestParam MultipartFile[] upfile, @RequestParam Map<String, String> map) throws Exception {
+    public ResponseEntity<String> modifyAccompany(@PathVariable int accompanyNo, AccompanyRequestDto accompanyRequestDto, 
+    		@RequestPart(required=false) MultipartFile[] upfile, @RequestPart(required=false) String originFile) throws Exception {
         logger.debug("modifyAccompany AccompanyRequestDto : {}", accompanyRequestDto);
     	String date = accompanyRequestDto.getDate();
     	String time = accompanyRequestDto.getTime();
         String joinTime = date + " " + time + ":00"; // 초를 "00"으로 초기화(TIMESTAMP로 저장됨)
         accompanyRequestDto.setJoinTime(joinTime);
         accompanyRequestDto.setAccompanyNo(accompanyNo);
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("originFile", "");  
+        // 기존 파일 존재한다면
+        if(originFile != null) {
+        	map.put("originFile", originFile);        	
+        }
         
     	// 이미지 업로드
-    	uploadFiles(accompanyRequestDto, upfile);
+        if(upfile != null) {
+        	uploadFiles(accompanyRequestDto, upfile);        	
+        }
     	// 동행 글 수정
     	accompanyService.modifyAccompany(accompanyRequestDto, map);
     	return ResponseEntity
