@@ -2,6 +2,8 @@ package com.ssafy.trip.member.service;
 
 import com.ssafy.trip.member.MemberDummy;
 import com.ssafy.trip.member.model.dto.Member;
+import com.ssafy.trip.member.model.dto.MemberDetailsDto;
+import com.ssafy.trip.member.model.dto.MemberSignUpRequestDto;
 import com.ssafy.trip.member.model.mapper.MemberMapper;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,8 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -32,13 +32,13 @@ class MemberServiceImplTest {
     @MockBean
     MemberMapper memberMapper;
 
-    Map dummyMap;
-    Member dummyMember;
+    MemberSignUpRequestDto dummyRequestDto;
+    MemberDetailsDto dummyMember;
 
     @BeforeEach
     void setUp() {
-        dummyMap = MemberDummy.getDummyMemberMap();
-        dummyMember = MemberDummy.getDummyMember();
+        dummyRequestDto = MemberDummy.getRequestDto();
+        dummyMember = MemberDummy.getDummyMemberDetails();
     }
 
     @Test
@@ -48,9 +48,9 @@ class MemberServiceImplTest {
         given(memberMapper.createMember(any(Member.class)))
                 .willReturn(1);
 
-        int result = memberService.createMember(dummyMap);
+        MemberDetailsDto result = memberService.createMember(dummyRequestDto);
 
-        Assertions.assertThat(result).isEqualTo(1);
+        Assertions.assertThat(result).isNotNull();
 
     }
 
@@ -61,7 +61,7 @@ class MemberServiceImplTest {
         given(memberMapper.getMemberById(any(String.class)))
                 .willReturn(dummyMember);
 
-        Member actualMember = memberService.getMemberById(dummyMember.getId());
+        MemberDetailsDto actualMember = memberService.getMemberById(dummyMember.getId());
 
         Assertions.assertThat(actualMember).isNotNull();
         Assertions.assertThat(actualMember.getEmail()).isEqualTo(dummyMember.getEmail());

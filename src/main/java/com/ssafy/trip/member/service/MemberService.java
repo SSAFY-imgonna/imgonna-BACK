@@ -1,25 +1,41 @@
 package com.ssafy.trip.member.service;
 
-import com.ssafy.trip.member.model.dto.Member;
-import com.ssafy.trip.member.model.dto.MemberFind;
+import com.ssafy.trip.member.model.dto.*;
 
-import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
 
 public interface MemberService {
 
-	int createMember(Map<String, String> map);
-	Member getMemberByIdAndPassword(String id, String password);
-	String getMemberIdByEmailAndName(MemberFind member);
-	String getMemberPasswordByIdAndEmailAndPhone(MemberFind member);
+	MemberDetailsDto createMember(MemberSignUpRequestDto requestDto);
+	Member getMemberByIdAndPassword(MemberLoginRequestDto requestDto);
+
+	Object getRefreshToken(String id) throws Exception;
+
+	String getMemberIdByEmailAndName(MemberFindRequestDto member);
+	String getMemberPasswordByIdAndEmailAndPhone(MemberFindRequestDto member);
+
+	MemberDetailsDto getMemberDetailsByIdAndPassword(MemberLoginRequestDto requestDto);
+
 	int delete(String id, String password);
 
-	int updateMember(String id, Map<String, String> map, HttpSession session);
+	Member updateMember(String id, MemberModifyRequestDto requestDto);
 
-	int updateMemberPasswordById(String id, Map<String, String> map);
+	Member updateMemberPasswordById(String id, MemberModifyPwRequestDto requestDto);
 
-	Member getMemberById(String id);
+	MemberDetailsDto getMemberById(String id);
 
 	List<Member> getMemberList(Map<String, Object> map);
+
+    int getMemberCountById(String id);
+
+	void saveRefreshToken(String id, String refreshToken);
+
+	void deleteRefreshToken(String id);
+
+	MemberLoginResponseDto loginMember(MemberLoginRequestDto requestDto);
+
+	MemberDetailsDto getInfo(String id, String authorization);
+
+	String refreshToken(String token, String id) throws Exception;
 }

@@ -4,12 +4,6 @@
 
 <mapper namespace="com.ssafy.trip.member.model.mapper.MemberMapper">
 
-<!--    <resultMap type="memberDto" id="member">-->
-<!--        <result column="user_id" property="userId"/>-->
-<!--        <result column="user_name" property="userName"/>-->
-<!--    </resultMap>-->
-
-    <!-- ADMIN -->
     <resultMap type="member" id="member" >
         <result column="id" property="id"></result>
         <result column="email" property="email"></result>
@@ -23,16 +17,23 @@
         <result column="type_no" property="type" typeHandler="com.ssafy.trip.enums.handlers.MemberTypeEnumHandler"></result>
         <result column="salt" property="salt"></result>
         <result column="photo" property="photo"></result>
+        <result column="token" property="token"></result>
     </resultMap>
 
-    <resultMap type="member" id="sessionMember" >
+    <resultMap type="memberDetailsDto" id="memberDetails" >
         <result column="id" property="id"></result>
         <result column="email" property="email"></result>
         <result column="name" property="name"></result>
+        <result column="phone" property="phone"></result>
         <result column="nickname" property="nickname"></result>
+        <result column="mbti" property="mbti"></result>
+        <result column="introduction" property="introduction"></result>
+        <result column="join_date" property="joinDate"></result>
         <result column="type_no" property="type" typeHandler="com.ssafy.trip.enums.handlers.MemberTypeEnumHandler"></result>
         <result column="photo" property="photo"></result>
+        <result column="token" property="token"></result>
     </resultMap>
+
 
 <!--    <select id="idCheck" parameterType="String" resultType="int">-->
 <!--        select count(user_id)-->
@@ -53,16 +54,28 @@
 							 typeHandler=com.ssafy.trip.enums.handlers.MemberTypeEnumHandler}, #{salt})
     </insert>
 
-    <select id="getMemberById" parameterType="String" resultMap="member">
-        select id, email, name, password, nickname, mbti, introduction, join_date, type_no, salt,photo
+    <select id="getMemberById" parameterType="String" resultMap="memberDetails">
+        select id, email, name, password, nickname, mbti, introduction, join_date, type_no, salt, photo, phone
         from members
         where id = #{id}
     </select>
 
-    <select id="getMemberByIdAndPassword" parameterType="map" resultMap="sessionMember">
-        select id, email, name, nickname, type_no, photo
+    <select id="getMemberByIdAndPassword" parameterType="memberLoginRequestDto" resultMap="member">
+        select id, name, phone, password, nickname, introduction, join_date, email, mbti, type_no, photo, token, salt
         from members
         where id = #{id} and password = #{password}
+    </select>
+
+    <select id="getMemberDetailsByIdAndPassword" parameterType="memberLoginRequestDto" resultMap="memberDetails">
+        select id, name, phone, nickname, introduction, join_date, email, mbti, type_no, photo, token
+        from members
+        where id = #{id} and password = #{password}
+    </select>
+
+    <select id="getMemberCountById" parameterType="String" resultType="int">
+        select count(id)
+        from members
+        where id = #{id}
     </select>
 
     <select id="getSaltById" parameterType="String" resultType="String">
@@ -88,7 +101,7 @@
         where id = #{id}
     </delete>
 
-    <update id="updateMember" parameterType="member">
+    <update id="updateMember" parameterType="memberDetailsDto">
         update members
         <trim prefix="set" suffixOverrides=",">
             <if test="name != null">name = #{name},</if>
@@ -106,6 +119,24 @@
             <if test="password != null">password = #{password},</if>
             <if test="salt != null">salt = #{salt},</if>
         </trim>
+        where id = #{id}
+    </update>
+
+    <update id="saveRefreshToken" parameterType="map">
+        update members
+        set token = #{token}
+        where id = #{id}
+    </update>
+
+    <select id="getRefreshToken" parameterType="string" resultType="string">
+        select token
+        from members
+        where id = #{id}
+    </select>
+
+    <update id="deleteRefreshToken" parameterType="map">
+        update members
+        set token = #{token, jdbcType=VARCHAR}
         where id = #{id}
     </update>
 

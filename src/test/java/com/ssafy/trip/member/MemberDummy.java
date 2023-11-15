@@ -1,6 +1,8 @@
 package com.ssafy.trip.member;
 
 import com.ssafy.trip.member.model.dto.Member;
+import com.ssafy.trip.member.model.dto.MemberDetailsDto;
+import com.ssafy.trip.member.model.dto.MemberSignUpRequestDto;
 import com.ssafy.trip.member.model.enums.MemberTypeEnum;
 
 import java.util.HashMap;
@@ -18,6 +20,31 @@ public class MemberDummy {
         member.setEmail("test@email.com");
         member.setMbti("esfj");
         member.setSalt("salt");
+        member.setType(MemberTypeEnum.GENERAL);
+        return member;
+    }
+
+    public static MemberDetailsDto getDummyMemberDetails() {
+        MemberDetailsDto member = new MemberDetailsDto();
+        member.setId("testuser");
+        member.setName("user");
+        member.setPhone("01012345678");
+        member.setNickname("user");
+        member.setEmail("test@email.com");
+        member.setMbti("esfj");
+        member.setType(MemberTypeEnum.GENERAL);
+        return member;
+    }
+
+    public static MemberSignUpRequestDto getRequestDto() {
+        MemberSignUpRequestDto member = new MemberSignUpRequestDto();
+        member.setId("testuser");
+        member.setPassword("1234");
+        member.setName("user");
+        member.setPhone("01012345678");
+        member.setNickname("user");
+        member.setEmail("test@email.com");
+        member.setMbti("esfj");
         member.setType(MemberTypeEnum.GENERAL);
         return member;
     }

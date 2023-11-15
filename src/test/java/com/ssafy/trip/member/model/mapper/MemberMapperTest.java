@@ -2,6 +2,7 @@ package com.ssafy.trip.member.model.mapper;
 
 import com.ssafy.trip.member.MemberDummy;
 import com.ssafy.trip.member.model.dto.Member;
+import com.ssafy.trip.member.model.dto.MemberDetailsDto;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +28,7 @@ class MemberMapperTest {
     void createMember() {
         memberMapper.createMember(dummyMember);
 
-        Member actualMember = memberMapper.getMemberById(dummyMember.getId());
+        MemberDetailsDto actualMember = memberMapper.getMemberById(dummyMember.getId());
 
         Assertions.assertThat(actualMember.getType()).isEqualTo(dummyMember.getType());
         Assertions.assertThat(actualMember.getEmail()).isEqualTo(dummyMember.getEmail());
@@ -36,7 +37,7 @@ class MemberMapperTest {
     @Test
     void getMemberById() {
 
-        Member actualMember = memberMapper.getMemberById(dummyMember.getId());
+        MemberDetailsDto actualMember = memberMapper.getMemberById(dummyMember.getId());
 
         Assertions.assertThat(actualMember.getType()).isEqualTo(dummyMember.getType());
         Assertions.assertThat(actualMember.getEmail()).isEqualTo(dummyMember.getEmail());
