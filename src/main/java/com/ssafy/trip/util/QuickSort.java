@@ -1,8 +1,8 @@
 package com.ssafy.trip.util;
 
-import com.ssafy.trip.accompany.model.Accompany;
-
 import java.util.List;
+
+import com.ssafy.trip.accompany.model.dto.Accompany;
 
 
 public class QuickSort {

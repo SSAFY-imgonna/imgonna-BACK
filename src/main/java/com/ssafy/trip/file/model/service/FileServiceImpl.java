@@ -1,6 +1,7 @@
 package com.ssafy.trip.file.model.service;
 
-import com.ssafy.trip.accompany.model.Accompany;
+import com.ssafy.trip.accompany.model.dto.Accompany;
+import com.ssafy.trip.accompany.model.dto.AccompanyRequestDto;
 import com.ssafy.trip.file.model.mapper.FileMapper;
 import org.springframework.stereotype.Service;
 
@@ -17,10 +18,10 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public void registerFile(Accompany accompanyDto) {
+    public void registerFile(AccompanyRequestDto accompanyRequestDto) {
         Map<String, Object> map = new HashMap<>();
-        map.put("fileInfos", accompanyDto.getFileInfos());
-        map.put("accompanyNo", accompanyDto.getAccompanyNo());
+        map.put("fileInfos", accompanyRequestDto.getFileInfos());
+        map.put("accompanyNo", accompanyRequestDto.getAccompanyNo());
         fileMapper.registerFile(map);
     }
 

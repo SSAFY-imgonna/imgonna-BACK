@@ -9,9 +9,12 @@ import java.util.Map;
 import com.ssafy.trip.file.model.service.FileService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.ssafy.trip.accompany.model.Accompany;
 import com.ssafy.trip.file.model.dto.FileInfoDto;
+import com.ssafy.trip.accompany.model.dto.Accompany;
+import com.ssafy.trip.accompany.model.dto.AccompanyRequestDto;
+import com.ssafy.trip.accompany.model.dto.AccompanyResponseDto;
 import com.ssafy.trip.accompany.model.mapper.AccompanyMapper;
 
 @Service
@@ -24,7 +27,24 @@ public class AccompanyServiceImpl implements AccompanyService {
         this.accompanyMapper = accompanyMapper;
         this.fileService = fileService;
     }
-
+    
+    
+    // 동행 글 작성
+    @Override
+    @Transactional
+    public void createAccompany(AccompanyRequestDto accompanyRequestDto) {
+    	// 동행 글 작성
+    	System.out.println("글 입력 전 Accompany : " + accompanyRequestDto);
+    	accompanyMapper.createAccompany(accompanyRequestDto);
+    	System.out.println("글 입력 후 AccompanyDto : " + accompanyRequestDto);
+    	
+    	// 이미지 저장
+    	List<FileInfoDto> fileInfos = accompanyRequestDto.getFileInfos();
+    	if (fileInfos != null && !fileInfos.isEmpty()) { // 파일 정보가 있다면
+    		fileService.registerFile(accompanyRequestDto);
+    	}
+    }
+    
     // 동행 글 목록
     @Override
     public List<Accompany> getAccompanyList(Map<String, String> map) {
@@ -43,104 +63,68 @@ public class AccompanyServiceImpl implements AccompanyService {
 
         return accompanyMapper.getAccompanyList(map);
     }
-    
-    // 동행 글 작성
+
+    // 조회수 증가
     @Override
-    @Transactional
-    public void createAccompany(Accompany accompany) {
-    	// 동행 글 작성
-    	System.out.println("글 입력 전 Accompany : " + accompany);
-    	accompanyMapper.createAccompany(accompany);
-    	System.out.println("글 입력 후 AccompanyDto : " + accompany);
-    	
-    	// 이미지 저장
-    	List<FileInfoDto> fileInfos = accompany.getFileInfos();
-    	if (fileInfos != null && !fileInfos.isEmpty()) { // 파일 정보가 있다면
-    		fileService.registerFile(accompany);
-    	}
+    public void updateHit(int accompanyNo) {
+    	accompanyMapper.updateHit(accompanyNo);
     }
     
-    // 업로드 파일 목록
-//    @Override
-//    public List<FileInfoDto> fileInfoList(int accompanyNo) {
-//        return accompanyMapper.fileInfoList(accompanyNo);
-//    }
+    // 동행 글 상세
+    @Override
+    public AccompanyResponseDto getAccompanyByAccompanyNo(int accompanyNo) {
+        return accompanyMapper.getAccompanyByAccompanyNo(accompanyNo);
+    }
 
+    // 동행 글 수정
+    @Override
+    @Transactional
+    public void modifyAccompany(AccompanyRequestDto accompanyRequestDto, Map<String, String> map) throws SQLException {
+    	// 동행 글 수정
+        accompanyMapper.modifyAccompany(accompanyRequestDto);
 
+        List<FileInfoDto> fileInfos = accompanyRequestDto.getFileInfos();
+        // 기존 파일도 존재하지 않고, 수정하고자 하는 파일이 존재하지 않다면 파일 삭제
+	    if ((fileInfos == null || fileInfos.isEmpty()) && map.get("originFile").isEmpty()) {
+	    	// 로컬에 저장된 기존 파일 정보 삭제
+	    	
+	    	// 기존 파일 정보 삭제
+	    	fileService.deleteFile(accompanyRequestDto.getAccompanyNo());
+	    }
 
-    
-//    /**
-//     * 글 상세
-//     */
-//    @Override
-//    public Accompany getAccompanyByAccompanyNo(int accompanyNo) {
-//        return accompanyMapper.getAccompanyByAccompanyNo(accompanyNo);
-//    }
-//
-//	/** 
-//	 * 조회수 증가 
-//	 */
-//	@Override
-//	public void updateHit(int accompanyNo) {
-//		accompanyMapper.updateHit(accompanyNo);
-//	}
-//
-//	
-//    /**
-//     * 글 삭제
-//     */
-//    @Override
-//    @Transactional
-//    public void deleteAccompany(int accompanyNo, String uploadPath) {
-//        fileService.deleteFile(accompanyNo);
-//        accompanyMapper.deleteAccompany(accompanyNo);
-//
-//        deleteFiles(accompanyNo, uploadPath);
-//    }
-//
-//    /**
-//     * 동행 글 번호를 기준으로 파일 목록들을 얻어와, 얻어온 파일들을 로컬 컴퓨터에서 삭제
-//     * @param accompanyNo 기준 동행 글 번호
-//     * @param uploadPath
-//     */
-//    private void deleteFiles(int accompanyNo, String uploadPath) {
-//        List<FileInfoDto> fileList = this.fileInfoList(accompanyNo);
-//        for (FileInfoDto fileInfoDto : fileList) {
-//            File file = new File(uploadPath + File.separator + fileInfoDto.getSaveFolder() + File.separator + fileInfoDto.getSaveFile());
-//            file.delete();
-//        }
-//    }
-//
-//    /**
-//     * 글 수정 (파일 수정도 함께)
-//     *
-//     * @param accompanyDto
-//     * @param map
-//     * @throws SQLException
-//     */
-//    @Override
-//    public void modifyAccompany(Accompany accompanyDto, Map<String, String> map) throws SQLException {
-//        accompanyDto.setAccompanyNo(Integer.parseInt(map.get("accompanyNo")));
-//        String accompanyDate = map.get("accompanyDate");
-//        String accompanyTime = map.get("accompanyTime");
-//        accompanyDate = accompanyDate + " " + accompanyTime; // 초를 "00"으로 초기화
-//        accompanyDto.setAccompanyDate(accompanyDate);
-//
-//        accompanyMapper.modifyAccompany(accompanyDto);
-//
-//        List<FileInfoDto> fileInfos = accompanyDto.getFileInfos();
-//        // 기존 파일도 존재하지 않고, 수정하고자 하는 파일이 존재하지 않다면 파일 삭제
-//        if ((fileInfos == null || fileInfos.isEmpty()) && map.get("originFile").isEmpty()) {
-//            fileService.deleteFile(accompanyDto.getAccompanyNo());
-//        }
-//
-//        // 수정하고자 하는 파일이 존재한다면 -> 기존 파일 삭제 후 수정 파일 등록
-//        if (fileInfos != null && !fileInfos.isEmpty()) {
-//            fileService.deleteFile(accompanyDto.getAccompanyNo());
-//            fileService.registerFile(accompanyDto);
-//        }
-//    }
-//
+        // 기존 파일 존재하고, 수정하고자 하는 파일이 존재한다면 => 기존 파일 삭제 후 수정 파일 등록
+        if (fileInfos != null && !fileInfos.isEmpty()) {
+        	// 로컬에 저장된 기존 파일 정보 삭제
+        	
+	    	// 기존 파일 정보 삭제
+            fileService.deleteFile(accompanyRequestDto.getAccompanyNo());
+            // 새 파일 등록
+            fileService.registerFile(accompanyRequestDto);
+        }
+    }
+
+    // 동행 글 삭제
+    @Override
+    @Transactional
+    public void deleteAccompany(int accompanyNo, String uploadPath) {
+    	// 로컬에 저장된 파일 정보 삭제
+    	deleteFiles(accompanyNo, uploadPath);
+    	// 파일 정보 삭제
+        fileService.deleteFile(accompanyNo);
+
+        // 동행 글 정보 삭제
+        accompanyMapper.deleteAccompany(accompanyNo);
+    }
+	
+    // 파일들 로컬 컴퓨터에서 삭제
+    public void deleteFiles(int accompanyNo, String uploadPath) {
+        List<FileInfoDto> fileList = accompanyMapper.fileInfoList(accompanyNo);
+        for (FileInfoDto fileInfoDto : fileList) {
+            File file = new File(uploadPath + File.separator + fileInfoDto.getSaveFolder() + File.separator + fileInfoDto.getSaveFile());
+            file.delete();
+        }
+    }
+
 //	/** 이미 신청되어 있는지 여부 */
 //	@Override
 //	public int isJoin( Map<String, String> map) {

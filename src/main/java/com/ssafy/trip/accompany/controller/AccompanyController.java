@@ -2,6 +2,7 @@ package com.ssafy.trip.accompany.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,24 +21,36 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.ssafy.trip.accompany.model.Accompany;
 import com.ssafy.trip.file.model.dto.FileInfoDto;
 import com.ssafy.trip.member.model.dto.Member;
+import com.ssafy.trip.accompany.model.dto.Accompany;
+import com.ssafy.trip.accompany.model.dto.AccompanyRequestDto;
+import com.ssafy.trip.accompany.model.dto.AccompanyResponseDto;
 import com.ssafy.trip.accompany.model.service.AccompanyService;
 //import com.ssafy.util.FileUtil;
 //import com.ssafy.util.QuickSort;
 
-@Controller
+@RestController
 @RequestMapping("/accompany")
 public class AccompanyController {
     private final Logger logger = LoggerFactory.getLogger(AccompanyController.class);
@@ -45,11 +58,11 @@ public class AccompanyController {
     @Value("${file.path}")
     private String uploadPath;
 
-    @Value("${file.path.upload-images}")
-    private String uploadImagePath;
-
-    @Value("${file.path.upload-files}")
-    private String uploadFilePath;
+//    @Value("${file.path.upload-images}")
+//    private String uploadImagePath;
+//
+//    @Value("${file.path.upload-files}")
+//    private String uploadFilePath;
 
     @Autowired
     private ServletContext servletContext;
@@ -60,187 +73,170 @@ public class AccompanyController {
         super();
         this.accompanyService = accompanyService;
     }
+    
+
+    /**
+     * 동행 글 작성
+     * @param accompanyRequestDto 등록할 동행 글 dto
+     * @param upfile
+     * @param session
+     * @return ResponseEntity
+     * @throws Exception
+     */
+    @PostMapping
+    public ResponseEntity<?> createAccompany(AccompanyRequestDto accompanyRequestDto,
+    		@RequestPart MultipartFile[] upfile, HttpSession session) throws Exception {
+//    	   나중에 로그인 완료되면 하드코딩된거 바꿔야!!
+//        Member member = (Member) session.getAttribute("memberDto");
+//        accompany.setId(member.getId());
+    	accompanyRequestDto.setId("ssafy");
+    	
+    	String date = accompanyRequestDto.getDate();
+    	String time = accompanyRequestDto.getTime();
+        String joinTime = date + " " + time + ":00"; // 초를 "00"으로 초기화(TIMESTAMP로 저장됨)
+        accompanyRequestDto.setJoinTime(joinTime);
+        
+    	logger.debug("AccompanyRequestDto : {}", accompanyRequestDto);
+    	logger.debug("upfile : {}", upfile[0]);
+        
+        try {
+        	// 이미지 업로드
+        	uploadFiles(accompanyRequestDto, upfile);
+        	// 동행 글 추가
+        	accompanyService.createAccompany(accompanyRequestDto);
+        	return ResponseEntity
+        			.status(HttpStatus.OK)
+        			.build();
+        } catch (Exception e) {
+        	return exceptionHandling(e);
+        }
+    }
 
     /**
      * 동행 글 목록
      * @param map(pgno, key, word)
-     * @return data("list") + viewName
+     * @return ResponseEntity
      * @throws Exception
      */
-    @GetMapping("/list")
-    private ModelAndView getAccompanyList(@RequestParam Map<String, String> map) throws Exception {
+    @GetMapping
+    private ResponseEntity<?> getAccompanyList(@RequestParam Map<String, String> map) throws Exception {
         logger.debug("getAccompanyList parameter pgno : {}", map.get("pgno"));
-        List<Accompany> list = accompanyService.getAccompanyList(map);
-
-//		PageNavigation pageNavigation = boardService.makePageNavigation(map);
-//		mav.addObject("navigation", pageNavigation);
-//		mav.addObject("pgno", map.get("pgno"));
-//		mav.addObject("key", map.get("key"));
-//		mav.addObject("word", map.get("word"));
-
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("list", list);
-        mav.setViewName("accompany/list");
-        return mav;
-    }
-
-    /**
-     * 동행 글 작성 폼 호출
-     * @param map(pgno, key, word)
-     * @param model
-     * @return viewName
-     */
-    @GetMapping("/write")
-    public String write(@RequestParam Map<String, String> map, Model model) {
-        logger.debug("write call parameter {}", map);
+         
+        try {
+        	List<Accompany> AccompanyList = accompanyService.getAccompanyList(map);
+        	HttpHeaders header = new HttpHeaders();
+        	header.setContentType(MediaType.APPLICATION_JSON);
+        	return ResponseEntity
+        			.status(HttpStatus.OK)
+        			.headers(header)
+        			.body(AccompanyList);        	
+        } catch (Exception e) {
+        	return exceptionHandling(e);
+        }
         
-//		model.addAttribute("pgno", map.get("pgno"));
-//		model.addAttribute("key", map.get("key"));
-//		model.addAttribute("word", map.get("word"));
-
-        return "accompany/write";
+//        페이지 네이션 관련 처리 나중에 하자!!!
     }
 
     /**
-     * 동행 글 작성
-     * @param accompany 등록할 동행 글 dto
-     * @param date 모임날짜
-     * @param time 모임시간
-     * @param files 이미지
-     * @param session 
-     * @param redirectAttributes
-     * @return redirect URL
+     * 동행 글 상세
+     * @param accompanyNo 동행 글 번호
+     * @param map(pgno, key, word)
+     * @param session
+     * @return
      * @throws Exception
      */
-    @PostMapping("/write")
-    public String createAccompany(Accompany accompany, @RequestParam String date, @RequestParam String time,
-                        @RequestParam("upfile") MultipartFile[] files, HttpSession session,
-                        RedirectAttributes redirectAttributes) throws Exception {
-        Member member = (Member) session.getAttribute("memberDto");
-        accompany.setId(member.getId());
-
-        String joinTime = date + " " + time + ":00"; // 초를 "00"으로 초기화(TIMESTAMP로 저장됨)
-        accompany.setJoinTime(joinTime);
-        logger.debug("createAccompany Accompany : {}", accompany);
-
-        // 이미지 업로드
-        uploadFiles(accompany, files);
+    @GetMapping("/{accompanyNo}")
+    public ResponseEntity<AccompanyResponseDto> getAccompanyByAccompanNo(@PathVariable int accompanyNo, HttpSession session) throws Exception {
+        logger.debug("getAccompanyByAccompanNo accompanyNo : {}", accompanyNo);
         
-        // 동행 글 추가
-        accompanyService.createAccompany(accompany);
-        
-//		redirectAttributes.addAttribute("pgno", "1");
-//		redirectAttributes.addAttribute("key", "");
-//		redirectAttributes.addAttribute("word", "");
-        
-        return "redirect:/accompany/list";
-    }
-
-
-//    /**
-//     * 글 상세
-//     */
-//    @GetMapping("/view")
-//    public String view(@RequestParam int accompanyNo, @RequestParam Map<String, String> map, Model model,
-//    		HttpSession session) throws Exception {
-//        logger.debug("view accompanyNo : {}", accompanyNo);
-//        accompanyService.updateHit(accompanyNo); // 조회수 증가
-//        Accompany accompanyDto = accompanyService.getAccompanyByAccompanyNo(accompanyNo);
-//        logger.debug("view accompanyDto : {}", accompanyDto);
-//        model.addAttribute("accompanyDto", accompanyDto);
-//   
-//        
-//		// 세션에 설정된 아이디 정보 가져오기
+    	// 조회수 증가
+    	accompanyService.updateHit(accompanyNo);
+    	// 동행 글 상세
+    	AccompanyResponseDto accompanyResponseDto = accompanyService.getAccompanyByAccompanyNo(accompanyNo);
+    	//
+    	String joinTime = accompanyResponseDto.getJoinTime();
+    	String date = joinTime.split(" ")[0];
+    	String time = joinTime.split(" ")[1].substring(0, 5);
+    	accompanyResponseDto.setDate(date);
+    	accompanyResponseDto.setTime(time);
+//    	String joinTime = date + " " + time + ":00"; // 초를 "00"으로 초기화(TIMESTAMP로 저장됨)   	
+//    	String date = accompanyRequestDto.getDate();
+//    	String time = accompanyRequestDto.getTime();
+    	logger.debug("getAccompanyByAccompanNo accompanyDto : {}", accompanyResponseDto);
+    	
+    	// 세션에 설정된 아이디 정보 가져오기
+// 	   나중에 로그인 완료되면 하드코딩된거 바꿔야!!
 //        Member memberDto = (Member) session.getAttribute("memberDto");
 //        String userId = memberDto.getId();	
-//        
-//		Map<String, String> joinInfo = new HashMap<>();
-//		joinInfo.put("accompanyNo", String.valueOf(accompanyNo));
-//		joinInfo.put("userId", userId);
-//		
-//		if(userId != null) {
-//			// 이미 신청됐는지 여부
-//			int cnt = accompanyService.isJoin(joinInfo);
-//			
-//			// 이미 신청되어있다면
-//			if(cnt == 1) {
-//				model.addAttribute("isJoin", true);
-//			}
-//			// 아직 신청되어있지 않다면
-//			else {
-//				model.addAttribute("isJoin", false);
-//			}
-//		}
-//
-////		model.addAttribute("pgno", map.get("pgno"));
-////		model.addAttribute("key", map.get("key"));
-////		model.addAttribute("word", map.get("word"));
-//        return "accompany/view";
-//    }
-//
-//
-//    /**
-//     * 글 수정폼 호출
-//     */
-//    @GetMapping("/modify")
-//    public String modify(@RequestParam int accompanyNo, @RequestParam Map<String, String> map, Model model)
-//            throws Exception {
-//        logger.debug("modify accompanyNo : {}", accompanyNo);
-//        Accompany accompanyDto = accompanyService.getAccompanyByAccompanyNo(accompanyNo);
-//        logger.debug("view accompanyDto : {}", accompanyDto);
-//
-//
-//        String[] splitDate = accompanyDto.getAccompanyDate().split(" ");
-//        String accompanyDate = splitDate[0];
-//        String accompanyTime = splitDate[1];
-//
-//        logger.debug("accompanyDate : {}, accompanyTime : {}", accompanyDate, accompanyTime);
-//        model.addAttribute("accompanyDto", accompanyDto);
-//        model.addAttribute("accompanyDate", accompanyDate);
-//        model.addAttribute("accompanyTime", accompanyTime);
-//
-////		model.addAttribute("pgno", map.get("pgno"));
-////		model.addAttribute("key", map.get("key"));
-////		model.addAttribute("word", map.get("word"));
-//        return "accompany/modify";
-//    }
-//
-//    /**
-//     * 동행 글 수정 메서드
-//     * @param accompanyDto 수정할 동행 글 dto
-//     * @param files 수정할 파일
-//     * @param map accompanyDate, accompanyTime, originFile
-//     * @return redirect URL
-//     * @throws Exception
-//     */
-//    @PostMapping("/modify")
-//    public String modify(Accompany accompanyDto, @RequestParam("upfile") MultipartFile[] files,
-//                         @RequestParam Map<String, String> map) throws Exception {
-//        logger.debug("modify AccompanyDto : {}", accompanyDto);
-//        uploadFiles(accompanyDto, files);
-//        accompanyService.modifyAccompany(accompanyDto, map);
-//
-////		redirectAttributes.addAttribute("pgno", map.get("pgno"));
-////		redirectAttributes.addAttribute("key", map.get("key"));
-////		redirectAttributes.addAttribute("word", map.get("word"));
-//        return "redirect:/accompany/list";
-//    }
-//
-//    /**
-//     * 글 삭제
-//     */
-//    @GetMapping("/delete")
-//    public String delete(@RequestParam int accompanyNo, @RequestParam Map<String, String> map,
-//                         RedirectAttributes redirectAttributes) throws Exception {
-//        logger.debug("delete accompanyNo : {}", accompanyNo);
-//
-//        accompanyService.deleteAccompany(accompanyNo, uploadPath);
-//
-////		redirectAttributes.addAttribute("pgno", map.get("pgno"));
-////		redirectAttributes.addAttribute("key", map.get("key"));
-////		redirectAttributes.addAttribute("word", map.get("word"));
-//        return "redirect:/accompany/list";
-//    }
+    	String userId = "ssafy";
+    	
+    	Map<String, String> joinInfo = new HashMap<>();
+    	joinInfo.put("accompanyNo", String.valueOf(accompanyNo));
+    	joinInfo.put("userId", userId);
+    	
+//        	// 로그인 되어 있다면
+//        	if(userId != null) {
+//        		// 이미 신청됐는지 여부
+//        		int cnt = accompanyService.isJoin(joinInfo);
+//        		boolean isJoin = false;
+//        		// 이미 신청되어있다면
+//        		if(cnt == 1) {
+//        			isJoin = true;
+//        		}
+//        		// 아직 신청되어있지 않다면
+//        		else {
+//        			isJoin = false;
+//        		}
+//        		accompanyResponseDto.setIsJoin(isJoin);
+//        	}
+    	return ResponseEntity
+    			.status(HttpStatus.OK)
+    			.body(accompanyResponseDto);
+    }
+
+    /**
+     * 동행 글 수정
+     * @param accompanyNo 동행 글 번호
+     * @param accompanyRequestDto 수정할 동행 글 dto
+     * @param upfile
+     * @param map(originFile)
+     * @return ResponseEntity
+     * @throws Exception
+     */
+    @PutMapping("/{accompanyNo}")
+    public ResponseEntity<String> modifyAccompany(@PathVariable int accompanyNo, @RequestPart AccompanyRequestDto accompanyRequestDto, 
+    		@RequestParam MultipartFile[] upfile, @RequestParam Map<String, String> map) throws Exception {
+        logger.debug("modifyAccompany AccompanyRequestDto : {}", accompanyRequestDto);
+    	String date = accompanyRequestDto.getDate();
+    	String time = accompanyRequestDto.getTime();
+        String joinTime = date + " " + time + ":00"; // 초를 "00"으로 초기화(TIMESTAMP로 저장됨)
+        accompanyRequestDto.setJoinTime(joinTime);
+        accompanyRequestDto.setAccompanyNo(accompanyNo);
+        
+    	// 이미지 업로드
+    	uploadFiles(accompanyRequestDto, upfile);
+    	// 동행 글 수정
+    	accompanyService.modifyAccompany(accompanyRequestDto, map);
+    	return ResponseEntity
+    			.status(HttpStatus.OK)
+    			.build();  
+    }
+
+    /**
+     * 동행 글 삭제
+     * @param accompanyNo 동행 글 번호
+     * @return
+     * @throws Exception
+     */
+    @DeleteMapping("/{accompanyNo}")
+    public ResponseEntity<String> deleteAccompany(@PathVariable int accompanyNo) throws Exception {
+        logger.debug("deleteAccompany accompanyNo : {}", accompanyNo);
+
+        accompanyService.deleteAccompany(accompanyNo, uploadPath);
+        return ResponseEntity
+        		.status(HttpStatus.OK)
+        		.build();
+    }
 
     /**
      * 파일 업로드
@@ -248,7 +244,7 @@ public class AccompanyController {
      * @param files
      * @throws IOException
      */
-    private void uploadFiles(Accompany accompany, MultipartFile[] files) throws IOException {
+    private void uploadFiles(AccompanyRequestDto accompanyRequestDto, MultipartFile[] files) throws IOException {
         // FileUpload 관련 설정
 //        logger.debug("uploadPath : {}, uploadImagePath : {}, uploadFilePath : {}", uploadPath, uploadImagePath, uploadFilePath);
         logger.debug("MultipartFile.isEmpty : {}", files[0].isEmpty());
@@ -276,7 +272,7 @@ public class AccompanyController {
                 }
                 fileInfos.add(fileInfoDto);
             }
-            accompany.setFileInfos(fileInfos);
+            accompanyRequestDto.setFileInfos(fileInfos);
         }
     }
 
@@ -359,4 +355,16 @@ public class AccompanyController {
 //		redirectAttributes.addAttribute("word", map.get("word"));
 //		return "redirect:/accompany/view";
 //	}
+    
+    /**
+     * 예외처리
+     * @param e 예외객체
+     * @return 예외메세지
+     */
+    private ResponseEntity<String> exceptionHandling(Exception e) {
+        e.printStackTrace();
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error : " + e.getMessage());
+    }    
 }
