@@ -1,11 +1,12 @@
 package com.ssafy.trip.accompany.model.mapper;
 
-import com.ssafy.trip.accompany.model.Accompany;
-
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import com.ssafy.trip.accompany.model.dto.Accompany;
+import com.ssafy.trip.accompany.model.dto.AccompanyRequestDto;
+import com.ssafy.trip.accompany.model.dto.AccompanyResponseDto;
 import com.ssafy.trip.file.model.dto.FileInfoDto;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -15,23 +16,23 @@ public interface AccompanyMapper {
 	List<Accompany> getAccompanyList(Map<String, String> map);
 
 	// 동행 글 작성
-	void createAccompany(Accompany accompany);
+	void createAccompany(AccompanyRequestDto accompanyRequestDto);
 
 	// 업로드 파일 목록
-	public List<FileInfoDto> fileInfoList(int accompanyNo);
+	List<FileInfoDto> fileInfoList(int accompanyNo);
 	
-//	/** 글 상세 */
-//	Accompany getAccompanyByAccompanyNo(int accompanyNo);
-//	
-//	/** 글 수정 */
-//	void modifyAccompany(Accompany accompanyDto) throws SQLException;
-//
-//	/** 글 삭제 */
-//	void deleteAccompany(int accompanyNo);
-//
-//	/** 조회수 증가 */
-//	void updateHit(int accompanyNo);
-//	
+	// 조회수 증가
+	void updateHit(int accompanyNo);	
+
+	// 동행 글 상세
+	AccompanyResponseDto getAccompanyByAccompanyNo(int accompanyNo);
+	
+	// 동행 글 수정
+	void modifyAccompany(AccompanyRequestDto accompanyRequestDto) throws SQLException;
+
+	// 동행 글 삭제
+	void deleteAccompany(int accompanyNo);
+
 //	/** 이미 신청되어있는지 여부 */
 //	int isJoin(Map<String, String> map);
 //	

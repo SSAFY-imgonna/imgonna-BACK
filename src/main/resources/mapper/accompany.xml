@@ -20,11 +20,32 @@
 		<result column="theme_no" property="themeNo"/>
 	</resultMap>
 
-	<resultMap type="accompany" id="accompanyFile" extends="accompany">
+	<resultMap type="accompanyResponseDto" id="accompanyResponseDto">
+		<result column="accompany_no" property="accompanyNo"/>
+		<result column="title" property="title"/>
+		<result column="content" property="content"/>
+		<result column="addr" property="addr"/>
+		<result column="join_time" property="joinTime"/>
+		<result column="current_num" property="currentNum"/>
+		<result column="limit_num" property="limitNum"/>
+		<result column="hit" property="hit"/>
+		<result column="id" property="id"/>
+		<result column="created_time" property="createdTime"/>
+		<result column="modified_time" property="modifiedTime"/>
+		<result column="status" property="status"/>
+		<result column="theme_no" property="themeNo"/>
+	</resultMap>
+	
+	<resultMap type="accompanyResponseDto" id="accompanyFile" extends="accompanyResponseDto">
 		<collection column="accompany_no" property="fileInfos" javaType="list"
 					ofType="com.ssafy.trip.file.model.dto.FileInfoDto" select="fileInfoList"/>
 	</resultMap>
 
+	<resultMap type="accompanyResponseDto" id="accompanyFileDto" extends="accompanyResponseDto">
+		<collection column="accompany_no" property="fileInfos" javaType="list"
+					ofType="com.ssafy.trip.file.model.dto.FileInfoDto" select="fileInfoList"/>
+	</resultMap>
+	
 	<resultMap type="com.ssafy.trip.file.model.dto.FileInfoDto" id="file">
 		<result column="save_folder" property="saveFolder"/>
 		<result column="original_file" property="originalFile"/>
@@ -55,8 +76,7 @@
 		order by created_time desc
 	</select>
 	
-	
- 	<insert id="createAccompany" parameterType="accompany">
+ 	<insert id="createAccompany" parameterType="accompanyRequestDto">
 		insert into accompany (title, content, addr, join_time, 
 			limit_num, id, status, theme_no)
 		values (#{title}, #{content}, #{addr}, #{joinTime}, 
@@ -66,29 +86,31 @@
 		</selectKey>
 	</insert>
 
-<!-- 	<update id="modifyAccompany" parameterType="accompanyDto">
-		update accompany
-		set accompany_title = #{accompanyTitle}, accompany_content = #{accompanyContent},
-			accompany_loc = #{accompanyLoc}, accompany_date = #{accompanyDate}, accompany_total = #{accompanyTotal}
-		where accompany_no=#{accompanyNo}
-	</update>
-
-	<select id="getAccompanyByAccompanyNo" parameterType="int" resultMap="accompanyFile">
+	<select id="getAccompanyByAccompanyNo" parameterType="int" resultMap="accompanyFileDto">
 		select *
 		from accompany
 		where accompany_no = #{accompanyNo}
 	</select>
-	
+
 	<update id="updateHit" parameterType="int">
 		update accompany
 		set hit = hit + 1
 		where accompany_no = #{accompanyNo}
 	</update>
 
+	<update id="modifyAccompany" parameterType="accompanyRequestDto">
+		update accompany
+		set title = #{title}, content = #{content}, addr = #{addr}, 
+			join_time = #{joinTime}, limit_num = #{limitNum} 
+		where accompany_no = #{accompanyNo}
+	</update>
+	
 	<delete id="deleteAccompany" parameterType="int">
 		delete from accompany
 		where accompany_no = #{accompanyNo}
 	</delete>
+
+<!-- 		
 	
 	<select id="isJoin" parameterType="map" resultType="int">
 		select count(*)
