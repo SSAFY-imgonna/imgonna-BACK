@@ -2,6 +2,7 @@ package com.ssafy.trip.member.service;
 
 import com.ssafy.trip.member.MemberDummy;
 import com.ssafy.trip.member.model.dto.Member;
+import com.ssafy.trip.member.model.dto.MemberDetailsDto;
 import com.ssafy.trip.member.model.dto.MemberSignUpRequestDto;
 import com.ssafy.trip.member.model.mapper.MemberMapper;
 import org.assertj.core.api.Assertions;
@@ -32,12 +33,12 @@ class MemberServiceImplTest {
     MemberMapper memberMapper;
 
     MemberSignUpRequestDto dummyRequestDto;
-    Member dummyMember;
+    MemberDetailsDto dummyMember;
 
     @BeforeEach
     void setUp() {
         dummyRequestDto = MemberDummy.getRequestDto();
-        dummyMember = MemberDummy.getDummyMember();
+        dummyMember = MemberDummy.getDummyMemberDetails();
     }
 
     @Test
@@ -47,9 +48,9 @@ class MemberServiceImplTest {
         given(memberMapper.createMember(any(Member.class)))
                 .willReturn(1);
 
-        int result = memberService.createMember(dummyRequestDto);
+        MemberDetailsDto result = memberService.createMember(dummyRequestDto);
 
-        Assertions.assertThat(result).isEqualTo(1);
+        Assertions.assertThat(result).isNotNull();
 
     }
 
@@ -60,7 +61,7 @@ class MemberServiceImplTest {
         given(memberMapper.getMemberById(any(String.class)))
                 .willReturn(dummyMember);
 
-        Member actualMember = memberService.getMemberById(dummyMember.getId());
+        MemberDetailsDto actualMember = memberService.getMemberById(dummyMember.getId());
 
         Assertions.assertThat(actualMember).isNotNull();
         Assertions.assertThat(actualMember.getEmail()).isEqualTo(dummyMember.getEmail());

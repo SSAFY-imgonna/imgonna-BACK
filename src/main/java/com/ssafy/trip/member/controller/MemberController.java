@@ -2,21 +2,21 @@ package com.ssafy.trip.member.controller;
 
 import com.ssafy.trip.member.model.dto.*;
 import com.ssafy.trip.member.service.MemberService;
+import com.ssafy.trip.util.JWTUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
-import java.util.List;
-import java.util.Map;
 
 /**
+ * 회원 컨트롤러입니다.
+ *
  * @author yihoney
  */
 @RestController
 @RequestMapping("/members")
-@CrossOrigin("*")
 public class MemberController {
     private final MemberService memberService;
 
@@ -78,13 +78,13 @@ public class MemberController {
     /**
      * 회원의 비밀번호를 수정하는 메서드
      *
-     * @param id                 수정할 회원의 id
-     * @param requestDto                수정할 정보
+     * @param id         수정할 회원의 id
+     * @param requestDto 수정할 정보
      * @return
      */
     @PutMapping("/{id}/pw")
     private ResponseEntity<Member> modifyMemberPassword(@PathVariable String id,
-                                                              @RequestBody MemberModifyPwRequestDto requestDto) {
+                                                        @RequestBody MemberModifyPwRequestDto requestDto) {
 
         Member member = memberService.updateMemberPasswordById(id, requestDto);
 
@@ -103,7 +103,7 @@ public class MemberController {
      * @return
      */
     @DeleteMapping("/{id}")
-    private ResponseEntity<List<Member>> deleteMember(@PathVariable String id, @RequestParam("leaveConfirmPwd") String inputPwd, HttpSession session, RedirectAttributes redirectAttributes) {
+    private ResponseEntity<String> deleteMember(@PathVariable String id, @RequestParam("leaveConfirmPwd") String inputPwd, HttpSession session, RedirectAttributes redirectAttributes) {
         memberService.delete(id, inputPwd);
 
         return ResponseEntity.status(HttpStatus.OK).body(id);
@@ -117,8 +117,8 @@ public class MemberController {
      * @return
      */
     @GetMapping("/{id}")
-    private ResponseEntity<Member> getMemberById(@PathVariable String id) {
-        Member member = memberService.getMemberById(id);
+    private ResponseEntity<MemberDetailsDto> getMemberById(@PathVariable String id) {
+        MemberDetailsDto member = memberService.getMemberById(id);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(member);
     }
@@ -128,16 +128,17 @@ public class MemberController {
      * 회원 정보를 수정하는 메서드
      *
      * @param id
-     * @param session
-     * @param map     이름, 전화번호, 닉네임, mbti, 소개글
+     * @param requestDto
      * @return
      */
     @PutMapping("/{id}")
-    private ResponseEntity<Member> modifyMember(@PathVariable String id, HttpSession session, @RequestParam Map<String, String> map) {
+    private ResponseEntity<Member> modifyMember(@PathVariable String id, @RequestBody MemberModifyRequestDto requestDto) {
 
-        Member member = memberService.updateMember(id, map, session);
+        Member member = memberService.updateMember(id, requestDto);
 
-        return ResponseEntity.status(HttpStatus.OK).body(member);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(member);
 
     }
 
@@ -149,9 +150,9 @@ public class MemberController {
      * @return
      */
     @PostMapping
-    private ResponseEntity<Member> registMember(@RequestBody MemberSignUpRequestDto requestDto) {
+    private ResponseEntity<MemberDetailsDto> registMember(@RequestBody MemberSignUpRequestDto requestDto) {
+        MemberDetailsDto member = memberService.createMember(requestDto);
         System.out.println(requestDto.toString());
-        Member member = memberService.createMember(requestDto);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(member);
@@ -161,67 +162,65 @@ public class MemberController {
      * 로그인을 처리하는 메서드
      *
      * @param requestDto
-     * @param session
      * @return
      */
     @PostMapping("/login")
-    private ResponseEntity<Member> login(@RequestBody MemberLoginRequestDto requestDto, HttpSession session) {
-        Member member = memberService.getMemberByIdAndPassword(requestDto);
+    private ResponseEntity<MemberLoginResponseDto> login(@RequestBody MemberLoginRequestDto requestDto) {
 
-        if (member == null) {
-            return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .build();
-        }
+        MemberLoginResponseDto responseDto = memberService.loginMember(requestDto);
 
-        session.setAttribute("member", member);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(responseDto);
+    }
+
+    /**
+     * 회원 인증
+     *
+     * @param id 인증할 회원의 아이디
+     * @return
+     */
+    @GetMapping("/info/{id}")
+    public ResponseEntity<MemberDetailsDto> getInfo(
+            @PathVariable String id, @RequestHeader("Authorization") String authorization) {
+
+        MemberDetailsDto member = memberService.getInfo(id, authorization);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(member);
     }
 
-//    /**
-//     * 로그아웃을 처리하는 메서드
-//     *
-//     * @param session
-//     * @return
-//     */
-//    @GetMapping("/logout")
-//    private String logout(HttpSession session) {
-//        if (session.getAttribute("memberDto") != null) {
-//            session.removeAttribute("memberDto");
-//        }
-//        session.invalidate();
-//        return "redirect:/";
-////    }
-////
-////    /**
-////     * 로그인을 처리하는 메서드
-////     *
-////     * @param id
-////     * @param password
-////     * @param session
-////     * @param request
-////     * @param response
-////     * @param redirect
-////     * @return
-////     */
-////    @PostMapping("/login")
-////    private String login(@RequestParam("loginId") String id, @RequestParam("loginPwd") String password, HttpSession
-////            session, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirect) {
-////        System.out.println("id " + id + "pw" + password);
-////        Member member = memberService.getMemberByIdAndPassword(id, password);
-////
-////        if (member != null) {
-////            session.setAttribute("memberDto", member);
-////            saveCookieId(request, response, id);
-////        } else {
-////            String msg = "로그인을 실패하였습니다. 다시 시도해주세요!";
-////            redirect.addFlashAttribute("msg", msg);
-////        }
-////        return "redirect:/";
-////    }
+    /**
+     * 로그아웃 - 토큰 제거
+     */
+    @GetMapping("/logout/{id}")
+    public ResponseEntity<Void> removeToken(@PathVariable String id) {
+
+        memberService.deleteRefreshToken(id);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .build();
+    }
+
+    /**
+     * Access Token 재발급
+     */
+
+    @PostMapping("/refresh")
+    public ResponseEntity<String> refreshToken(@RequestBody String id,
+                                               @RequestHeader("refreshToken") String token)
+            throws Exception {
+
+        String accessToken = memberService.refreshToken(token, id);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(accessToken);
+    }
+
+
 //
 //    /**
 //     * 아이디를 쿠키에 저장하는 메서드

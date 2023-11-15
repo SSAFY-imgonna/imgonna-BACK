@@ -1,8 +1,10 @@
 package com.ssafy.trip.member.service;
 
+import com.ssafy.trip.exception.member.MemberNotFoundException;
 import com.ssafy.trip.member.model.dto.*;
 import com.ssafy.trip.member.model.mapper.MemberMapper;
 import com.ssafy.trip.member.model.enums.MemberTypeEnum;
+import com.ssafy.trip.util.JWTUtil;
 import com.ssafy.trip.util.PasswordUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,15 +17,18 @@ import java.util.Map;
 
 @Service
 public class MemberServiceImpl implements MemberService {
-    private MemberMapper memberMapper;
+    private final MemberMapper memberMapper;
+    private final JWTUtil jwtUtil;
 
-    public MemberServiceImpl(MemberMapper memberMapper) {
+
+    public MemberServiceImpl(MemberMapper memberMapper, JWTUtil jwtUtil) {
         this.memberMapper = memberMapper;
+        this.jwtUtil = jwtUtil;
     }
 
     @Override
     @Transactional
-    public Member createMember(MemberSignUpRequestDto requestDto) {
+    public MemberDetailsDto createMember(MemberSignUpRequestDto requestDto) {
 
         Member member = new Member();
         member.setId(requestDto.getId());
@@ -45,24 +50,41 @@ public class MemberServiceImpl implements MemberService {
             MemberLoginRequestDto loginRequestDto = new MemberLoginRequestDto();
             loginRequestDto.setId(requestDto.getId());
             loginRequestDto.setPassword(requestDto.getPassword());
-            return getMemberByIdAndPassword(loginRequestDto);
+            return getMemberDetailsByIdAndPassword(loginRequestDto);
         }
     }
 
     @Override
-    public Member getMemberByIdAndPassword(MemberLoginRequestDto requestDto) {
+    public Member getMemberByIdAndPassword(MemberLoginRequestDto requestDto) throws MemberNotFoundException {
         String digest = getDigest(requestDto.getId(), requestDto.getPassword());
-        if (digest == null) return null;
         requestDto.setPassword(digest);
         Member member = memberMapper.getMemberByIdAndPassword(requestDto);
-        return member;
+
+        if (member == null) {
+            throw new MemberNotFoundException();
+        } else {
+            return member;
+        }
+    }
+
+    @Override
+    public MemberDetailsDto getMemberDetailsByIdAndPassword(MemberLoginRequestDto requestDto) {
+        String digest = getDigest(requestDto.getId(), requestDto.getPassword());
+        requestDto.setPassword(digest);
+        MemberDetailsDto member = memberMapper.getMemberDetailsByIdAndPassword(requestDto);
+
+        if (member == null) {
+            throw new MemberNotFoundException();
+        } else {
+            return member;
+        }
     }
 
     private String getDigest(String id, String password) {
         String salt = memberMapper.getSaltById(id);
 
         if (salt == null) {
-            return null;
+            throw new MemberNotFoundException();
         }
         byte[] saltBytes = PasswordUtils.hexToBytes(salt);
         String digest = PasswordUtils.encode(password, saltBytes);
@@ -76,7 +98,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public int delete(String id, String password) {
         try {
-            Member member = getMemberById(id);
+            Member member = getMemberByIdAndPassword(new MemberLoginRequestDto(id, password));
             if (!getDigest(id, password).equals(member.getPassword())) {
                 return 0;
             }
@@ -90,22 +112,21 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public Member updateMember(String id, Map<String, String> map, HttpSession session) {
+    public Member updateMember(String id, MemberModifyRequestDto requestDto) {
         try {
-            Member member = getMemberById(id);
-            member.setName(map.get("name"));
-            member.setPhone(map.get("phone"));
-            member.setNickname(map.get("nickname"));
-            member.setMbti(map.get("mbti"));
-            member.setIntroduction(map.get("introduction"));
+            MemberDetailsDto member = getMemberById(id);
+            member.setName(requestDto.getName());
+            member.setPhone(requestDto.getPhone());
+            member.setNickname(requestDto.getNickname());
+            member.setMbti(requestDto.getMbti());
+            member.setIntroduction(requestDto.getIntroduction());
             memberMapper.updateMember(member);
-            updateSession(session, member);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
         MemberLoginRequestDto loginRequestDto = new MemberLoginRequestDto();
         loginRequestDto.setId(id);
-        loginRequestDto.setPassword(requestDto.getNewPassword());
+        loginRequestDto.setPassword(requestDto.getPassword());
         return getMemberByIdAndPassword(loginRequestDto);
     }
 
@@ -120,8 +141,11 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public Member updateMemberPasswordById(String id, MemberModifyPwRequestDto requestDto) {
         try {
-            String digest = getDigest(id, requestDto.getOldPassword());
-            if (!digest.equals(getMemberById(id).getPassword())) {
+
+            String oldPassword = requestDto.getOldPassword();
+            String digest = getDigest(id, oldPassword);
+            String actualPassword = getMemberByIdAndPassword(new MemberLoginRequestDto(id, oldPassword)).getPassword();
+            if (!digest.equals(actualPassword)) {
                 return null;
             }
 
@@ -146,8 +170,13 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Member getMemberById(String id) {
-        return memberMapper.getMemberById(id);
+    public MemberDetailsDto getMemberById(String id) {
+        MemberDetailsDto member = memberMapper.getMemberById(id);
+        if (member == null) {
+            throw new MemberNotFoundException();
+        } else {
+            return member;
+        }
     }
 
     @Override
@@ -158,6 +187,72 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public int getMemberCountById(String id) {
         return memberMapper.getMemberCountById(id);
+    }
+
+    @Override
+    public void saveRefreshToken(String id, String refreshToken) {
+        Map<String, String> map = new HashMap<>();
+        map.put("id", id);
+        map.put("token", refreshToken);
+        memberMapper.saveRefreshToken(map);
+    }
+
+    @Override
+    public void deleteRefreshToken(String id) {
+        Map<String, String> map = new HashMap<>();
+        map.put("id", id);
+        map.put("token", null);
+        memberMapper.deleteRefreshToken(map);
+    }
+
+    @Override
+    public MemberLoginResponseDto loginMember(MemberLoginRequestDto requestDto) {
+
+        MemberDetailsDto member = getMemberDetailsByIdAndPassword(requestDto);
+
+        MemberLoginResponseDto responseDto = null;
+
+        String accessToken = null;
+        String refreshToken = null;
+
+        if (member != null) {
+            accessToken = jwtUtil.createAccessToken(requestDto.getId());
+            refreshToken = jwtUtil.createRefreshToken(requestDto.getId());
+
+            saveRefreshToken(requestDto.getId(), refreshToken);
+
+            responseDto = new MemberLoginResponseDto(accessToken, refreshToken);
+        }
+        return responseDto;
+    }
+
+    @Override
+    public MemberDetailsDto getInfo(String id, String authorization) {
+        MemberDetailsDto member = null;
+
+        if (jwtUtil.isValidToken(authorization)) {
+            member = getMemberById(id);
+        }
+
+        return member;
+    }
+
+    @Override
+    public String refreshToken(String token, String id) throws Exception {
+        String accessToken = null;
+
+        if (jwtUtil.isValidToken(token)) {
+            if (token.equals(getRefreshToken(id))) {
+                accessToken = jwtUtil.createAccessToken(id);
+            }
+        }
+
+        return accessToken;
+    }
+
+    @Override
+    public Object getRefreshToken(String id) throws Exception {
+        return memberMapper.getRefreshToken(id);
     }
 
     @Override

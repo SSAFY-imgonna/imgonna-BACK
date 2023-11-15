@@ -1,6 +1,7 @@
 package com.ssafy.trip.enums.handlers;
 
 import com.ssafy.trip.member.model.dto.Member;
+import com.ssafy.trip.member.model.dto.MemberDetailsDto;
 import com.ssafy.trip.member.model.mapper.MemberMapper;
 import com.ssafy.trip.member.model.enums.MemberTypeEnum;
 import org.assertj.core.api.Assertions;
@@ -40,7 +41,7 @@ class MemberTypeEnumHandlerTest {
     @Transactional
     public void handlingEnumTest() {
         mapper.createMember(dummyMember);
-        Member actualMember = mapper.getMemberById("testuser");
+        MemberDetailsDto actualMember = mapper.getMemberById("testuser");
         Assertions.assertThatNoException();
         Assertions.assertThat(actualMember.getType()).isEqualTo(MemberTypeEnum.GENERAL);
     }

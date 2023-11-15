@@ -4,6 +4,14 @@ public class MemberLoginRequestDto {
     private String id;
     private String password;
 
+    public MemberLoginRequestDto() {
+    }
+
+    public MemberLoginRequestDto(String id, String password) {
+        this.id = id;
+        this.password = password;
+    }
+
     public String getId() {
         return id;
     }
