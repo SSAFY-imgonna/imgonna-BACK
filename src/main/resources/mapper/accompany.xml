@@ -41,6 +41,11 @@
 					ofType="com.ssafy.trip.file.model.dto.FileInfoDto" select="fileInfoList"/>
 	</resultMap>
 
+	<resultMap type="accompanyResponseDto" id="accompanyFileDto" extends="accompanyResponseDto">
+		<collection column="accompany_no" property="fileInfos" javaType="list"
+					ofType="com.ssafy.trip.file.model.dto.FileInfoDto" select="fileInfoList"/>
+	</resultMap>
+	
 	<resultMap type="com.ssafy.trip.file.model.dto.FileInfoDto" id="file">
 		<result column="save_folder" property="saveFolder"/>
 		<result column="original_file" property="originalFile"/>
@@ -64,7 +69,7 @@
 		</if>
 	</sql>
  -->
-	<select id="getAccompanyList" parameterType="map" resultMap="accompany">
+	<select id="getAccompanyList" parameterType="map" resultMap="accompanyFile">
 		select accompany_no, title, content, addr, join_time, current_num, limit_num,
 			hit, id, created_time, modified_time, status, theme_no
 		from accompany
@@ -81,7 +86,7 @@
 		</selectKey>
 	</insert>
 
-	<select id="getAccompanyByAccompanyNo" parameterType="int" resultMap="accompanyFile">
+	<select id="getAccompanyByAccompanyNo" parameterType="int" resultMap="accompanyFileDto">
 		select *
 		from accompany
 		where accompany_no = #{accompanyNo}

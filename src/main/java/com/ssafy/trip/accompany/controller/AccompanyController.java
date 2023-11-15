@@ -84,8 +84,8 @@ public class AccompanyController {
      * @throws Exception
      */
     @PostMapping
-    public ResponseEntity<?> createAccompany(@RequestPart AccompanyRequestDto accompanyRequestDto,
-    		@RequestParam MultipartFile[] upfile, HttpSession session) throws Exception {
+    public ResponseEntity<?> createAccompany(AccompanyRequestDto accompanyRequestDto,
+    		@RequestPart MultipartFile[] upfile, HttpSession session) throws Exception {
 //    	   나중에 로그인 완료되면 하드코딩된거 바꿔야!!
 //        Member member = (Member) session.getAttribute("memberDto");
 //        accompany.setId(member.getId());
@@ -153,7 +153,15 @@ public class AccompanyController {
     	accompanyService.updateHit(accompanyNo);
     	// 동행 글 상세
     	AccompanyResponseDto accompanyResponseDto = accompanyService.getAccompanyByAccompanyNo(accompanyNo);
-    	
+    	//
+    	String joinTime = accompanyResponseDto.getJoinTime();
+    	String date = joinTime.split(" ")[0];
+    	String time = joinTime.split(" ")[1].substring(0, 5);
+    	accompanyResponseDto.setDate(date);
+    	accompanyResponseDto.setTime(time);
+//    	String joinTime = date + " " + time + ":00"; // 초를 "00"으로 초기화(TIMESTAMP로 저장됨)   	
+//    	String date = accompanyRequestDto.getDate();
+//    	String time = accompanyRequestDto.getTime();
     	logger.debug("getAccompanyByAccompanNo accompanyDto : {}", accompanyResponseDto);
     	
     	// 세션에 설정된 아이디 정보 가져오기

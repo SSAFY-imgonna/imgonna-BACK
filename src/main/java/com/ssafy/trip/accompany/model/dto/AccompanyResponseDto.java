@@ -9,6 +9,8 @@ public class AccompanyResponseDto {
 	private String title;
 	private String content;
 	private String addr;
+	private String date;
+	private String time;
 	private String joinTime;
 	private int currentNum;
 	private int limitNum;
@@ -45,6 +47,21 @@ public class AccompanyResponseDto {
 	}
 	public void setAddr(String addr) {
 		this.addr = addr;
+	}
+	public String getDate() {
+		return date;
+	}
+	public void setDate(String date) {
+		this.date = date;
+	}
+	public String getTime() {
+		return time;
+	}
+	public void setTime(String time) {
+		this.time = time;
+	}
+	public void setJoin(boolean isJoin) {
+		this.isJoin = isJoin;
 	}
 	public String getJoinTime() {
 		return joinTime;
@@ -113,13 +130,14 @@ public class AccompanyResponseDto {
 		this.isJoin = isJoin;
 	}
 	
+	
 	@Override
 	public String toString() {
 		return "AccompanyResponseDto [accompanyNo=" + accompanyNo + ", title=" + title + ", content=" + content
-				+ ", addr=" + addr + ", joinTime=" + joinTime + ", currentNum=" + currentNum + ", limitNum=" + limitNum
-				+ ", hit=" + hit + ", id=" + id + ", createdTime=" + createdTime + ", modifiedTime=" + modifiedTime
-				+ ", status=" + status + ", themeNo=" + themeNo + ", fileInfos=" + fileInfos + ", isJoin=" + isJoin
-				+ "]";
+				+ ", addr=" + addr + ", date=" + date + ", time=" + time + ", joinTime=" + joinTime + ", currentNum="
+				+ currentNum + ", limitNum=" + limitNum + ", hit=" + hit + ", id=" + id + ", createdTime=" + createdTime
+				+ ", modifiedTime=" + modifiedTime + ", status=" + status + ", themeNo=" + themeNo + ", fileInfos="
+				+ fileInfos + ", isJoin=" + isJoin + "]";
 	}
 	
 }
