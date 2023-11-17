@@ -14,7 +14,6 @@ import org.springframework.web.servlet.resource.PathResourceResolver;
 
 @Configuration
 @EnableAspectJAutoProxy
-//@MapperScan(basePackages = { "com.ssafy.**.mapper" })
 public class WebMvcConfiguration implements WebMvcConfigurer {
 	
 	private final Logger logger = LoggerFactory.getLogger(WebMvcConfiguration.class);

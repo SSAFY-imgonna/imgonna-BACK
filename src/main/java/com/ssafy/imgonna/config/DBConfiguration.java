@@ -6,7 +6,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 @Configuration
 @EnableAspectJAutoProxy
-@MapperScan(basePackages = { "com.ssafy.trip.**.mapper" })
+@MapperScan(basePackages = { "com.ssafy.imgonna.**.mapper" })
 public class DBConfiguration {
 
 }
