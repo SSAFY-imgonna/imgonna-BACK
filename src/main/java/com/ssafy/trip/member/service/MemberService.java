@@ -19,11 +19,13 @@ public interface MemberService {
 
 	int delete(String id, String password);
 
-	Member updateMember(String id, MemberModifyRequestDto requestDto);
+	MemberDetailsDto updateMember(String id, MemberModifyRequestDto requestDto);
 
-	Member updateMemberPasswordById(String id, MemberModifyPwRequestDto requestDto);
+	void updateMemberPasswordById(String id, MemberModifyPwRequestDto requestDto);
 
-	MemberDetailsDto getMemberById(String id);
+	Member getMemberById(String id);
+
+	MemberDetailsDto getMemberDetailsById(String id);
 
 	List<Member> getMemberList(Map<String, Object> map);
 

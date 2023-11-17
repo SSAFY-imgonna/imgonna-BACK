@@ -4,6 +4,7 @@ package com.ssafy.trip.member.model.mapper;
 import com.ssafy.trip.member.model.dto.Member;
 import com.ssafy.trip.member.model.dto.MemberDetailsDto;
 import com.ssafy.trip.member.model.dto.MemberLoginRequestDto;
+import com.ssafy.trip.member.model.dto.MemberModifyRequestDto;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -19,10 +20,10 @@ public interface MemberMapper {
 	String getMemberPasswordByIdAndEmailAndPhone(Map<String, String> map);
 	void deleteMember(String id);
 
-	void updateMember(MemberDetailsDto member);
+	void updateMember(MemberModifyRequestDto member);
 	void updateMemberPasswordById(Map<String, String> map);
 
-	MemberDetailsDto getMemberById(String id);
+	Member getMemberById(String id);
 
 	List<Member> getMemberList(Map<String, Object> map);
 
@@ -33,4 +34,6 @@ public interface MemberMapper {
 	void deleteRefreshToken(Map<String, String> map);
 
 	Object getRefreshToken(String id);
+
+	MemberDetailsDto getMemberDetailsById(String id);
 }

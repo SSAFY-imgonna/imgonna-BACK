@@ -2,7 +2,6 @@ package com.ssafy.trip.member.controller;
 
 import com.ssafy.trip.member.model.dto.*;
 import com.ssafy.trip.member.service.MemberService;
-import com.ssafy.trip.util.JWTUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -53,10 +52,6 @@ public class MemberController {
 
         String id = memberService.getMemberIdByEmailAndName(member);
 
-        if (id == null) {
-            ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
-
         return ResponseEntity.status(HttpStatus.OK).body(id);
     }
 
@@ -76,19 +71,19 @@ public class MemberController {
 
 
     /**
-     * 회원의 비밀번호를 수정하는 메서드
+     * 회원의 비밀번호를 변경하는 메서드
      *
      * @param id         수정할 회원의 id
      * @param requestDto 수정할 정보
      * @return
      */
     @PutMapping("/{id}/pw")
-    private ResponseEntity<Member> modifyMemberPassword(@PathVariable String id,
+    private ResponseEntity<Void> modifyMemberPassword(@PathVariable String id,
                                                         @RequestBody MemberModifyPwRequestDto requestDto) {
 
-        Member member = memberService.updateMemberPasswordById(id, requestDto);
+        memberService.updateMemberPasswordById(id, requestDto);
 
-        return ResponseEntity.status(HttpStatus.OK).body(member);
+        return ResponseEntity.status(HttpStatus.OK).build();
 
     }
 
@@ -117,8 +112,8 @@ public class MemberController {
      * @return
      */
     @GetMapping("/{id}")
-    private ResponseEntity<MemberDetailsDto> getMemberById(@PathVariable String id) {
-        MemberDetailsDto member = memberService.getMemberById(id);
+    private ResponseEntity<Member> getMemberById(@PathVariable String id) {
+        Member member = memberService.getMemberById(id);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(member);
     }
@@ -132,9 +127,9 @@ public class MemberController {
      * @return
      */
     @PutMapping("/{id}")
-    private ResponseEntity<Member> modifyMember(@PathVariable String id, @RequestBody MemberModifyRequestDto requestDto) {
+    private ResponseEntity<MemberDetailsDto> modifyMember(@PathVariable String id, @RequestBody MemberModifyRequestDto requestDto) {
 
-        Member member = memberService.updateMember(id, requestDto);
+        MemberDetailsDto member = memberService.updateMember(id, requestDto);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

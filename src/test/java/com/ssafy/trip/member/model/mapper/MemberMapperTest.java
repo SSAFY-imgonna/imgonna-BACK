@@ -28,7 +28,7 @@ class MemberMapperTest {
     void createMember() {
         memberMapper.createMember(dummyMember);
 
-        MemberDetailsDto actualMember = memberMapper.getMemberById(dummyMember.getId());
+        Member actualMember = memberMapper.getMemberById(dummyMember.getId());
 
         Assertions.assertThat(actualMember.getType()).isEqualTo(dummyMember.getType());
         Assertions.assertThat(actualMember.getEmail()).isEqualTo(dummyMember.getEmail());
@@ -37,7 +37,7 @@ class MemberMapperTest {
     @Test
     void getMemberById() {
 
-        MemberDetailsDto actualMember = memberMapper.getMemberById(dummyMember.getId());
+        Member actualMember = memberMapper.getMemberById(dummyMember.getId());
 
         Assertions.assertThat(actualMember.getType()).isEqualTo(dummyMember.getType());
         Assertions.assertThat(actualMember.getEmail()).isEqualTo(dummyMember.getEmail());

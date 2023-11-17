@@ -15,6 +15,7 @@ public class Member {
 	private String mbti;
 	private MemberTypeEnum type;
 	private String photo;
+	private String token;
 
 	public String getId() {
 		return id;
@@ -96,6 +97,14 @@ public class Member {
 
 	public Member() {
 		super();
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
 	}
 
 	@Override

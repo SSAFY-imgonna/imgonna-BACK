@@ -54,7 +54,13 @@
 							 typeHandler=com.ssafy.trip.enums.handlers.MemberTypeEnumHandler}, #{salt})
     </insert>
 
-    <select id="getMemberById" parameterType="String" resultMap="memberDetails">
+    <select id="getMemberById" parameterType="String" resultMap="member">
+        select id, email, name, nickname, mbti, introduction, join_date, type_no, photo, phone, password, token
+        from members
+        where id = #{id}
+    </select>
+
+    <select id="getMemberDetailsById" parameterType="String" resultMap="memberDetails">
         select id, email, name, password, nickname, mbti, introduction, join_date, type_no, salt, photo, phone
         from members
         where id = #{id}
@@ -101,7 +107,7 @@
         where id = #{id}
     </delete>
 
-    <update id="updateMember" parameterType="memberDetailsDto">
+    <update id="updateMember" parameterType="memberModifyRequestDto">
         update members
         <trim prefix="set" suffixOverrides=",">
             <if test="name != null">name = #{name},</if>

@@ -1,15 +1,17 @@
 package com.ssafy.trip.member.model.dto;
 
-import com.ssafy.trip.member.model.enums.MemberTypeEnum;
 
 public class MemberModifyRequestDto {
+    private String id;
     private String name;
-    private String password;
     private String phone;
     private String nickname;
     private String introduction;
     private String mbti;
     private String photo;
+    private String joinDate;
+    private String token;
+    private String type;
 
     public String getName() {
         return name;
@@ -19,13 +21,6 @@ public class MemberModifyRequestDto {
         this.name = name;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     public String getPhone() {
         return phone;
@@ -65,5 +60,37 @@ public class MemberModifyRequestDto {
 
     public void setPhoto(String photo) {
         this.photo = photo;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getJoinDate() {
+        return joinDate;
+    }
+
+    public void setJoinDate(String joinDate) {
+        this.joinDate = joinDate;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

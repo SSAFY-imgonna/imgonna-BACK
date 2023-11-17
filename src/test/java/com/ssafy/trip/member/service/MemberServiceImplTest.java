@@ -33,12 +33,12 @@ class MemberServiceImplTest {
     MemberMapper memberMapper;
 
     MemberSignUpRequestDto dummyRequestDto;
-    MemberDetailsDto dummyMember;
+    Member dummyMember;
 
     @BeforeEach
     void setUp() {
         dummyRequestDto = MemberDummy.getRequestDto();
-        dummyMember = MemberDummy.getDummyMemberDetails();
+        dummyMember = MemberDummy.getDummyMember();
     }
 
     @Test
@@ -61,7 +61,7 @@ class MemberServiceImplTest {
         given(memberMapper.getMemberById(any(String.class)))
                 .willReturn(dummyMember);
 
-        MemberDetailsDto actualMember = memberService.getMemberById(dummyMember.getId());
+        Member actualMember = memberService.getMemberById(dummyMember.getId());
 
         Assertions.assertThat(actualMember).isNotNull();
         Assertions.assertThat(actualMember.getEmail()).isEqualTo(dummyMember.getEmail());

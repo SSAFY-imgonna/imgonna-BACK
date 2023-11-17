@@ -1,6 +1,7 @@
 package com.ssafy.trip.common.advisor;
 
 
+import com.ssafy.trip.exception.member.InvalidPasswordException;
 import com.ssafy.trip.exception.member.MemberNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class RestControllerAdvisor {
      * @return 에러 메세지를 response entity에 담아 전송
      */
     @ExceptionHandler(value = {
-            MemberNotFoundException.class
+            MemberNotFoundException.class, InvalidPasswordException.class
     })
     public ResponseEntity<String> badRequestException400(Exception e) {
 

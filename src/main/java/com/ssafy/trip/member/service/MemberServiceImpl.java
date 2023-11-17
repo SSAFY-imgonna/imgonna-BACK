@@ -1,15 +1,15 @@
 package com.ssafy.trip.member.service;
 
+import com.ssafy.trip.exception.member.InvalidPasswordException;
 import com.ssafy.trip.exception.member.MemberNotFoundException;
 import com.ssafy.trip.member.model.dto.*;
-import com.ssafy.trip.member.model.mapper.MemberMapper;
 import com.ssafy.trip.member.model.enums.MemberTypeEnum;
+import com.ssafy.trip.member.model.mapper.MemberMapper;
 import com.ssafy.trip.util.JWTUtil;
 import com.ssafy.trip.util.PasswordUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpSession;
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.List;
@@ -112,66 +112,55 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public Member updateMember(String id, MemberModifyRequestDto requestDto) {
+    public MemberDetailsDto updateMember(String id, MemberModifyRequestDto requestDto) {
         try {
-            MemberDetailsDto member = getMemberById(id);
-            member.setName(requestDto.getName());
-            member.setPhone(requestDto.getPhone());
-            member.setNickname(requestDto.getNickname());
-            member.setMbti(requestDto.getMbti());
-            member.setIntroduction(requestDto.getIntroduction());
-            memberMapper.updateMember(member);
+            memberMapper.updateMember(requestDto);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
-        MemberLoginRequestDto loginRequestDto = new MemberLoginRequestDto();
-        loginRequestDto.setId(id);
-        loginRequestDto.setPassword(requestDto.getPassword());
-        return getMemberByIdAndPassword(loginRequestDto);
-    }
-
-
-    private void updateSession(HttpSession session, Member member) {
-        Member memberDto = (Member) session.getAttribute("memberDto");
-        memberDto.setNickname(member.getNickname());
-        session.setAttribute("memberDto", memberDto);
+        return getMemberDetailsById(id);
     }
 
     @Override
     @Transactional
-    public Member updateMemberPasswordById(String id, MemberModifyPwRequestDto requestDto) {
-        try {
+    public void updateMemberPasswordById(String id, MemberModifyPwRequestDto requestDto) {
+        String oldPassword = requestDto.getOldPassword();
 
-            String oldPassword = requestDto.getOldPassword();
-            String digest = getDigest(id, oldPassword);
-            String actualPassword = getMemberByIdAndPassword(new MemberLoginRequestDto(id, oldPassword)).getPassword();
-            if (!digest.equals(actualPassword)) {
-                return null;
+        HashMap map = new HashMap<String, String>();
+
+        String actualPassword = getMemberById(id).getPassword();
+
+        if (!oldPassword.equals(actualPassword)) {
+            Member member = getMemberByIdAndPassword(new MemberLoginRequestDto(id, oldPassword));
+            if (member == null) {
+                throw new InvalidPasswordException();
             }
-
-            HashMap map = new HashMap<>();
-            map.put("id", id);
-            byte[] saltBytes = getSalt();
-            String password = PasswordUtils.encode(requestDto.getNewPassword(), saltBytes);
-            String salt = PasswordUtils.bytesToHex(saltBytes);
-            map.put("password", password);
-            map.put("salt", salt);
-
-            memberMapper.updateMemberPasswordById(map);
-
-        } catch (
-                Exception ex) {
-            System.out.println(ex.getMessage());
         }
-        MemberLoginRequestDto loginRequestDto = new MemberLoginRequestDto();
-        loginRequestDto.setId(id);
-        loginRequestDto.setPassword(requestDto.getNewPassword());
-        return getMemberByIdAndPassword(loginRequestDto);
+        byte[] saltBytes = getSalt();
+        String password = PasswordUtils.encode(requestDto.getNewPassword(), saltBytes);
+        String salt = PasswordUtils.bytesToHex(saltBytes);
+        map.put("salt", salt);
+
+        map.put("id", id);
+        map.put("password", password);
+
+        memberMapper.updateMemberPasswordById(map);
+
     }
 
     @Override
-    public MemberDetailsDto getMemberById(String id) {
-        MemberDetailsDto member = memberMapper.getMemberById(id);
+    public Member getMemberById(String id) {
+        Member member = memberMapper.getMemberById(id);
+        if (member == null) {
+            throw new MemberNotFoundException();
+        } else {
+            return member;
+        }
+    }
+
+    @Override
+    public MemberDetailsDto getMemberDetailsById(String id) {
+        MemberDetailsDto member = memberMapper.getMemberDetailsById(id);
         if (member == null) {
             throw new MemberNotFoundException();
         } else {
@@ -212,8 +201,8 @@ public class MemberServiceImpl implements MemberService {
 
         MemberLoginResponseDto responseDto = null;
 
-        String accessToken = null;
-        String refreshToken = null;
+        String accessToken;
+        String refreshToken;
 
         if (member != null) {
             accessToken = jwtUtil.createAccessToken(requestDto.getId());
@@ -231,14 +220,14 @@ public class MemberServiceImpl implements MemberService {
         MemberDetailsDto member = null;
 
         if (jwtUtil.isValidToken(authorization)) {
-            member = getMemberById(id);
+            member = getMemberDetailsById(id);
         }
 
         return member;
     }
 
     @Override
-    public String refreshToken(String token, String id) throws Exception {
+    public String refreshToken(String token, String id) {
         String accessToken = null;
 
         if (jwtUtil.isValidToken(token)) {
@@ -251,7 +240,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Object getRefreshToken(String id) throws Exception {
+    public Object getRefreshToken(String id) {
         return memberMapper.getRefreshToken(id);
     }
 
@@ -260,7 +249,11 @@ public class MemberServiceImpl implements MemberService {
         Map<String, String> map = new HashMap<>();
         map.put("email", member.getEmail());
         map.put("name", member.getName());
-        return memberMapper.getMemberIdByEmailAndName(map);
+        String id = memberMapper.getMemberIdByEmailAndName(map);
+        if (id == null) {
+            throw new MemberNotFoundException();
+        }
+        return id;
     }
 
     @Override
@@ -269,7 +262,11 @@ public class MemberServiceImpl implements MemberService {
         map.put("id", member.getId());
         map.put("email", member.getEmail());
         map.put("phone", member.getPhone());
-        return memberMapper.getMemberPasswordByIdAndEmailAndPhone(map);
+        String password = memberMapper.getMemberPasswordByIdAndEmailAndPhone(map);
+        if (password == null) {
+            throw new MemberNotFoundException();
+        }
+        return password;
     }
 
     private byte[] getSalt() {
