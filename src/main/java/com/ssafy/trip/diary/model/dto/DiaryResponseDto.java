@@ -1,5 +1,9 @@
 package com.ssafy.trip.diary.model.dto;
 
+import java.util.List;
+
+import com.ssafy.trip.file.model.dto.FileInfoDto;
+
 public class DiaryResponseDto {
 	private int diaryNo;
 	private String travelTime;
@@ -8,13 +12,14 @@ public class DiaryResponseDto {
 	private String title;
 	private String content;
 	private String createdTime;
-	private int weather;
-	private int emotion;
+	private String weather;
+	private String emotion;
 	private int isPublic;
 	private String latitude;
 	private String longitude;
 	private int contentTypeId;
-	
+	private String attraction;
+	private List<FileInfoDto> fileInfos;
 	
 	public int getDiaryNo() {
 		return diaryNo;
@@ -58,16 +63,16 @@ public class DiaryResponseDto {
 	public void setCreatedTime(String createdTime) {
 		this.createdTime = createdTime;
 	}
-	public int getWeather() {
+	public String getWeather() {
 		return weather;
 	}
-	public void setWeather(int weather) {
+	public void setWeather(String weather) {
 		this.weather = weather;
 	}
-	public int getEmotion() {
+	public String getEmotion() {
 		return emotion;
 	}
-	public void setEmotion(int emotion) {
+	public void setEmotion(String emotion) {
 		this.emotion = emotion;
 	}
 	public int getIsPublic() {
@@ -94,6 +99,18 @@ public class DiaryResponseDto {
 	public void setContentTypeId(int contentTypeId) {
 		this.contentTypeId = contentTypeId;
 	}
+	public String getAttraction() {
+		return attraction;
+	}
+	public void setAttraction(String attraction) {
+		this.attraction = attraction;
+	}
+	public List<FileInfoDto> getFileInfos() {
+		return fileInfos;
+	}
+	public void setFileInfos(List<FileInfoDto> fileInfos) {
+		this.fileInfos = fileInfos;
+	}
 	
 	
 	@Override
@@ -101,7 +118,8 @@ public class DiaryResponseDto {
 		return "DiaryResponseDto [diaryNo=" + diaryNo + ", travelTime=" + travelTime + ", id=" + id + ", contentId="
 				+ contentId + ", title=" + title + ", content=" + content + ", createdTime=" + createdTime
 				+ ", weather=" + weather + ", emotion=" + emotion + ", isPublic=" + isPublic + ", latitude=" + latitude
-				+ ", longitude=" + longitude + ", contentTypeId=" + contentTypeId + "]";
+				+ ", longitude=" + longitude + ", contentTypeId=" + contentTypeId + ", attraction=" + attraction
+				+ ", fileInfos=" + fileInfos + "]";
 	}
 	
 }

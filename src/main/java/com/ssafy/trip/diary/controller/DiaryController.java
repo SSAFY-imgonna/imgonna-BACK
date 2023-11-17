@@ -32,6 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.trip.accompany.model.dto.AccompanyRequestDto;
 import com.ssafy.trip.diary.model.dto.AttractionResponseDto;
+import com.ssafy.trip.diary.model.dto.DiaryListResponseDto;
 import com.ssafy.trip.diary.model.dto.DiaryRequestDto;
 import com.ssafy.trip.diary.service.DiaryService;
 import com.ssafy.trip.file.model.dto.FileInfoDto;
@@ -92,12 +93,23 @@ public class DiaryController {
         }
     }
     
-    /**
-     * 파일 업로드
-     * @param accompanyDto
-     * @param files
-     * @throws IOException
-     */
+    @GetMapping
+    public ResponseEntity<?> getDiaryList(@RequestParam Map<String, String> map) {
+        try {
+            DiaryListResponseDto diaryList = diaryService.getDiaryList(map);
+            
+            HttpHeaders header = new HttpHeaders();
+            header.setContentType(MediaType.APPLICATION_JSON);
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .headers(header)
+                    .body(diaryList);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
+    
     private void uploadFiles(DiaryRequestDto diaryRequestDto, MultipartFile[] files) throws IOException {
         // FileUpload 관련 설정
 //        logger.debug("uploadPath : {}, uploadImagePath : {}, uploadFilePath : {}", uploadPath, uploadImagePath, uploadFilePath);
