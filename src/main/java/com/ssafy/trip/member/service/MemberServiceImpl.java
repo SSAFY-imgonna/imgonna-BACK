@@ -1,6 +1,7 @@
 package com.ssafy.trip.member.service;
 
 import com.ssafy.trip.exception.member.InvalidPasswordException;
+import com.ssafy.trip.exception.member.MemberInfoDuplicateException;
 import com.ssafy.trip.exception.member.MemberNotFoundException;
 import com.ssafy.trip.member.model.dto.*;
 import com.ssafy.trip.member.model.enums.MemberTypeEnum;
@@ -96,18 +97,14 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public int delete(String id, String password) {
-        try {
-            Member member = getMemberByIdAndPassword(new MemberLoginRequestDto(id, password));
-            if (!getDigest(id, password).equals(member.getPassword())) {
-                return 0;
-            }
-            memberMapper.deleteMember(id);
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-            return 0;
+    public void delete(String id, MemberDeleteRequestDto requestDto) {
+        String password = requestDto.getPassword();
+        Member member = getMemberByIdAndPassword(new MemberLoginRequestDto(id, password));
+        if (!getDigest(id, password).equals(member.getPassword())) {
+            throw new MemberNotFoundException();
         }
-        return 1;
+        memberMapper.deleteMember(id);
+
     }
 
     @Override
@@ -174,8 +171,11 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public int getMemberCountById(String id) {
-        return memberMapper.getMemberCountById(id);
+    public void checkDuplicateId(String id) {
+        int cnt = memberMapper.getMemberCountById(id);
+        if(cnt!=0) {
+            throw new MemberInfoDuplicateException("아이디");
+        }
     }
 
     @Override

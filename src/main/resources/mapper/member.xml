@@ -45,6 +45,7 @@
         select id, email, name, password, nickname, mbti, introduction, join_date, type_no, salt,photo
         from members
         order by join_date
+
     </select>
 
     <insert id="createMember" parameterType="member">
@@ -58,24 +59,28 @@
         select id, email, name, nickname, mbti, introduction, join_date, type_no, photo, phone, password, token
         from members
         where id = #{id}
+        and not type_no=3
     </select>
 
     <select id="getMemberDetailsById" parameterType="String" resultMap="memberDetails">
         select id, email, name, password, nickname, mbti, introduction, join_date, type_no, salt, photo, phone
         from members
         where id = #{id}
+        and not type_no=3
     </select>
 
     <select id="getMemberByIdAndPassword" parameterType="memberLoginRequestDto" resultMap="member">
         select id, name, phone, password, nickname, introduction, join_date, email, mbti, type_no, photo, token, salt
         from members
         where id = #{id} and password = #{password}
+        and not type_no=3
     </select>
 
     <select id="getMemberDetailsByIdAndPassword" parameterType="memberLoginRequestDto" resultMap="memberDetails">
         select id, name, phone, nickname, introduction, join_date, email, mbti, type_no, photo, token
         from members
         where id = #{id} and password = #{password}
+        and not type_no=3
     </select>
 
     <select id="getMemberCountById" parameterType="String" resultType="int">
@@ -87,23 +92,24 @@
     <select id="getSaltById" parameterType="String" resultType="String">
         select salt
         from members
-        where id = #{id}
+        where id = #{id} and not type_no=3
     </select>
 
     <select id="getMemberIdByEmailAndName" parameterType="map" resultType="String">
         select id
         from members
-        where email = #{email} and name = #{name}
+        where email = #{email} and name = #{name} and not type_no=3
     </select>
 
     <select id="getMemberPasswordByIdAndEmailAndPhone" parameterType="map" resultType="String">
         select password
         from members
-        where id = #{id} and email = #{email} and phone = #{phone}
+        where id = #{id} and email = #{email} and phone = #{phone} and not type_no=3
     </select>
 
     <delete id="deleteMember" parameterType="String">
-        delete from members
+        update members
+        set type_no = 3
         where id = #{id}
     </delete>
 

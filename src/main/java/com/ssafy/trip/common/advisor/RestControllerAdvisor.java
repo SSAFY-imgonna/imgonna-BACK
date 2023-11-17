@@ -2,6 +2,7 @@ package com.ssafy.trip.common.advisor;
 
 
 import com.ssafy.trip.exception.member.InvalidPasswordException;
+import com.ssafy.trip.exception.member.MemberInfoDuplicateException;
 import com.ssafy.trip.exception.member.MemberNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -68,6 +69,24 @@ public class RestControllerAdvisor {
 //                .status(HttpStatus.FORBIDDEN)
 //                .body(errMsg);
 //    }
+
+    /**
+     * 409에 해당하는 예외들을 한번에 처리하는 메서드
+     *
+     * @param e 실제 발생한 예외객체
+     * @return 에러 메세지를 response entity에 담아 전송
+     */
+    @ExceptionHandler(value = {
+            MemberInfoDuplicateException.class
+    })
+    public ResponseEntity<String> conflictException409(Exception e) {
+
+        String errMsg = e.getMessage();
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(errMsg);
+    }
 
     /**
      * 500에 해당하는 예외들을 한번에 처리하는 메서드

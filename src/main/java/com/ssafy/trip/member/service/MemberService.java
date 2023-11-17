@@ -17,7 +17,7 @@ public interface MemberService {
 
 	MemberDetailsDto getMemberDetailsByIdAndPassword(MemberLoginRequestDto requestDto);
 
-	int delete(String id, String password);
+	void delete(String id, MemberDeleteRequestDto password);
 
 	MemberDetailsDto updateMember(String id, MemberModifyRequestDto requestDto);
 
@@ -29,7 +29,7 @@ public interface MemberService {
 
 	List<Member> getMemberList(Map<String, Object> map);
 
-    int getMemberCountById(String id);
+    void checkDuplicateId(String id);
 
 	void saveRefreshToken(String id, String refreshToken);
 

@@ -5,9 +5,6 @@ import com.ssafy.trip.member.service.MemberService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.http.HttpSession;
 
 /**
  * 회원 컨트롤러입니다.
@@ -32,13 +29,11 @@ public class MemberController {
     @GetMapping("/check/id")
     public ResponseEntity<String> checkDuplicateMemberId(@RequestParam String id) {
 
-        int cnt = memberService.getMemberCountById(id);
+        memberService.checkDuplicateId(id);
 
-        if (cnt != 0) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(id);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(id);
     }
 
     /**
@@ -52,7 +47,9 @@ public class MemberController {
 
         String id = memberService.getMemberIdByEmailAndName(member);
 
-        return ResponseEntity.status(HttpStatus.OK).body(id);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(id);
     }
 
     /**
@@ -66,7 +63,9 @@ public class MemberController {
 
         String password = memberService.getMemberPasswordByIdAndEmailAndPhone(member);
 
-        return ResponseEntity.status(HttpStatus.OK).body(password);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(password);
     }
 
 
@@ -79,11 +78,13 @@ public class MemberController {
      */
     @PutMapping("/{id}/pw")
     private ResponseEntity<Void> modifyMemberPassword(@PathVariable String id,
-                                                        @RequestBody MemberModifyPwRequestDto requestDto) {
+                                                      @RequestBody MemberModifyPwRequestDto requestDto) {
 
         memberService.updateMemberPasswordById(id, requestDto);
 
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .build();
 
     }
 
@@ -91,17 +92,18 @@ public class MemberController {
     /**
      * 회원 탈퇴 처리하는 메서드
      *
-     * @param id                 탈퇴 처리할 회원
-     * @param inputPwd           입력 받은 기존 비밀번호
-     * @param session
-     * @param redirectAttributes
+     * @param id       탈퇴 처리할 회원
+     * @param inputPwd 입력 받은 기존 비밀번호
      * @return
      */
-    @DeleteMapping("/{id}")
-    private ResponseEntity<String> deleteMember(@PathVariable String id, @RequestParam("leaveConfirmPwd") String inputPwd, HttpSession session, RedirectAttributes redirectAttributes) {
-        memberService.delete(id, inputPwd);
+    @PostMapping("/{id}")
+    private ResponseEntity<String> deleteMember(@PathVariable String id,
+                                                @RequestBody MemberDeleteRequestDto requestDto) {
+        memberService.delete(id, requestDto);
 
-        return ResponseEntity.status(HttpStatus.OK).body(id);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(id);
 
     }
 
@@ -114,7 +116,8 @@ public class MemberController {
     @GetMapping("/{id}")
     private ResponseEntity<Member> getMemberById(@PathVariable String id) {
         Member member = memberService.getMemberById(id);
-        return ResponseEntity.status(HttpStatus.OK)
+        return ResponseEntity
+                .status(HttpStatus.OK)
                 .body(member);
     }
 
@@ -147,7 +150,7 @@ public class MemberController {
     @PostMapping
     private ResponseEntity<MemberDetailsDto> registMember(@RequestBody MemberSignUpRequestDto requestDto) {
         MemberDetailsDto member = memberService.createMember(requestDto);
-        System.out.println(requestDto.toString());
+
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(member);
