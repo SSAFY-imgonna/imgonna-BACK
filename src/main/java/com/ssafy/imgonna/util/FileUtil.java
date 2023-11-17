@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -45,12 +44,9 @@ public class FileUtil {
 	}
 
 	// 파일 삭제
-	public void removeFile(HttpServletRequest request, String filename) {
+	public void removeFile(String filename) {
 		if (filename != null) {
-			// 업로드 절대 경로
-			String upload = request.getServletContext().getRealPath(UPLOAD_PATH);
-
-			File file = new File(upload + "/" + filename);
+			File file = new File(UPLOAD_PATH + File.separator + filename);
 			if (file.exists()) {
 				file.delete();
 			}

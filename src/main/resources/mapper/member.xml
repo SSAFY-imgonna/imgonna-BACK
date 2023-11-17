@@ -4,7 +4,7 @@
 
 <mapper namespace="com.ssafy.imgonna.member.model.mapper.MemberMapper">
 
-    <resultMap type="member" id="member" >
+    <resultMap type="member" id="member">
         <result column="id" property="id"></result>
         <result column="email" property="email"></result>
         <result column="name" property="name"></result>
@@ -14,13 +14,14 @@
         <result column="mbti" property="mbti"></result>
         <result column="introduction" property="introduction"></result>
         <result column="join_date" property="joinDate"></result>
-        <result column="type_no" property="type" typeHandler="com.ssafy.imgonna.enums.handlers.MemberTypeEnumHandler"></result>
+        <result column="type_no" property="type"
+                typeHandler="com.ssafy.imgonna.enums.handlers.MemberTypeEnumHandler"></result>
         <result column="salt" property="salt"></result>
         <result column="photo" property="photo"></result>
         <result column="token" property="token"></result>
     </resultMap>
 
-    <resultMap type="memberDetailsDto" id="memberDetails" >
+    <resultMap type="memberDetailsDto" id="memberDetails">
         <result column="id" property="id"></result>
         <result column="email" property="email"></result>
         <result column="name" property="name"></result>
@@ -29,7 +30,8 @@
         <result column="mbti" property="mbti"></result>
         <result column="introduction" property="introduction"></result>
         <result column="join_date" property="joinDate"></result>
-        <result column="type_no" property="type" typeHandler="com.ssafy.imgonna.enums.handlers.MemberTypeEnumHandler"></result>
+        <result column="type_no" property="type"
+                typeHandler="com.ssafy.imgonna.enums.handlers.MemberTypeEnumHandler"></result>
         <result column="photo" property="photo"></result>
         <result column="token" property="token"></result>
     </resultMap>
@@ -49,7 +51,8 @@
     </select>
 
     <insert id="createMember" parameterType="memberSignUpRequestDto">
-        insert into members (id, email, name, password, phone, nickname, mbti, introduction, join_date, type_no, salt, photo)
+        insert into members (id, email, name, password, phone, nickname, mbti, introduction, join_date, type_no, salt,
+        photo)
         values (#{id}, #{email}, #{name}, #{password}, #{phone}, #{nickname}, #{mbti}, #{introduction}, now(),
         #{type, javaType=com.ssafy.imgonna.member.model.enums.MemberTypeEnum,
 							 typeHandler=com.ssafy.imgonna.enums.handlers.MemberTypeEnumHandler}, #{salt}, #{photo})
@@ -121,12 +124,12 @@
             <if test="nickname != null">nickname = #{nickname},</if>
             <if test="mbti != null">mbti = #{mbti},</if>
             <if test="introduction != null">introduction = #{introduction},</if>
-            <if test="photo != null">photo = #{photo},</if>
+            photo = #{photo},
         </trim>
         where id = #{id}
     </update>
 
-    <update id="updateMemberPasswordById" parameterType="map" >
+    <update id="updateMemberPasswordById" parameterType="map">
         update members
         <trim prefix="set" suffixOverrides=",">
             <if test="password != null">password = #{password},</if>

@@ -39,8 +39,7 @@ public class MemberServiceImpl implements MemberService {
 
         requestDto.setType(MemberTypeEnum.GENERAL);
         byte[] salt = getSalt();
-        String rawPassword = requestDto.getPassword();
-        String digest = PasswordUtils.encode(rawPassword, salt);
+        String digest = PasswordUtils.encode(requestDto.getPassword(), salt);
         requestDto.setPassword(digest);
         requestDto.setSalt(PasswordUtils.bytesToHex(salt));
         //파일 업로드
@@ -49,15 +48,30 @@ public class MemberServiceImpl implements MemberService {
 
         int result = memberMapper.createMember(requestDto);
 
-        if(result==0) {
+        if (result == 0) {
             // TODO 회원가입 비정상 처리 예외 터뜨리기
         }
 
+        return getMemberDetailsById(requestDto.getId());
+    }
 
-        MemberLoginRequestDto loginRequestDto = new MemberLoginRequestDto();
-        loginRequestDto.setId(requestDto.getId());
-        loginRequestDto.setPassword(rawPassword);
-        return getMemberDetailsByIdAndPassword(loginRequestDto);
+    @Override
+    @Transactional
+    public MemberDetailsDto updateMember(String id, MemberModifyRequestDto requestDto, MultipartFile upfile) throws IOException {
+
+        String originPath = getMemberDetailsById(id).getPhoto();
+        if(originPath!=null) {
+            fileUtil.removeFile(originPath);
+        }
+        //파일 업로드
+        if (upfile != null) {
+            String photoPath = fileUtil.uploadFile(upfile);
+            requestDto.setPhoto(photoPath);
+        }
+
+        memberMapper.updateMember(requestDto);
+
+        return getMemberDetailsById(id);
     }
 
     @Override
@@ -112,16 +126,6 @@ public class MemberServiceImpl implements MemberService {
 
     }
 
-    @Override
-    @Transactional
-    public MemberDetailsDto updateMember(String id, MemberModifyRequestDto requestDto) {
-        try {
-            memberMapper.updateMember(requestDto);
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-        }
-        return getMemberDetailsById(id);
-    }
 
     @Override
     @Transactional

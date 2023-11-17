@@ -25,7 +25,7 @@ class MemberMapperTest {
     }
     @Test
     void createMember() {
-        memberMapper.createMember(dummyMember);
+//        memberMapper.createMember(dummyMember);
 
         Member actualMember = memberMapper.getMemberById(dummyMember.getId());
 

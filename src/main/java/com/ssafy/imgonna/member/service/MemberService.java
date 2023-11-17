@@ -21,7 +21,7 @@ public interface MemberService {
 
 	void delete(String id, MemberDeleteRequestDto password);
 
-	MemberDetailsDto updateMember(String id, MemberModifyRequestDto requestDto);
+	MemberDetailsDto updateMember(String id, MemberModifyRequestDto requestDto, MultipartFile upfile) throws IOException;
 
 	void updateMemberPasswordById(String id, MemberModifyPwRequestDto requestDto);
 
