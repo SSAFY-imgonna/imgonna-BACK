@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.ssafy.trip.attraction.model.mapper.AttractionMapper">
+<mapper namespace="com.ssafy.imgonna.attraction.model.mapper.AttractionMapper">
 
     <resultMap id="sido" type="sido">
         <result column="sido_code" property="sidoCode"/>

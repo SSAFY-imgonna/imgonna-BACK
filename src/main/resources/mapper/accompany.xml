@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.ssafy.trip.accompany.model.mapper.AccompanyMapper">
+<mapper namespace="com.ssafy.imgonna.accompany.model.mapper.AccompanyMapper">
 
 	<resultMap type="accompany" id="accompany">
 		<result column="accompany_no" property="accompanyNo"/>
@@ -38,15 +38,15 @@
 	
 	<resultMap type="accompanyResponseDto" id="accompanyFile" extends="accompanyResponseDto">
 		<collection column="accompany_no" property="fileInfos" javaType="list"
-					ofType="com.ssafy.trip.file.model.dto.FileInfoDto" select="fileInfoList"/>
+					ofType="com.ssafy.imgonna.file.model.dto.FileInfoDto" select="fileInfoList"/>
 	</resultMap>
 
 	<resultMap type="accompanyResponseDto" id="accompanyFileDto" extends="accompanyResponseDto">
 		<collection column="accompany_no" property="fileInfos" javaType="list"
-					ofType="com.ssafy.trip.file.model.dto.FileInfoDto" select="fileInfoList"/>
+					ofType="com.ssafy.imgonna.file.model.dto.FileInfoDto" select="fileInfoList"/>
 	</resultMap>
 	
-	<resultMap type="com.ssafy.trip.file.model.dto.FileInfoDto" id="file">
+	<resultMap type="com.ssafy.imgonna.file.model.dto.FileInfoDto" id="file">
 		<result column="save_folder" property="saveFolder"/>
 		<result column="original_file" property="originalFile"/>
 		<result column="save_file" property="saveFile"/>

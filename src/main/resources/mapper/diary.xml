@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.ssafy.trip.diary.model.mapper.DiaryMapper">
+<mapper namespace="com.ssafy.imgonna.diary.model.mapper.DiaryMapper">
     <resultMap type="attractionResponseDto" id="attractionResponseDto" >
         <result column="content_id" property="contentId"></result>
         <result column="content_type_id" property="contentTypeId"></result>
@@ -38,10 +38,10 @@
 		
 	<resultMap type="diaryResponseDto" id="diaryResponseFileDto" extends="diaryResponseDto">
 		<collection column="diary_no" property="fileInfos" javaType="list"
-					ofType="com.ssafy.trip.file.model.dto.FileInfoDto" select="fileInfoList"/>		
+					ofType="com.ssafy.imgonna.file.model.dto.FileInfoDto" select="fileInfoList"/>
 	</resultMap>
 	
-	<resultMap type="com.ssafy.trip.file.model.dto.FileInfoDto" id="file">
+	<resultMap type="com.ssafy.imgonna.file.model.dto.FileInfoDto" id="file">
 		<result column="save_folder" property="saveFolder"/>
 		<result column="original_file" property="originalFile"/>
 		<result column="save_file" property="saveFile"/>

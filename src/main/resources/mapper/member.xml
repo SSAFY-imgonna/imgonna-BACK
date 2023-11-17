@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.ssafy.trip.member.model.mapper.MemberMapper">
+<mapper namespace="com.ssafy.imgonna.member.model.mapper.MemberMapper">
 
     <resultMap type="member" id="member" >
         <result column="id" property="id"></result>
@@ -14,7 +14,7 @@
         <result column="mbti" property="mbti"></result>
         <result column="introduction" property="introduction"></result>
         <result column="join_date" property="joinDate"></result>
-        <result column="type_no" property="type" typeHandler="com.ssafy.trip.enums.handlers.MemberTypeEnumHandler"></result>
+        <result column="type_no" property="type" typeHandler="com.ssafy.imgonna.enums.handlers.MemberTypeEnumHandler"></result>
         <result column="salt" property="salt"></result>
         <result column="photo" property="photo"></result>
         <result column="token" property="token"></result>
@@ -29,17 +29,17 @@
         <result column="mbti" property="mbti"></result>
         <result column="introduction" property="introduction"></result>
         <result column="join_date" property="joinDate"></result>
-        <result column="type_no" property="type" typeHandler="com.ssafy.trip.enums.handlers.MemberTypeEnumHandler"></result>
+        <result column="type_no" property="type" typeHandler="com.ssafy.imgonna.enums.handlers.MemberTypeEnumHandler"></result>
         <result column="photo" property="photo"></result>
         <result column="token" property="token"></result>
     </resultMap>
 
 
-<!--    <select id="idCheck" parameterType="String" resultType="int">-->
-<!--        select count(user_id)-->
-<!--        from members-->
-<!--        where user_id = #{userid}-->
-<!--    </select>-->
+    <!--    <select id="idCheck" parameterType="String" resultType="int">-->
+    <!--        select count(user_id)-->
+    <!--        from members-->
+    <!--        where user_id = #{userid}-->
+    <!--    </select>-->
 
     <select id="getMemberList" resultMap="member">
         select id, email, name, password, nickname, mbti, introduction, join_date, type_no, salt,photo
@@ -48,11 +48,11 @@
 
     </select>
 
-    <insert id="createMember" parameterType="member">
-        insert into members (id, email, name, password, phone, nickname, mbti, introduction, join_date, type_no, salt)
+    <insert id="createMember" parameterType="memberSignUpRequestDto">
+        insert into members (id, email, name, password, phone, nickname, mbti, introduction, join_date, type_no, salt, photo)
         values (#{id}, #{email}, #{name}, #{password}, #{phone}, #{nickname}, #{mbti}, #{introduction}, now(),
-        #{type, javaType=com.ssafy.trip.member.model.enums.MemberTypeEnum,
-							 typeHandler=com.ssafy.trip.enums.handlers.MemberTypeEnumHandler}, #{salt})
+        #{type, javaType=com.ssafy.imgonna.member.model.enums.MemberTypeEnum,
+							 typeHandler=com.ssafy.imgonna.enums.handlers.MemberTypeEnumHandler}, #{salt}, #{photo})
     </insert>
 
     <select id="getMemberById" parameterType="String" resultMap="member">
@@ -163,26 +163,26 @@
     <!--    </update>-->
 
     <!--    &lt;!&ndash; ADMIN &ndash;&gt;-->
-<!--    <select id="listMember" resultMap="memberAll">-->
-<!--        select user_name, user_id, user_password, email_id, email_domain, join_date-->
-<!--        from members-->
-<!--        order by join_date-->
-<!--    </select>-->
+    <!--    <select id="listMember" resultMap="memberAll">-->
+    <!--        select user_name, user_id, user_password, email_id, email_domain, join_date-->
+    <!--        from members-->
+    <!--        order by join_date-->
+    <!--    </select>-->
 
-<!--    <select id="getMember" parameterType="string" resultMap="memberAll">-->
-<!--        select user_id, user_name, user_password, email_id, email_domain, join_date-->
-<!--        from members-->
-<!--        where user_id = #{userId}-->
-<!--    </select>-->
+    <!--    <select id="getMember" parameterType="string" resultMap="memberAll">-->
+    <!--        select user_id, user_name, user_password, email_id, email_domain, join_date-->
+    <!--        from members-->
+    <!--        where user_id = #{userId}-->
+    <!--    </select>-->
 
-<!--    <update id="updateMember" parameterType="memberDto">-->
-<!--        update members-->
-<!--        <trim prefix="set" suffixOverrides=",">-->
-<!--            <if test="userPwd != null">user_password = #{userPwd},</if>-->
-<!--            <if test="emailId != null">email_id = #{emailId},</if>-->
-<!--            <if test="emailDomain != null">email_domain = #{emailDomain},</if>-->
-<!--        </trim>-->
-<!--        where user_id = #{userId}-->
-<!--    </update>-->
+    <!--    <update id="updateMember" parameterType="memberDto">-->
+    <!--        update members-->
+    <!--        <trim prefix="set" suffixOverrides=",">-->
+    <!--            <if test="userPwd != null">user_password = #{userPwd},</if>-->
+    <!--            <if test="emailId != null">email_id = #{emailId},</if>-->
+    <!--            <if test="emailDomain != null">email_domain = #{emailDomain},</if>-->
+    <!--        </trim>-->
+    <!--        where user_id = #{userId}-->
+    <!--    </update>-->
 
 </mapper>

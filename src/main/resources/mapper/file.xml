@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.ssafy.trip.file.model.mapper.FileMapper">
+<mapper namespace="com.ssafy.imgonna.file.model.mapper.FileMapper">
 	
 	<resultMap type="FileInfoDto" id="file">
 		<result column="save_folder" property="saveFolder"/>
