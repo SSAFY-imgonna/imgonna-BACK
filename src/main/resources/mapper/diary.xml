@@ -18,7 +18,19 @@
         <result column="latitude" property="latitude"></result>
         <result column="longitude" property="longitude"></result>
     </resultMap>	
-
+	
+<!-- 	<resultMap type="diaryResponseDto" id="diaryResponseDto">
+		<result column="" property=""></result>
+		<result column="" property=""></result>
+		<result column="" property=""></result>
+		<result column="" property=""></result>
+		<result column="" property=""></result>
+		<result column="" property=""></result>
+		<result column="" property=""></result>
+		<result column="" property=""></result>
+		<result column="" property=""></result>
+		<result column="" property=""></result>
+	</resultMap> -->
     <select id="getAttractionListByTitle" parameterType="String" resultMap="attractionResponseDto">
         select content_id, content_type_id, title, addr1, addr2, zipcode, tel, 
         		first_image, first_image2, sido_code, gugun_code, latitude, longitude
@@ -26,5 +38,14 @@
 		where title like concat('%', #{title}, '%');
     </select>
     
+ 	<insert id="createDiary" parameterType="diaryRequestDto">
+		insert into travel_diary (travel_time, id, content_id, title, content, 
+			 weather, emotion, is_public)
+		values (#{travelTime}, #{id}, #{contentId}, #{title}, #{content},
+			#{weather}, #{emotion}, #{isPublic})
+		<selectKey resultType="int" keyProperty="diaryNo" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+	</insert>    
     
 </mapper>
