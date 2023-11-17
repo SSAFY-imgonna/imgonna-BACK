@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.trip.accompany.comment.model.mapper.AccompanyCommentMapper">
+
+	<resultMap type="accompanyComment" id="comment">
+		<result column="comment_no" property="commentNo"/>
+		<result column="accompany_no" property="accompanyNo"/>
+		<result column="content" property="content"/>
+		<result column="created_time" property="createdTime"/>
+		<result column="modified_time" property="modifiedTime"/>
+		<result column="id" property="id"/>
+	</resultMap>
+	
+	<insert id="createAccompanyComment" parameterType="accompanyComment">
+		insert into accompany_comment (accompany_no, content, id)
+		values (#{accompanyNo}, #{content}, #{id})
+	</insert>
+
+	<select id="getAccompanyCommentList" parameterType="map" resultMap="comment">
+		select comment_no, accompany_no, content, created_time, modified_time, id
+		from accompany_comment 
+		where accompany_no = #{accompanyNo}
+		order by comment_no desc
+		<!-- 	댓글 목록 관련 부분 주석 처리
+				order by comment_no desc
+				limit #{start}, #{listsize} 
+		-->
+	</select>
+	
+	<select id="getAccompanyComment" parameterType="int" resultMap="comment">
+		select comment_no, accompany_no, content, created_time, modified_time, id
+		from accompany_comment
+		where comment_no = #{commentNo}
+	</select>
+	
+	<update id="modifyAccompanyComment" parameterType="accompanyComment">
+		update accompany_comment
+		set content = #{content}, modified_time = now()
+		where comment_no = #{commentNo}
+	</update>
+	
+	<delete id="deleteAccompanyComment" parameterType="int">
+		delete from accompany_comment
+		where comment_no = #{commentNo}
+	</delete>
+
+</mapper>

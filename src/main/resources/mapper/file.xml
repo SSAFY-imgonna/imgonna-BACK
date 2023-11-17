@@ -14,10 +14,20 @@
 		insert into file_info (table_name, pk_no, save_folder, original_file, save_file)
 		values
 		<foreach collection="fileInfos" item="fileinfo" separator=" , ">
-			(1, #{accompanyNo}, #{fileinfo.saveFolder}, #{fileinfo.originalFile}, #{fileinfo.saveFile})
+	        <choose>
+	            <when test="accompanyNo != null">
+	                (1, #{accompanyNo}, #{fileinfo.saveFolder}, #{fileinfo.originalFile}, #{fileinfo.saveFile})
+	            </when>
+	            <when test="diaryNo != null">
+	                (2, #{diaryNo}, #{fileinfo.saveFolder}, #{fileinfo.originalFile}, #{fileinfo.saveFile})
+	            </when>
+				<!-- 	            
+				<otherwise>             
+	            </otherwise> 
+	            -->
+	        </choose>		
 		</foreach>
 	</insert>
-
 
 
 	<delete id="deleteFile" parameterType="int">
