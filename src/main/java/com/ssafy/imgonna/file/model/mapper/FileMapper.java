@@ -10,7 +10,7 @@ public interface FileMapper {
     /**
      * 파일 삭제
      */
-    void deleteFile(int accompanyNo);
+    void deleteFile(Map<String, Object> map);
 
     /**
      * 파일 등록
