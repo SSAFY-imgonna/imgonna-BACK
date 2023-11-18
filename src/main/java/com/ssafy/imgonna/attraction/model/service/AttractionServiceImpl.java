@@ -1,11 +1,13 @@
 package com.ssafy.imgonna.attraction.model.service;
 
 import com.ssafy.imgonna.attraction.model.dto.AttractionInfo;
+import com.ssafy.imgonna.attraction.model.dto.AttractionRequestDto;
 import com.ssafy.imgonna.attraction.model.dto.Gugun;
 import com.ssafy.imgonna.attraction.model.dto.Sido;
 import com.ssafy.imgonna.attraction.model.mapper.AttractionMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,7 +21,13 @@ public class AttractionServiceImpl implements AttractionService {
 	}
 
 	@Override
-	public List<AttractionInfo> getAttractionInfo(Map<String, Integer> map) {
+	public List<AttractionInfo> getAttractionInfo(AttractionRequestDto attractionRequestDto) {
+		Map<String, Integer> map = new HashMap<>();
+		map.put("sidoCode", attractionRequestDto.getSidoCode());
+		map.put("gugunCode", attractionRequestDto.getGugunCode());
+		if(attractionRequestDto.getContentTypeId()!=0) {
+			map.put("contentTypeId", attractionRequestDto.getContentTypeId());
+		}
 		return attractionMapper.getAttractionInfo(map);
 	}
 

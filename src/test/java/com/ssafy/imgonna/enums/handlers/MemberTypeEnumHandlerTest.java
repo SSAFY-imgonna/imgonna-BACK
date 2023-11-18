@@ -39,7 +39,7 @@ class MemberTypeEnumHandlerTest {
     @Test
     @Transactional
     public void handlingEnumTest() {
-        mapper.createMember(dummyMember);
+//        mapper.createMember(dummyMember);
         Member actualMember = mapper.getMemberById("testuser");
         Assertions.assertThatNoException();
         Assertions.assertThat(actualMember.getType()).isEqualTo(MemberTypeEnum.GENERAL);

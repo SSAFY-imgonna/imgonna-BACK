@@ -81,7 +81,7 @@ public class MemberController {
      */
     @PutMapping("/{id}/pw")
     public ResponseEntity<Void> modifyMemberPassword(@PathVariable String id,
-                                                      @RequestBody MemberModifyPwRequestDto requestDto) {
+                                                     @RequestBody MemberModifyPwRequestDto requestDto) {
 
         memberService.updateMemberPasswordById(id, requestDto);
 
@@ -95,13 +95,13 @@ public class MemberController {
     /**
      * 회원 탈퇴 처리하는 메서드
      *
-     * @param id       탈퇴 처리할 회원
-     * @param inputPwd 입력 받은 기존 비밀번호
+     * @param id         탈퇴 처리할 회원
+     * @param requestDto 입력 받은 기존 비밀번호
      * @return
      */
     @PostMapping("/{id}")
     public ResponseEntity<String> deleteMember(@PathVariable String id,
-                                                @RequestBody MemberDeleteRequestDto requestDto) {
+                                               @RequestBody MemberDeleteRequestDto requestDto) {
         memberService.delete(id, requestDto);
 
         return ResponseEntity
@@ -133,9 +133,10 @@ public class MemberController {
      * @return
      */
     @PutMapping("/{id}")
-    public ResponseEntity<MemberDetailsDto> modifyMember(@PathVariable String id, @RequestBody MemberModifyRequestDto requestDto) {
+    public ResponseEntity<MemberDetailsDto> modifyMember(@PathVariable String id, MemberModifyRequestDto requestDto,
+                                                         @RequestPart(required = false) MultipartFile upfile) throws IOException {
 
-        MemberDetailsDto member = memberService.updateMember(id, requestDto);
+        MemberDetailsDto member = memberService.updateMember(id, requestDto, upfile);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
