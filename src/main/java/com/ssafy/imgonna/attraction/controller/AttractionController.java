@@ -1,21 +1,14 @@
 package com.ssafy.imgonna.attraction.controller;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.ssafy.imgonna.attraction.model.dto.AttractionInfo;
 import com.ssafy.imgonna.attraction.model.dto.AttractionRequestDto;
 import com.ssafy.imgonna.attraction.model.dto.Sido;
 import com.ssafy.imgonna.attraction.model.service.AttractionService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author yihoney
@@ -33,14 +26,9 @@ public class AttractionController {
     
     @GetMapping
     private ResponseEntity<List<AttractionInfo>> getAttractionList(AttractionRequestDto attractionRequestDto) {
-        Map<String, Integer> map = new HashMap<>();
-        map.put("sidoCode", attractionRequestDto.getSidoCode());
-        map.put("gugunCode", attractionRequestDto.getGugunCode());
-        map.put("contentTypeId", attractionRequestDto.getContentTypeId());
-
         return ResponseEntity
         		.status(HttpStatus.OK)
-        		.body(attractionService.getAttractionInfo(map));
+        		.body(attractionService.getAttractionInfo(attractionRequestDto));
     }
     
     @GetMapping("/gugun")
