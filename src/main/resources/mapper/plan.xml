@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.imgonna.plan.model.mapper.PlanMapper">
+
+    <insert id="createPlan" parameterType="planRegistRequestDto">
+        insert into attraction_plan (id, name, start_time, departure_time, memo, theme_no)
+        values (#{id}, #{name}, #{startTime}, #{departureTime}, #{memo}, #{themeNo})
+        <selectKey resultType="int" keyProperty="planNo" order="AFTER">
+            select last_insert_id()
+        </selectKey>
+    </insert>
+
+    <insert id="createCourse" parameterType="courseRegistRequestDto">
+        insert into travel_course (plan_no, content_id, `order`, memo)
+        values (#{planNo}, #{contentId}, #{order}, #{memo})
+    </insert>
+
+
+</mapper>
