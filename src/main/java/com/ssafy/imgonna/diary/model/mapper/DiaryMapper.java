@@ -26,16 +26,13 @@ public interface DiaryMapper {
 	
 	// 업로드 파일 목록
 	List<FileInfoDto> fileInfoList(int diaryNo);
+
+	// 여행일기 상세
+	DiaryResponseDto getDiaryByDiaryNo(int diaryNo);
 	
-//	// 조회수 증가
-//	void updateHit(int diaryNo);	
-//
-//	// 여행일기 상세
-//	DiaryResponseDto getDiaryByDiaryNo(int diaryNo);
-//	
-//	// 여행일기 수정
-//	void modifyDiary(DiaryRequestDto diaryRequestDto);
-//
-//	// 여행일기 삭제
-//	void deleteDiary(int diaryNo);
+	// 여행일기 수정
+	void modifyDiary(DiaryRequestDto diaryRequestDto);
+
+	// 여행일기 삭제
+	void deleteDiary(int diaryNo);
 }

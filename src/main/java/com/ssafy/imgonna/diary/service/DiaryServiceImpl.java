@@ -1,5 +1,6 @@
 package com.ssafy.imgonna.diary.service;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,29 +77,58 @@ public class DiaryServiceImpl implements DiaryService {
     	}
 	}
 
+	// 여행일기 상세
+	@Override
+	public DiaryResponseDto getDiaryByDiaryNo(int diaryNo) {
+		return diaryMapper.getDiaryByDiaryNo(diaryNo);
+	}
 
-//	// 조회수 증가
-//	@Override
-//	public void updateHit(int diaryNo) {
-//
-//	}
-//
-//	// 여행일기 상세
-//	@Override
-//	public DiaryResponseDto getDiaryByDiaryNo(int diaryNo) {
-//
-//	}
-//
-//	// 여행일기 수정
-//	@Override
-//	public void modifyDiary(DiaryRequestDto diaryRequestDto) {
-//
-//	}
-//
-//	// 여행일기 삭제
-//	@Override
-//	public void deleteDiary(int diaryNo) {
-//
-//	}
+	// 여행일기 수정
+	@Override
+	@Transactional
+	public void modifyDiary(DiaryRequestDto diaryRequestDto, Map<String, String> map) {
+    	// 여행일기 글 수정
+        diaryMapper.modifyDiary(diaryRequestDto);
 
+        List<FileInfoDto> fileInfos = diaryRequestDto.getFileInfos();
+        // 기존 파일도 존재하지 않고, 수정하고자 하는 파일이 존재하지 않다면 파일 삭제
+	    if ((fileInfos == null || fileInfos.isEmpty()) && map.get("originFile").isEmpty()) {
+	    	// 로컬에 저장된 기존 파일 정보 삭제
+	    	
+	    	// 기존 파일 정보 삭제
+	    	fileService.deleteFile("travel_diary", diaryRequestDto.getDiaryNo());
+	    }
+
+        // 기존 파일 존재하고, 수정하고자 하는 파일이 존재한다면 => 기존 파일 삭제 후 수정 파일 등록
+        if (fileInfos != null && !fileInfos.isEmpty()) {
+        	// 로컬에 저장된 기존 파일 정보 삭제
+        	
+	    	// 기존 파일 정보 삭제
+            fileService.deleteFile("travel_diary", diaryRequestDto.getDiaryNo());
+            // 새 파일 등록
+            fileService.registerFile(diaryRequestDto);
+        }
+	}
+
+	// 여행일기 삭제
+	@Override
+	public void deleteDiary(int diaryNo, String uploadPath) {
+    	// 로컬에 저장된 파일 정보 삭제
+    	deleteFiles(diaryNo, uploadPath);
+    	// 파일 정보 삭제
+        fileService.deleteFile("travel_diary", diaryNo);
+
+        // 여행일기 글 정보 삭제
+        diaryMapper.deleteDiary(diaryNo);
+	}
+
+    // 파일들 로컬 컴퓨터에서 삭제
+    public void deleteFiles(int diaryNo, String uploadPath) {
+        List<FileInfoDto> fileList = diaryMapper.fileInfoList(diaryNo);
+        for (FileInfoDto fileInfoDto : fileList) {
+            File file = new File(uploadPath + File.separator + fileInfoDto.getSaveFolder() + File.separator + fileInfoDto.getSaveFile());
+            file.delete();
+        }
+    }
+    
 }

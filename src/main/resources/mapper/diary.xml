@@ -93,31 +93,24 @@
         </where> -->
     </select>
     
-    
-<!-- 
-    <select id="getDiaryByDiaryNo" parameterType="Integer" resultMap="diaryResponseDto">
-        select q.qna_no, q.title, q.content, q.created_time, q.modified_time, m.id, m.nickname
-        from qna q inner join members m on q.id = m.id
-        where qna_no = #{diaryNo}
+    <select id="getDiaryByDiaryNo" parameterType="Integer" resultMap="diaryResponseFileDto">
+		select t.*,  content_type_id, a.title attraction, latitude, longitude 
+		from travel_diary t join attraction_info a
+		on t.content_id = a.content_id
+		where diary_no = #{diaryNo}
     </select>
-
-
+    
     <update id="modifyDiary" parameterType="diaryRequestDto">
-        update qna
-        set title=#{title}, content=#{content}, modified_time = now()
-        where qna_no = #{diaryNo}
+        update travel_diary
+        set travel_time=#{travelTime}, content_id=#{contentId}, title=#{title}, content=#{content}, 
+        	weather=#{weather}, emotion=#{emotion}, is_public=#{isPublic}
+        where diary_no = #{diaryNo}
     </update>
 
     <delete id="deleteDiary" parameterType="int">
-        delete from qna
-        where qna_no = #{diaryNo}
+        delete from travel_diary
+        where diary_no = #{diaryNo}
     </delete>
-
- -->
-
-
-
-
 
     
 </mapper>

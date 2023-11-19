@@ -2,9 +2,11 @@ package com.ssafy.imgonna.diary.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -20,15 +22,22 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ssafy.imgonna.diary.model.dto.DiaryRequestDto;
+import com.ssafy.imgonna.diary.model.dto.DiaryResponseDto;
+import com.ssafy.imgonna.diary.model.dto.DiaryRequestDto;
+import com.ssafy.imgonna.diary.model.dto.DiaryResponseDto;
 import com.ssafy.imgonna.diary.model.dto.AttractionResponseDto;
 import com.ssafy.imgonna.diary.model.dto.DiaryListResponseDto;
 import com.ssafy.imgonna.diary.model.dto.DiaryRequestDto;
@@ -54,7 +63,7 @@ public class DiaryController {
 		this.diaryService = diaryService;
 	}
 	
-	@GetMapping("/{title}")
+	@GetMapping("/attraction/{title}")
 	public ResponseEntity<?> getAttractionListByTitle(@PathVariable("title") String title) {
 		logger.info("getAttractionListByTitle title : {}", title);
 		
@@ -72,9 +81,9 @@ public class DiaryController {
 	}	
 
     @PostMapping
-    public ResponseEntity<?> createAccompany(DiaryRequestDto diaryRequestDto,
+    public ResponseEntity<?> createDiary(DiaryRequestDto diaryRequestDto,
     		@RequestPart(required=false) MultipartFile[] upfile, HttpSession session) throws Exception {
-    	logger.debug("AccompanyRequestDto : {}", diaryRequestDto);
+    	logger.debug("DiaryRequestDto : {}", diaryRequestDto);
         
         try {
         	if(upfile != null) {
@@ -107,7 +116,51 @@ public class DiaryController {
         }
     }
 
-    
+    @GetMapping("/{diaryNo}")
+    public ResponseEntity<DiaryResponseDto> getDiaryByDiaryNo(@PathVariable int diaryNo) throws Exception {
+    	logger.debug("getDiaryByDiaryNo diaryNo : {}", diaryNo);
+    	DiaryResponseDto diaryResponseDto = diaryService.getDiaryByDiaryNo(diaryNo);
+    	logger.debug("getDiaryByDiaryNo diaryDto : {}", diaryResponseDto);
+    	
+    	return ResponseEntity
+    			.status(HttpStatus.OK)
+    			.body(diaryResponseDto);
+    }
+
+    @PutMapping("/{diaryNo}")
+    public ResponseEntity<String> modifyDiary(@PathVariable int diaryNo, DiaryRequestDto diaryRequestDto, 
+    		@RequestPart(required=false) MultipartFile[] upfile, @RequestPart(required=false) String originFile) throws Exception {
+    	logger.debug("modifyDiary DiaryRequestDto : {}", diaryRequestDto);
+    	diaryRequestDto.setDiaryNo(diaryNo);
+    	
+    	Map<String, String> map = new HashMap<String, String>();
+    	map.put("originFile", "");  
+    	// 기존 파일 존재한다면
+    	if(originFile != null) {
+    		map.put("originFile", originFile);        	
+    	}
+    	
+    	// 이미지 업로드
+    	if(upfile != null) {
+    		uploadFiles(diaryRequestDto, upfile);        	
+    	}
+    	// 여행일기 글 수정
+    	diaryService.modifyDiary(diaryRequestDto, map);
+    	return ResponseEntity
+    			.status(HttpStatus.OK)
+    			.build();  
+    }
+
+    @DeleteMapping("/{diaryNo}")
+    public ResponseEntity<String> deleteDiary(@PathVariable int diaryNo) throws Exception {
+    	logger.debug("deleteDiary diaryNo : {}", diaryNo);
+    	
+    	diaryService.deleteDiary(diaryNo, uploadPath);
+    	return ResponseEntity
+    			.status(HttpStatus.OK)
+    			.build();
+    }
+
     private void uploadFiles(DiaryRequestDto diaryRequestDto, MultipartFile[] files) throws IOException {
         // FileUpload 관련 설정
 //        logger.debug("uploadPath : {}, uploadImagePath : {}, uploadFilePath : {}", uploadPath, uploadImagePath, uploadFilePath);

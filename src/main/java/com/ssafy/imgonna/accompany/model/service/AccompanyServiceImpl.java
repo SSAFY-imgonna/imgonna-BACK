@@ -87,7 +87,7 @@ public class AccompanyServiceImpl implements AccompanyService {
 	    	// 로컬에 저장된 기존 파일 정보 삭제
 	    	
 	    	// 기존 파일 정보 삭제
-	    	fileService.deleteFile(accompanyRequestDto.getAccompanyNo());
+	    	fileService.deleteFile("accompany", accompanyRequestDto.getAccompanyNo());
 	    }
 
         // 기존 파일 존재하고, 수정하고자 하는 파일이 존재한다면 => 기존 파일 삭제 후 수정 파일 등록
@@ -95,7 +95,7 @@ public class AccompanyServiceImpl implements AccompanyService {
         	// 로컬에 저장된 기존 파일 정보 삭제
         	
 	    	// 기존 파일 정보 삭제
-            fileService.deleteFile(accompanyRequestDto.getAccompanyNo());
+            fileService.deleteFile("accompany", accompanyRequestDto.getAccompanyNo());
             // 새 파일 등록
             fileService.registerFile(accompanyRequestDto);
         }
@@ -108,7 +108,7 @@ public class AccompanyServiceImpl implements AccompanyService {
     	// 로컬에 저장된 파일 정보 삭제
     	deleteFiles(accompanyNo, uploadPath);
     	// 파일 정보 삭제
-        fileService.deleteFile(accompanyNo);
+        fileService.deleteFile("accompany", accompanyNo);
 
         // 동행 글 정보 삭제
         accompanyMapper.deleteAccompany(accompanyNo);

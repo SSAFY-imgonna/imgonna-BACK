@@ -7,6 +7,6 @@ public interface FileService {
     void registerFile(AccompanyRequestDto accompanyRequestDto);
     void registerFile(DiaryRequestDto diaryRequestDto);
 
-    void deleteFile(int accompanyNo);
+    void deleteFile(String tableName, int no);
 
 }

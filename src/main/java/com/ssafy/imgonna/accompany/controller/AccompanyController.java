@@ -75,12 +75,7 @@ public class AccompanyController {
      */
     @PostMapping
     public ResponseEntity<?> createAccompany(AccompanyRequestDto accompanyRequestDto,
-    		@RequestPart(required=false) MultipartFile[] upfile, HttpSession session) throws Exception {
-//    	   나중에 로그인 완료되면 하드코딩된거 바꿔야!!
-//        Member member = (Member) session.getAttribute("memberDto");
-//        accompany.setId(member.getId());
-    	accompanyRequestDto.setId("ssafy");
-    	
+    		@RequestPart(required=false) MultipartFile[] upfile, HttpSession session) throws Exception {  	
     	String date = accompanyRequestDto.getDate();
     	String time = accompanyRequestDto.getTime();
         String joinTime = date + " " + time + ":00"; // 초를 "00"으로 초기화(TIMESTAMP로 저장됨)

@@ -34,8 +34,11 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public void deleteFile(int accompanyNo) {
-        fileMapper.deleteFile(accompanyNo);
+    public void deleteFile(String tableName, int no) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("tableName", tableName);
+        map.put("no", no);
+        fileMapper.deleteFile(map);
     }
 
 
