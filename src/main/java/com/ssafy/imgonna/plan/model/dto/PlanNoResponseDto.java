@@ -1,9 +1,9 @@
 package com.ssafy.imgonna.plan.model.dto;
 
-public class PlanRegistResponseDto {
+public class PlanNoResponseDto {
     private int planNo;
 
-    public PlanRegistResponseDto(int planNo) {
+    public PlanNoResponseDto(int planNo) {
         this.planNo = planNo;
     }
 

@@ -1,9 +1,11 @@
 package com.ssafy.imgonna.plan.service;
 
 import com.ssafy.imgonna.attraction.model.dto.AttractionInfo;
+import com.ssafy.imgonna.exception.plan.PlanModifyException;
 import com.ssafy.imgonna.exception.plan.PlanRegistException;
-import com.ssafy.imgonna.plan.model.dto.CourseRegistRequestDto;
-import com.ssafy.imgonna.plan.model.dto.PlanRegistRequestDto;
+import com.ssafy.imgonna.plan.model.dto.CourseRequestDto;
+import com.ssafy.imgonna.plan.model.dto.PlanResponseDto;
+import com.ssafy.imgonna.plan.model.dto.PlanRequestDto;
 import com.ssafy.imgonna.plan.model.mapper.PlanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,33 +34,94 @@ public class PlanServiceImpl implements PlanService {
      */
     @Override
     @Transactional
-    public int createPlan(PlanRegistRequestDto planRequestDto) {
-        int planNo = 0;
+    public int createPlan(PlanRequestDto planRequestDto) {
         try {
-           planMapper.createPlan(planRequestDto);
+            planMapper.createPlan(planRequestDto);
             List<AttractionInfo> attractions = planRequestDto.getAttractions();
             List<String> detailMemoList = planRequestDto.getDetailMemoList();
-            CourseRegistRequestDto requestDto = new CourseRegistRequestDto();
-            requestDto.setPlanNo(planRequestDto.getPlanNo());
+
             for (int idx = 0; idx < attractions.size(); idx++) {
-                createCourse(requestDto, attractions, idx, detailMemoList);
+                CourseRequestDto requestDto = getCourseRequestDto(planRequestDto.getPlanNo(), attractions, idx, detailMemoList);
+                planMapper.createCourse(requestDto);
             }
         } catch (Exception e) {
             e.printStackTrace();
             throw new PlanRegistException();
         }
-        return planNo;
+        return planRequestDto.getPlanNo();
     }
 
+    @Override
     @Transactional
-    private void createCourse(CourseRegistRequestDto requestDto, List<AttractionInfo> attractions, int idx, List<String> detailMemoList) {
+    public int modifyPlan(PlanRequestDto planRequestDto) {
+        try {
+            planMapper.modifyPlan(planRequestDto);
+            List<AttractionInfo> attractions = planRequestDto.getAttractions();
+            List<String> detailMemoList = planRequestDto.getDetailMemoList();
+            int planNo = planRequestDto.getPlanNo();
+
+            // 기존 코스 삭제
+            planMapper.deleteCourseByPlanNo(planNo);
+
+            for (int idx = 0; idx < attractions.size(); idx++) {
+                CourseRequestDto requestDto = getCourseRequestDto(planNo, attractions, idx, detailMemoList);
+                planMapper.createCourse(requestDto);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new PlanModifyException();
+        }
+        return planRequestDto.getPlanNo();
+    }
+
+    @Override
+    public void deletePlan(int planNo) {
+        try {
+            planMapper.deleteCourseByPlanNo(planNo);
+            planMapper.deletePlanByPlanNo(planNo);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new PlanModifyException();
+        }
+    }
+
+    @Override
+    public PlanResponseDto getPlanByPlanNo(int planNo) {
+        PlanResponseDto plan = planMapper.getPlanByPlanNo(planNo);
+        plan.setCourses(planMapper.getCourseListByPlanNo(planNo));
+        return plan;
+    }
+
+    @Override
+    public List<PlanResponseDto> getPlanList() {
+        List<PlanResponseDto> planList = planMapper.getPlanList();
+        for (int i = 0; i < planList.size(); i++) {
+            PlanResponseDto planResponseDto = planList.get(i);
+            planResponseDto.setCourses(planMapper.getCourseListByPlanNo(planResponseDto.getPlanNo()));
+        }
+        return planList;
+    }
+
+    @Override
+    public List<PlanResponseDto> getPlanListById(String id) {
+        List<PlanResponseDto> planList = planMapper.getPlanListById(id);
+        for (int i = 0; i < planList.size(); i++) {
+            PlanResponseDto planResponseDto = planList.get(i);
+            planResponseDto.setCourses(planMapper.getCourseListByPlanNo(planResponseDto.getPlanNo()));
+        }
+        return planList;
+    }
+
+    private CourseRequestDto getCourseRequestDto(int planNo, List<AttractionInfo> attractions, int idx, List<String> detailMemoList) {
+        CourseRequestDto requestDto = new CourseRequestDto();
+        requestDto.setPlanNo(planNo);
         requestDto.setContentId(attractions.get(idx).getContentId());
         if (detailMemoList != null && detailMemoList.get(idx) != null) {
             requestDto.setMemo(detailMemoList.get(idx));
         }
         requestDto.setOrder(idx + 1);
         requestDto.setMemo(requestDto.getMemo());
-        planMapper.createCourse(requestDto);
+        return requestDto;
     }
 
 }

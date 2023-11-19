@@ -4,7 +4,38 @@
 
 <mapper namespace="com.ssafy.imgonna.plan.model.mapper.PlanMapper">
 
-    <insert id="createPlan" parameterType="planRegistRequestDto">
+    <resultMap type="planResponseDto" id="planResponseDto">
+        <result column="plan_no" property="planNo"></result>
+        <result column="name" property="name"></result>
+        <result column="start_time" property="startTime"></result>
+        <result column="departure_time" property="departureTime"></result>
+        <result column="id" property="id"></result>
+        <result column="theme_no" property="themeNo"></result>
+        <result column="memo" property="memo"></result>
+    </resultMap>
+
+    <resultMap type="courseResponseDto" id="courseResponseDto">
+        <result column="plan_no" property="planNo"></result>
+        <result column="content_id" property="contentId"></result>
+        <result column="order" property="order"></result>
+        <result column="memo" property="memo"></result>
+        <result column="content_type_id" property="contentTypeId"/>
+        <result column="title" property="title"/>
+        <result column="addr1" property="addr1"/>
+        <result column="addr2" property="addr2"/>
+        <result column="zipcode" property="zipcode"/>
+        <result column="tel" property="tel"/>
+        <result column="first_image" property="firstImage"/>
+        <result column="first_image2" property="firstImage2"/>
+        <result column="readcount" property="readcount"/>
+        <result column="sido_code" property="sidoCode"/>
+        <result column="gugun_code" property="gugunCode"/>
+        <result column="latitude" property="latitude"/>
+        <result column="longitude" property="longitude"/>
+    </resultMap>
+
+
+    <insert id="createPlan" parameterType="planRequestDto">
         insert into attraction_plan (id, name, start_time, departure_time, memo, theme_no)
         values (#{id}, #{name}, #{startTime}, #{departureTime}, #{memo}, #{themeNo})
         <selectKey resultType="int" keyProperty="planNo" order="AFTER">
@@ -12,10 +43,56 @@
         </selectKey>
     </insert>
 
-    <insert id="createCourse" parameterType="courseRegistRequestDto">
+    <insert id="createCourse" parameterType="courseRequestDto">
         insert into travel_course (plan_no, content_id, `order`, memo)
         values (#{planNo}, #{contentId}, #{order}, #{memo})
     </insert>
 
+    <update id="modifyPlan" parameterType="planRequestDto">
+        update attraction_plan
+        <trim prefix="set" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="departureTime != null">departure_time = #{departureTime},</if>
+            <if test="memo != null">memo = #{memo},</if>
+            <if test="themeNo != null">theme_no = #{themeNo},</if>
+        </trim>
+        where plan_no = #{planNo}
+    </update>
+
+    <delete id="deleteCourseByPlanNo" parameterType="int">
+        delete from travel_course
+        where plan_no = #{planNo}
+    </delete>
+
+    <delete id="deletePlanByPlanNo" parameterType="int">
+        delete from attraction_plan
+        where plan_no = #{planNo}
+    </delete>
+
+    <select id="getPlanByPlanNo" parameterType="int" resultMap="planResponseDto">
+        select plan_no, id, name, start_time, departure_time, memo, theme_no
+        from attraction_plan
+        where plan_no = #{planNo}
+    </select>
+
+    <select id="getPlanList" resultMap="planResponseDto">
+        select plan_no, id, name, start_time, departure_time, memo, theme_no
+        from attraction_plan
+    </select>
+
+    <select id="getPlanListById" parameterType="string" resultMap="planResponseDto">
+        select plan_no, id, name, start_time, departure_time, memo, theme_no
+        from attraction_plan
+        where id=#{id}
+    </select>
+
+    <select id="getCourseListByPlanNo" parameterType="int" resultMap="courseResponseDto">
+        select t.plan_no, t.content_id, t.`order`, t.memo, a.content_type_id, a.title,
+        a.addr1, a.addr2, a.zipcode, a.tel, a.first_image, a.first_image2, a.readcount,
+        a.sido_code, a.gugun_code, a.latitude, a.longitude
+        from travel_course t inner join attraction_info a on t.content_id = a.content_id
+        where plan_no = #{planNo}
+    </select>
 
 </mapper>

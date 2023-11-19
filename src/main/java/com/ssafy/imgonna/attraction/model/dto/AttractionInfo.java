@@ -134,14 +134,14 @@ public class AttractionInfo {
 		return mlevel;
 	}
 
-	public void setMlevel(String mlevel) {
-		this.mlevel = mlevel;
-	}
-
 	@Override
 	public String toString() {
 		return "AttractionInfoDto [contentId=" + contentId + ", contentTypeId=" + contentTypeId + ", title=" + title
-				+ ", addr1=" + addr1 + ", addr2=" + addr2 + ", zipcode=" + zipcode + ", firstImage=" + firstImage
+				+ ", addr1=" + addr1 + ", addr2=" + addr2 + ", zipcode=" + zipcode + ", firstImageel;\n" +
+				"\t}\n" +
+				"\n" +
+				"\tpublic void setMlevel(String mlevel) {\n" +
+				"\t\tthis.mlevel = mlev=" + firstImage
 				+ ", firstImage2=" + firstImage2 + ", readcount=" + readcount + ", sidoCode=" + sidoCode
 				+ ", gugunCode=" + gugunCode + ", latitude=" + latitude + ", longitude=" + longitude + ", mlevel="
 				+ mlevel + "]";

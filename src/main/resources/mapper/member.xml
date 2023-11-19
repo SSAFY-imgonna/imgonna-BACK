@@ -110,11 +110,11 @@
         where id = #{id} and email = #{email} and phone = #{phone} and not type_no=3
     </select>
 
-    <delete id="deleteMember" parameterType="String">
+    <update id="deleteMember" parameterType="String">
         update members
         set type_no = 3
         where id = #{id}
-    </delete>
+    </update>
 
     <update id="updateMember" parameterType="memberModifyRequestDto">
         update members
