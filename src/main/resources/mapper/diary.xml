@@ -133,7 +133,8 @@
 		select id
 		from travel_diary
 		group by id
-		order by count(content_id) desc;
+		order by count(content_id) desc
+		limit 5;
 	</select>
 
 	<select id="getAttractionListById" resultMap="attractionInfo" parameterType="string">

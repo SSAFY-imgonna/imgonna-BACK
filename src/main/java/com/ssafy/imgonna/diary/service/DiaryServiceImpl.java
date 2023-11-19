@@ -4,6 +4,7 @@ import com.ssafy.imgonna.diary.model.dto.*;
 import com.ssafy.imgonna.diary.model.mapper.DiaryMapper;
 import com.ssafy.imgonna.file.model.dto.FileInfoDto;
 import com.ssafy.imgonna.file.model.service.FileService;
+import com.ssafy.imgonna.member.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,12 +19,14 @@ import java.util.Map;
 public class DiaryServiceImpl implements DiaryService {
     private DiaryMapper diaryMapper;
     private FileService fileService;
+    private final MemberService memberService;
 
     @Autowired
-    public DiaryServiceImpl(DiaryMapper diaryMapper, FileService fileService) {
+    public DiaryServiceImpl(DiaryMapper diaryMapper, FileService fileService, MemberService memberService) {
         super();
         this.diaryMapper = diaryMapper;
         this.fileService = fileService;
+        this.memberService = memberService;
     }
 
     // 관광지명에 따른 관광지 목록
@@ -125,7 +128,7 @@ public class DiaryServiceImpl implements DiaryService {
         List<String> rankIdList = diaryMapper.getRankList();
         for (String id : rankIdList) {
             RankResponseDto responseDto = new RankResponseDto();
-            responseDto.setId(id);
+            responseDto.setMember(memberService.getMemberDetailsById(id));
             responseDto.setAttractions(diaryMapper.getAttractionListById(id));
             rankList.add(responseDto);
         }

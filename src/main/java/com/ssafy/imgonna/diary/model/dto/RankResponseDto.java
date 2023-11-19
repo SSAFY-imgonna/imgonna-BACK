@@ -1,20 +1,21 @@
 package com.ssafy.imgonna.diary.model.dto;
 
 import com.ssafy.imgonna.attraction.model.dto.AttractionInfo;
+import com.ssafy.imgonna.member.model.dto.MemberDetailsDto;
 
 import java.util.List;
 
 public class RankResponseDto {
-    private String id;
+    private MemberDetailsDto member;
     private List<AttractionInfo> attractions;
 
 
-    public String getId() {
-        return id;
+    public MemberDetailsDto getMember() {
+        return member;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setMember(MemberDetailsDto member) {
+        this.member = member;
     }
 
     public List<AttractionInfo> getAttractions() {
