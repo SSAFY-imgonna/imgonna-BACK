@@ -60,9 +60,6 @@ public class AccompanyResponseDto {
 	public void setTime(String time) {
 		this.time = time;
 	}
-	public void setJoin(boolean isJoin) {
-		this.isJoin = isJoin;
-	}
 	public String getJoinTime() {
 		return joinTime;
 	}
@@ -123,7 +120,7 @@ public class AccompanyResponseDto {
 	public void setFileInfos(List<FileInfoDto> fileInfos) {
 		this.fileInfos = fileInfos;
 	}
-	public boolean isJoin() {
+	public boolean getIsJoin() {
 		return isJoin;
 	}
 	public void setIsJoin(boolean isJoin) {
