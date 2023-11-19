@@ -1,14 +1,14 @@
 package com.ssafy.imgonna.diary.model.mapper;
 
-import java.util.List;
-import java.util.Map;
-
-import org.apache.ibatis.annotations.Mapper;
-
+import com.ssafy.imgonna.attraction.model.dto.AttractionInfo;
+import com.ssafy.imgonna.diary.model.dto.AttractionResponseDto;
 import com.ssafy.imgonna.diary.model.dto.DiaryRequestDto;
 import com.ssafy.imgonna.diary.model.dto.DiaryResponseDto;
-import com.ssafy.imgonna.diary.model.dto.AttractionResponseDto;
 import com.ssafy.imgonna.file.model.dto.FileInfoDto;
+import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface DiaryMapper {
@@ -35,4 +35,8 @@ public interface DiaryMapper {
 
 	// 여행일기 삭제
 	void deleteDiary(int diaryNo);
+
+	List<String> getRankList();
+
+	List<AttractionInfo> getAttractionListById(String id);
 }
