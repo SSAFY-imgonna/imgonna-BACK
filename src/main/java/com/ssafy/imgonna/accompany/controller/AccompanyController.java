@@ -229,6 +229,35 @@ public class AccompanyController {
         		.build();
     }
 
+
+//    @PostMapping("/{accompanyNo}")
+//    public ResponseEntity<?> createAccompanyJoin(@PathVariable int accompanyNo, @RequestParam Map<String, String> map) throws Exception {
+//    	// 로그인한 사용자 정보 가져오기
+//    	String id = map.get("id");
+//    	
+//    	Map<String, String> joinInfo = new HashMap<>();
+//    	joinInfo.put("accompanyNo", String.valueOf(accompanyNo));
+//    	joinInfo.put("id", id);
+//    	
+//    	if(id != null) {
+//    		// 이미 신청되었는지 여부
+//    		int cnt = accompanyService.isJoin(joinInfo);
+//    		
+//    		// 아직 신청되어 있지 않다면
+//    		if(cnt <= 0) {
+//    			// 신청
+//    			accompanyService.join(joinInfo);	
+//    		}
+//    		
+//    		HttpHeaders header = new HttpHeaders();
+//    		header.setContentType(MediaType.APPLICATION_JSON);
+//    		return ResponseEntity
+//    				.status(HttpStatus.OK)
+//    				.headers(header)
+//    				.body("{\"isJoin\" : true}");    
+//    	}
+//    }
+    
     /**
      * 파일 업로드
      * @param accompanyDto
@@ -267,6 +296,7 @@ public class AccompanyController {
         }
     }
 
+    
 //    /**
 //     * 동행 신청
 //     */
