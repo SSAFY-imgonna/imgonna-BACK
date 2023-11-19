@@ -1,5 +1,6 @@
 package com.ssafy.imgonna.plan.controller;
 
+import com.ssafy.imgonna.plan.model.dto.PlanListResponseDto;
 import com.ssafy.imgonna.plan.model.dto.PlanNoResponseDto;
 import com.ssafy.imgonna.plan.model.dto.PlanRequestDto;
 import com.ssafy.imgonna.plan.model.dto.PlanResponseDto;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RequestMapping("/plans")
 @RestController
@@ -42,8 +44,8 @@ public class PlanController {
      * @return 모든 여행 계획들
      */
     @GetMapping
-    public ResponseEntity<List<PlanResponseDto>> getPlanList() {
-        List<PlanResponseDto> planList = planService.getPlanList();
+    public ResponseEntity<PlanListResponseDto> getPlanList(@RequestParam Map<String, String> map) {
+        PlanListResponseDto planList = planService.getPlanList(map);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(planList);

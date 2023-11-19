@@ -7,6 +7,7 @@ import com.ssafy.imgonna.plan.model.dto.PlanRequestDto;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface PlanMapper {
@@ -29,4 +30,6 @@ public interface PlanMapper {
 	List<PlanResponseDto> getPlanList();
 
 	List<PlanResponseDto> getPlanListById(String id);
+
+	int getTotalPlanCount(Map<String, Object> param);
 }

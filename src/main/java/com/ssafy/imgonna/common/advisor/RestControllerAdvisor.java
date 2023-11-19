@@ -98,7 +98,6 @@ public class RestControllerAdvisor {
     public ResponseEntity<String> internalErrorException500(Exception e) {
 
         String errMsg = e.getMessage();
-
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(errMsg);

@@ -4,6 +4,7 @@ import com.ssafy.imgonna.attraction.model.dto.AttractionInfo;
 import com.ssafy.imgonna.exception.plan.PlanModifyException;
 import com.ssafy.imgonna.exception.plan.PlanRegistException;
 import com.ssafy.imgonna.plan.model.dto.CourseRequestDto;
+import com.ssafy.imgonna.plan.model.dto.PlanListResponseDto;
 import com.ssafy.imgonna.plan.model.dto.PlanResponseDto;
 import com.ssafy.imgonna.plan.model.dto.PlanRequestDto;
 import com.ssafy.imgonna.plan.model.mapper.PlanMapper;
@@ -11,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class PlanServiceImpl implements PlanService {
@@ -93,13 +96,33 @@ public class PlanServiceImpl implements PlanService {
     }
 
     @Override
-    public List<PlanResponseDto> getPlanList() {
+    public PlanListResponseDto getPlanList(Map<String, String> map) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("word", map.get("word") == null ? "" : map.get("word"));
+        int currentPage = Integer.parseInt(map.get("pgno") == null ? "1" : map.get("pgno"));
+        int sizePerPage = Integer.parseInt(map.get("spp") == null ? "9" : map.get("spp"));
+
+        int start = currentPage * sizePerPage - sizePerPage;
+        param.put("start", start);
+        param.put("listsize", sizePerPage);
+
+        String key = map.get("key");
+        param.put("key", key == null ? "" : key);
+
         List<PlanResponseDto> planList = planMapper.getPlanList();
+        int totalPlanCount = planMapper.getTotalPlanCount(param);
+        int totalPageCount = (totalPlanCount - 1) / sizePerPage + 1;
+
+        PlanListResponseDto planListResponseDto = new PlanListResponseDto();
         for (int i = 0; i < planList.size(); i++) {
             PlanResponseDto planResponseDto = planList.get(i);
             planResponseDto.setCourses(planMapper.getCourseListByPlanNo(planResponseDto.getPlanNo()));
         }
-        return planList;
+        planListResponseDto.setPlanList(planList);
+        planListResponseDto.setCurrentPage(currentPage);
+        planListResponseDto.setTotalPageCount(totalPageCount);
+
+        return planListResponseDto;
     }
 
     @Override

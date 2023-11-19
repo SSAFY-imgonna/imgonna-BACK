@@ -76,9 +76,18 @@
         where plan_no = #{planNo}
     </select>
 
-    <select id="getPlanList" resultMap="planResponseDto">
+    <sql id="search">
+        <if test="word != null and word != ''">
+            and ${key} like concat ('%', #{word}, '%')
+        </if>
+    </sql>
+
+    <select id="getPlanList" parameterType="map" resultMap="planResponseDto">
         select plan_no, id, name, start_time, departure_time, memo, theme_no
         from attraction_plan
+        <include refid="search"></include>
+        limit #{start}, #{listsize}
+
     </select>
 
     <select id="getPlanListById" parameterType="string" resultMap="planResponseDto">
@@ -93,6 +102,14 @@
         a.sido_code, a.gugun_code, a.latitude, a.longitude
         from travel_course t inner join attraction_info a on t.content_id = a.content_id
         where plan_no = #{planNo}
+    </select>
+
+    <select id="getTotalPlanCount" parameterType="map" resultType="int">
+        select count(plan_no)
+        from attraction_plan
+        <!--         <where>
+                    <include refid="search"></include>
+                </where> -->
     </select>
 
 </mapper>
