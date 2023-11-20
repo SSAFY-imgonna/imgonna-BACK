@@ -45,8 +45,6 @@ public class AccompanyCommentController {
 		logger.info("writeComment accompanyComment - {}", accompanyComment);
 		
 		try {
-			// AccompanyComment 객체에 id 등록해줘야!!!
-			
 			// AccompanyComment 객체에 현재 accompany 글번호 등록해줘야!!!
 			accompanyComment.setAccompanyNo(accompanyNo);
 			accompanyCommentService.createAccompanyComment(accompanyComment);
