@@ -107,7 +107,7 @@ public class AccompanyController {
      */
     @GetMapping
     private ResponseEntity<?> getAccompanyList(@RequestParam Map<String, String> map) throws Exception {
-        logger.debug("getAccompanyList parameter pgno : {}", map.get("pgno"));
+        logger.debug("getAccompanyList parameter cat : {}", map.get("cat"));
          
         try {
         	List<Accompany> AccompanyList = accompanyService.getAccompanyList(map);
