@@ -44,5 +44,11 @@ public interface AccompanyMapper {
 	
 	// 동행 신청 취소
 	int joinCancel(Map<String, String> map);
+	
+	// 현재 신청자수와 모집정원 같은지 확인
+	int isLimit(Map<String, String> map);
+	
+	// 상태변경 (모집신청/모집마감)
+	void updateStatus(Map<String, String> map);
 
 }
