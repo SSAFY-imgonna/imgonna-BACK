@@ -101,7 +101,7 @@
 	<update id="modifyAccompany" parameterType="accompanyRequestDto">
 		update accompany
 		set title = #{title}, content = #{content}, addr = #{addr}, 
-			join_time = #{joinTime}, limit_num = #{limitNum} 
+			join_time = #{joinTime}, limit_num = #{limitNum}, status = #{status}, theme_no=#{themeNo} 
 		where accompany_no = #{accompanyNo}
 	</update>
 	
