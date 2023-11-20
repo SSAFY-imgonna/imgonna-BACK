@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -127,12 +128,11 @@ public class AccompanyController {
      * 동행 글 상세
      * @param accompanyNo 동행 글 번호
      * @param map(pgno, key, word)
-     * @param session
      * @return
      * @throws Exception
      */
     @GetMapping("/{accompanyNo}")
-    public ResponseEntity<AccompanyResponseDto> getAccompanyByAccompanNo(@PathVariable int accompanyNo, HttpSession session) throws Exception {
+    public ResponseEntity<AccompanyResponseDto> getAccompanyByAccompanNo(@PathVariable int accompanyNo, @RequestParam Map<String, String> map) throws Exception {
         logger.debug("getAccompanyByAccompanNo accompanyNo : {}", accompanyNo);
         
     	// 조회수 증가
@@ -146,32 +146,23 @@ public class AccompanyController {
     	accompanyResponseDto.setTime(time);
 
     	logger.debug("getAccompanyByAccompanNo accompanyDto : {}", accompanyResponseDto);
-    	
-    	// 세션에 설정된 아이디 정보 가져오기
-// 	   나중에 로그인 완료되면 하드코딩된거 바꿔야!!
-//        Member memberDto = (Member) session.getAttribute("memberDto");
-//        String userId = memberDto.getId();	
-    	String userId = "ssafy";
-    	
+
     	Map<String, String> joinInfo = new HashMap<>();
     	joinInfo.put("accompanyNo", String.valueOf(accompanyNo));
-    	joinInfo.put("userId", userId);
+    	joinInfo.put("id", map.get("id"));
+    	logger.debug("getAccompanyByAccompanNo joinInfo : {}", joinInfo);
     	
-//        	// 로그인 되어 있다면
-//        	if(userId != null) {
-//        		// 이미 신청됐는지 여부
-//        		int cnt = accompanyService.isJoin(joinInfo);
-//        		boolean isJoin = false;
-//        		// 이미 신청되어있다면
-//        		if(cnt == 1) {
-//        			isJoin = true;
-//        		}
-//        		// 아직 신청되어있지 않다면
-//        		else {
-//        			isJoin = false;
-//        		}
-//        		accompanyResponseDto.setIsJoin(isJoin);
-//        	}
+    	// 로그인 되어 있다면
+    	if(joinInfo.get("id") != null) {
+    		// 이미 신청됐는지 여부
+    		int cnt = accompanyService.isJoin(joinInfo);
+    		logger.debug("getAccompanyByAccompanNo cnt : {}", cnt);
+    		// 신청되어있다면 true, 신청되어있지 않다면 false
+    		boolean isJoin = cnt == 1 ? true : false;
+    		logger.debug("getAccompanyByAccompanNo isJoin : {}", isJoin);
+
+    		accompanyResponseDto.setIsJoin(isJoin);
+    	}
     	return ResponseEntity
     			.status(HttpStatus.OK)
     			.body(accompanyResponseDto);
@@ -229,34 +220,47 @@ public class AccompanyController {
         		.build();
     }
 
-
-//    @PostMapping("/{accompanyNo}")
-//    public ResponseEntity<?> createAccompanyJoin(@PathVariable int accompanyNo, @RequestParam Map<String, String> map) throws Exception {
-//    	// 로그인한 사용자 정보 가져오기
-//    	String id = map.get("id");
-//    	
-//    	Map<String, String> joinInfo = new HashMap<>();
-//    	joinInfo.put("accompanyNo", String.valueOf(accompanyNo));
-//    	joinInfo.put("id", id);
-//    	
-//    	if(id != null) {
-//    		// 이미 신청되었는지 여부
-//    		int cnt = accompanyService.isJoin(joinInfo);
-//    		
-//    		// 아직 신청되어 있지 않다면
-//    		if(cnt <= 0) {
-//    			// 신청
-//    			accompanyService.join(joinInfo);	
-//    		}
-//    		
-//    		HttpHeaders header = new HttpHeaders();
-//    		header.setContentType(MediaType.APPLICATION_JSON);
-//    		return ResponseEntity
-//    				.status(HttpStatus.OK)
-//    				.headers(header)
-//    				.body("{\"isJoin\" : true}");    
-//    	}
-//    }
+    /**
+     * 동행 신청
+     * @param accompanyNo 동행 글 번호
+     * @param map(id)
+     * @return
+     * @throws Exception
+     */
+    @PostMapping("/{accompanyNo}")
+    public ResponseEntity<?> createAccompanyJoin(@PathVariable int accompanyNo, @RequestBody Map<String, String> map) throws Exception {    	    	
+    	Map<String, String> joinInfo = new HashMap<>();
+    	joinInfo.put("accompanyNo", String.valueOf(accompanyNo));
+    	joinInfo.put("id", map.get("id")); // 로그인한 사용자 정보 가져오기
+    	logger.debug("createAccompanyJoin joinInfo : {}", joinInfo);
+    	
+		accompanyService.join(joinInfo);	
+		
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.build();    
+    }
+    
+    /**
+     * 동행 신청 취소
+     * @param accompanyNo 동행 글 번호
+     * @param map(id)
+     * @return
+     * @throws Exception
+     */
+    @DeleteMapping("/{accompanyNo}/join")
+    public ResponseEntity<?> deleteAccompanyJoin(@PathVariable int accompanyNo, @RequestParam Map<String, String> map) throws Exception {    	    	
+    	Map<String, String> joinInfo = new HashMap<>();
+    	joinInfo.put("accompanyNo", String.valueOf(accompanyNo));
+    	joinInfo.put("id", map.get("id")); // 로그인한 사용자 정보 가져오기
+    	logger.debug("deleteAccompanyJoin joinInfo : {}", joinInfo);
+    	
+		accompanyService.joinCancel(joinInfo);	
+		
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.build();
+    }
     
     /**
      * 파일 업로드
@@ -296,87 +300,6 @@ public class AccompanyController {
         }
     }
 
-    
-//    /**
-//     * 동행 신청
-//     */
-//    @GetMapping("/join")
-//	private String join(@RequestParam("accompanyNo") int accompanyNo, @RequestParam Map<String, String> map,
-//			HttpSession session, Model model, RedirectAttributes redirectAttributes) {
-//		// 세션에 설정된 아이디 정보 가져오기
-//        Member memberDto = (Member) session.getAttribute("memberDto");
-//        String userId = memberDto.getId();	
-//        
-//		Map<String, String> joinInfo = new HashMap<>();
-//		joinInfo.put("accompanyNo", String.valueOf(accompanyNo));
-//		joinInfo.put("userId", userId);
-//		
-//		if(userId != null) {
-//			// 이미 신청됐는지 여부
-//			int cnt = accompanyService.isJoin(joinInfo);
-//			
-//			// 이미 신청되어있다면
-//			if(cnt == 1) {
-//				redirectAttributes.addAttribute("isJoin", true);
-////				redirectAttributes.addAttribute("msg", "이미 신청되었습니다");
-//				return "redirect:/accompany/view";
-//			}
-//			// 아직 신청되어있지 않다면
-//			else {
-//				// 신청
-//				accompanyService.join(joinInfo);
-//				redirectAttributes.addAttribute("msg", "신청 완료되었습니다");
-//				redirectAttributes.addAttribute("isJoin", true);
-//				redirectAttributes.addAttribute("accompanyNo", accompanyNo);
-//				
-//				return "redirect:/accompany/view";
-//			}
-//		}
-//		
-//		redirectAttributes.addAttribute("pgno", map.get("pgno"));
-//		redirectAttributes.addAttribute("key", map.get("key"));
-//		redirectAttributes.addAttribute("word", map.get("word"));
-//		
-//		return "redirect:/accompany/view";
-//	} 
-//	
-//    /**
-//     * 동행 취소
-//     * @param accompanyNo
-//     * @param map
-//     * @param session
-//     * @param model
-//     * @param redirectAttributes
-//     * @return
-//     */
-//    @GetMapping("/joinCancel")
-//	private String joinCancel(@RequestParam("accompanyNo") int accompanyNo, @RequestParam Map<String, String> map,
-//			HttpSession session, Model model, RedirectAttributes redirectAttributes) {		
-//		// 세션에 설정된 아이디 정보 가져오기
-//        Member memberDto = (Member) session.getAttribute("memberDto");
-//        String userId = memberDto.getId();	
-//		
-//		Map<String, String> joinInfo = new HashMap<>();
-//		joinInfo.put("accompanyNo", String.valueOf(accompanyNo));
-//		joinInfo.put("userId", userId);
-//		
-//		if(userId != null) {
-//			// 신청 취소
-//			accompanyService.joinCancel(joinInfo);
-//			
-//			// 신청 취소 성공했다면
-//			redirectAttributes.addAttribute("isJoin", false);
-//			redirectAttributes.addAttribute("msg", "신청 취소 완료되었습니다");
-//			redirectAttributes.addAttribute("accompanyNo", accompanyNo);
-//			return "redirect:/accompany/view";	
-//		}	
-//		
-//		redirectAttributes.addAttribute("pgno", map.get("pgno"));
-//		redirectAttributes.addAttribute("key", map.get("key"));
-//		redirectAttributes.addAttribute("word", map.get("word"));
-//		return "redirect:/accompany/view";
-//	}
-    
     /**
      * 예외처리
      * @param e 예외객체

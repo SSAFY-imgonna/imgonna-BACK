@@ -14,6 +14,8 @@ import com.ssafy.imgonna.accompany.model.dto.Accompany;
 import com.ssafy.imgonna.accompany.model.dto.AccompanyRequestDto;
 import com.ssafy.imgonna.accompany.model.dto.AccompanyResponseDto;
 import com.ssafy.imgonna.accompany.model.mapper.AccompanyMapper;
+import com.ssafy.imgonna.exception.accompany.InvalidAccompanyDataException;
+import com.ssafy.imgonna.exception.member.MemberNotFoundException;
 
 @Service
 public class AccompanyServiceImpl implements AccompanyService {
@@ -123,61 +125,39 @@ public class AccompanyServiceImpl implements AccompanyService {
         }
     }
 
-//	/** 이미 신청되어 있는지 여부 */
-//	@Override
-//	public int isJoin( Map<String, String> map) {
-//		return accompanyMapper.isJoin(map);
-//	}
-//	
-//	/** 신청 */
-//	@Override
-//	public void join( Map<String, String> map) {
-//		// accompany_join 테이블에 레코드 추가
-//		accompanyMapper.join(map);
-//		
-//		// accompany 테이블에 accompany_num 업데이트 
-//		accompanyMapper.increaseAccompanyNum(map);
-//	}
-//	
-//	/** 신청 취소하기 */
-//	@Override
-//	public void joinCancel(Map<String, String> map) {
-//		accompanyMapper.joinCancel(map);
-//
-//		// accompany 테이블에 accompany_num 업데이트 
-//		accompanyMapper.decreaseAccompanyNum(map);
-//	}
+	// 동행 신청 여부
+	@Override
+	public int isJoin( Map<String, String> map) {
+		try {
+			if(map.get("id") == null) {
+				throw new MemberNotFoundException();
+			}
+			return accompanyMapper.isJoin(map);							
+		} catch(Exception e) {
+			throw new InvalidAccompanyDataException();
+		}
+	}
+	
+	// 동행 신청
+	@Override
+	public void join(Map<String, String> map) {
+		// accompany_join 테이블에 레코드 추가
+		accompanyMapper.join(map);
+		
+		// accompany 테이블에 accompany_num 업데이트
+		map.put("cat", "increase");
+		accompanyMapper.updateCurrentNum(map);
+	}
+	
+	// 동행 신청 취소
+	@Override
+	public void joinCancel(Map<String, String> map) {
+		accompanyMapper.joinCancel(map);
 
-
-//	/** 댓글 목록 */
-//	@Override
-//	public List<AccompanyCommDto> getCommList(int accompanyNo) {
-//		return dao.getCommList(accompanyNo);
-//	}
-//	
-//	/** 댓글 작성 */
-//	@Override
-//	public int createComm(AccompanyCommDto dto) {
-//		return dao.createComm(dto);
-//	}
-//	
-//	/** 댓글 수정 */
-//	@Override
-//	public int modifyComm(AccompanyCommDto dto) {
-//		return dao.modifyComm(dto);
-//	}
-//	
-//	/** 댓글 삭제 */
-//	@Override
-//	public int deleteComment(int commentNo) {
-//		return dao.deleteComment(commentNo);
-//	}
-//	
-//	/** 댓글 개수 세기 */
-//	@Override
-//	public int commentCount(int accompanyNo) {
-//		return dao.commentCount(accompanyNo);
-//	}
+		// accompany 테이블에 accompany_num 업데이트 
+		map.put("cat", "decrease");
+		accompanyMapper.updateCurrentNum(map);
+	}
 
 
 }
