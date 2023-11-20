@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.ssafy.imgonna.file.model.service.FileService;
+import com.ssafy.imgonna.notify.model.dto.Notify;
+import com.ssafy.imgonna.notify.model.service.NotifyService;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,14 +25,16 @@ public class AccompanyServiceImpl implements AccompanyService {
 
     private AccompanyMapper accompanyMapper;
     private FileService fileService;
+    private NotifyService notifyService;
+    
+    public AccompanyServiceImpl(AccompanyMapper accompanyMapper, FileService fileService, NotifyService notifyService) {
+		super();
+		this.accompanyMapper = accompanyMapper;
+		this.fileService = fileService;
+		this.notifyService = notifyService;
+	}
 
-    public AccompanyServiceImpl(AccompanyMapper accompanyMapper, FileService fileService) {
-        this.accompanyMapper = accompanyMapper;
-        this.fileService = fileService;
-    }
-    
-    
-    // 동행 글 작성
+	// 동행 글 작성
     @Override
     @Transactional
     public void createAccompany(AccompanyRequestDto accompanyRequestDto) {
@@ -158,6 +163,17 @@ public class AccompanyServiceImpl implements AccompanyService {
 			map.put("cat", "finished");
 			accompanyMapper.updateStatus(map);
 		}
+		
+		// 글 작성자에게 알림
+		Notify notify = new Notify();
+		notify.setTableName(1);
+		notify.setPkNo(Integer.parseInt(map.get("accompanyNo")));
+		notify.setContent("동행 신청하였습니다");
+		notify.setSend(map.get("id"));;
+		notify.setReceive(map.get("writerId"));
+		System.out.println(notify);
+		notifyService.createNotify(notify);
+		
 	}
 	
 	// 동행 신청 취소

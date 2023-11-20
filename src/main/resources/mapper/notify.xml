@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.imgonna.notify.model.mapper.NotifyMapper">
+
+	<resultMap type="notify" id="notify">
+		<result column="notify_no" property="notifyNo"></result>
+		<result column="table_name" property="tableName"></result>
+		<result column="pk_no" property="pkNo"></result>
+		<result column="content" property="content"></result>
+		<result column="send" property="send"></result>
+		<result column="receive" property="receive"></result>
+		<result column="is_read" property="isRead"></result>
+		<result column="created_time" property="createdTime"></result>
+	</resultMap>
+	<select id="getNotifyCount" parameterType="map">
+		select count(*) from notify
+		where receive=#{id} and is_read = 0
+		order by created_time desc;
+	</select>
+	
+	<select id="getNotifyList" parameterType="map" resultMap="notify">
+		select notify_no, table_name, pk_no, content, send, receive, is_read, created_time
+		from notify
+		where receive=#{id} and is_read = 0
+		order by created_time desc;
+	</select>
+	
+    <insert id="createNotify" parameterType="notify">
+        insert into notify (table_name, pk_no, content, send, receive)
+        values (#{tableName}, #{pkNo}, #{content}, #{send}, #{receive})
+        <selectKey resultType="int" keyProperty="notifyNo" order="AFTER">
+            select last_insert_id()
+        </selectKey>
+    </insert>
+
+    <update id="updateNotify" parameterType="int">
+       update notify
+       set is_read = 1
+       where notify_no = #{notifyNo}
+    </update>
+
+    <update id="updateNotifyAll" parameterType="String">
+		UPDATE notify
+		SET is_read = 1
+		WHERE notify_no BETWEEN (
+		    SELECT MIN_notify_no FROM (
+		        SELECT MIN(notify_no) AS MIN_notify_no FROM notify
+		    ) AS temp
+		) AND (
+		    SELECT MAX_notify_no FROM (
+		        SELECT MAX(notify_no) AS MAX_notify_no FROM notify
+		    ) AS temp
+		)
+		AND receive = #{id};
+    </update>
+
+    <delete id="deleteNotify" parameterType="int">
+       delete from notify
+       where notify_no = #{notifyNo}
+    </delete>
+</mapper>
