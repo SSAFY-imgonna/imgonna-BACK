@@ -232,6 +232,7 @@ public class AccompanyController {
     	Map<String, String> joinInfo = new HashMap<>();
     	joinInfo.put("accompanyNo", String.valueOf(accompanyNo));
     	joinInfo.put("id", map.get("id")); // 로그인한 사용자 정보 가져오기
+    	joinInfo.put("writerId", map.get("writerId")); // 글 작성자 정보 가져오기
     	logger.debug("createAccompanyJoin joinInfo : {}", joinInfo);
     	
 		accompanyService.join(joinInfo);	
