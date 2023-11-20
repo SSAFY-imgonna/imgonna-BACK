@@ -140,21 +140,40 @@ public class AccompanyServiceImpl implements AccompanyService {
 	
 	// 동행 신청
 	@Override
+	@Transactional
 	public void join(Map<String, String> map) {
 		// accompany_join 테이블에 레코드 추가
 		accompanyMapper.join(map);
 		
-		// accompany 테이블에 accompany_num 업데이트
+		// accompany 테이블에 current_num 업데이트
 		map.put("cat", "increase");
 		accompanyMapper.updateCurrentNum(map);
+		
+		// 현재 신청자수와 모집정원 같은지 확인
+		int cnt = accompanyMapper.isLimit(map);
+		if(cnt == 1) {
+			// 같다면, 상태를 모집중 -> 모집마감으로 변경
+			map.put("cat", "finished");
+			accompanyMapper.updateStatus(map);
+		}
 	}
 	
 	// 동행 신청 취소
 	@Override
+	@Transactional
 	public void joinCancel(Map<String, String> map) {
+		// accompany_join 테이블에서 레코드 삭제
 		accompanyMapper.joinCancel(map);
 
-		// accompany 테이블에 accompany_num 업데이트 
+		// 현재 신청자수와 모집정원 같은지 확인
+		int cnt = accompanyMapper.isLimit(map);
+		if(cnt == 1) {
+			// 같다면, 상태를 모집마감 -> 모집중으로 변경
+			map.put("cat", "finding");
+			accompanyMapper.updateStatus(map);
+		}
+		
+		// accompany 테이블에 current_num 업데이트 
 		map.put("cat", "decrease");
 		accompanyMapper.updateCurrentNum(map);
 	}

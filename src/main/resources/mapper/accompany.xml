@@ -138,5 +138,25 @@
 		delete from accompany_join
 		where accompany_no = #{accompanyNo} and id = #{id}
 	</delete>
+
+	<select id="isLimit" parameterType="map" resultType="int">
+		select count(*)
+		from accompany
+		where accompany_no = #{accompanyNo} and current_num >= limit_num
+	</select>	
 	
+	<update id="updateStatus" parameterType="map">
+		update accompany
+		<set>
+			<if test="cat == 'finished'">
+				status='모집완료'
+			</if>
+			<if test="cat == 'finding'">
+				status='모집중'
+			</if>
+		</set>
+		where accompany_no = #{accompanyNo}
+	</update>
+	
+
 </mapper>
