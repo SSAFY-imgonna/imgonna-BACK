@@ -60,7 +60,9 @@ public class AccompanyServiceImpl implements AccompanyService {
 //		int start = pgNo * SizeConstant.LIST_SIZE - SizeConstant.LIST_SIZE;
 //		param.put("start", start);
 //		param.put("listsize", SizeConstant.LIST_SIZE);
-
+    	
+//    	String cat = map.get("cat");
+    	
         return accompanyMapper.getAccompanyList(map);
     }
 
