@@ -1,12 +1,15 @@
 package com.ssafy.imgonna.common.advisor;
 
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import com.ssafy.imgonna.exception.accompany.InvalidAccompanyDataException;
 import com.ssafy.imgonna.exception.member.InvalidPasswordException;
 import com.ssafy.imgonna.exception.member.MemberInfoDuplicateException;
 import com.ssafy.imgonna.exception.member.MemberNotFoundException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 /**
  * rest controller에서 예외 발생 시 처리
@@ -23,7 +26,7 @@ public class RestControllerAdvisor {
      * @return 에러 메세지를 response entity에 담아 전송
      */
     @ExceptionHandler(value = {
-            MemberNotFoundException.class, InvalidPasswordException.class
+            MemberNotFoundException.class, InvalidPasswordException.class, InvalidAccompanyDataException.class
     })
     public ResponseEntity<String> badRequestException400(Exception e) {
 

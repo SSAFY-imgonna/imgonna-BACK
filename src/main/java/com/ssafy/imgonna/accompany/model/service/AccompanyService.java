@@ -27,28 +27,13 @@ public interface AccompanyService {
 	// 동행 글 삭제
 	void deleteAccompany(int accompanyNo, String uploadPath);
     
+	// 동행 신청 여부
+	int isJoin( Map<String, String> map);
 
-	
-//	/** 이미 신청되어있는지 여부 */
-//	int isJoin( Map<String, String> map);
-//
-//	/** 신청 */
-//	void join(Map<String, String> map);
-//	
-//	/** 신청 취소하기 */
-//	void joinCancel(Map<String, String> map);
-	
-//	/** 댓글 목록 */
-//	List<AccompanyCommDto> getCommList(int accompanyNo);
-//	/** 댓글 작성 */
-//	int createComm(AccompanyCommDto dto);
-//	/** 댓글 수정 */
-//	int modifyComm(AccompanyCommDto dto);
-//	/** 댓글 삭제 */
-//	int deleteComment(int commentNo);
-//	/** 댓글 개수 세기 */
-//	int commentCount(int accompanyNo);
+	// 동행 신청
+	void join(Map<String, String> map);
+		
+	// 동행 신청 취소
+	void joinCancel(Map<String, String> map);
 
-
-	
 }

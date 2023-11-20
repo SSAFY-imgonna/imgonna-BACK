@@ -110,44 +110,33 @@
 		where accompany_no = #{accompanyNo}
 	</delete>
 
-<!-- 		
-	
 	<select id="isJoin" parameterType="map" resultType="int">
 		select count(*)
 		from accompany_join
-		where accompany_no = #{accompanyNo} and id = #{userId}
+		where accompany_no = #{accompanyNo} and id = #{id}
 	</select>
 	
 	<insert id="join" parameterType="map">
 		insert into accompany_join (accompany_no, id)
-		values (#{accompanyNo}, #{userId})
+		values (#{accompanyNo}, #{id})
 	</insert>	
 	
-	<update id="increaseAccompanyNum" parameterType="map">
+	<update id="updateCurrentNum" parameterType="map">
 		update accompany
-		set accompany_num = accompany_num + 1
+		<set>
+			<if test="cat == 'increase'">
+				current_num = current_num + 1
+			</if>
+			<if test="cat == 'decrease'">
+				current_num = current_num - 1
+			</if>
+		</set>
 		where accompany_no = #{accompanyNo}
-	</update>	
+	</update>		
 
 	<delete id="joinCancel" parameterType="map">
 		delete from accompany_join
-		where accompany_no = #{accompanyNo} and id = #{userId}
+		where accompany_no = #{accompanyNo} and id = #{id}
 	</delete>
-
-	<update id="decreaseAccompanyNum" parameterType="map">
-		update accompany
-		set accompany_num = accompany_num - 1
-		where accompany_no = #{accompanyNo}
-	</update>	 -->
 	
-<!--	
-	<select id="getTotalaccompanyCount" parameterType="map" resultType="int">
-		select count(accompany_no)
-		from board
-		<where>
-			<include refid="search"></include>
-		</where>
-	</select>
- -->
-
 </mapper>
