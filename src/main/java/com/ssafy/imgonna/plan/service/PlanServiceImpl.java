@@ -109,8 +109,8 @@ public class PlanServiceImpl implements PlanService {
         String key = map.get("key");
         param.put("key", key == null ? "" : key);
 
-        List<PlanResponseDto> planList = planMapper.getPlanList();
-        int totalPlanCount = planMapper.getTotalPlanCount(param);
+        List<PlanResponseDto> planList = planMapper.getPlanList(param);
+        int totalPlanCount = planMapper.getTotalPlanCount();
         int totalPageCount = (totalPlanCount - 1) / sizePerPage + 1;
 
         PlanListResponseDto planListResponseDto = new PlanListResponseDto();

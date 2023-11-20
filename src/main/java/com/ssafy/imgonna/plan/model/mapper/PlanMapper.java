@@ -27,9 +27,9 @@ public interface PlanMapper {
 
 	List<CourseResponseDto> getCourseListByPlanNo(int planNo);
 
-	List<PlanResponseDto> getPlanList();
+	List<PlanResponseDto> getPlanList(Map<String, Object> param);
 
 	List<PlanResponseDto> getPlanListById(String id);
 
-	int getTotalPlanCount(Map<String, Object> param);
+	int getTotalPlanCount();
 }

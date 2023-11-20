@@ -34,7 +34,7 @@ public class PlanController {
     public ResponseEntity<PlanResponseDto> getPlanByPlanNo(@PathVariable int planNo) {
         PlanResponseDto plan = planService.getPlanByPlanNo(planNo);
         return ResponseEntity
-                .status(HttpStatus.CREATED)
+                .status(HttpStatus.OK)
                 .body(plan);
     }
 
