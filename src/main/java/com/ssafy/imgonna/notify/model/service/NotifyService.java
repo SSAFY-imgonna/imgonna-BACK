@@ -9,8 +9,11 @@ public interface NotifyService {
 	// 알림 개수
 	int getNotifyCount(Map<String, String> map);
 	
-	// 알림 목록 가져오기
+	// 알림 목록 가져오기(안읽음)
 	List<Notify> getNotifyList(Map<String, String> map);
+	
+	// 알림 목록 가져오기(읽음+안읽음)
+	List<Notify> getNotifyListAll(Map<String, String> map);
 	
 	// 알림 보내기
 	void createNotify(Notify notify);
@@ -22,5 +25,5 @@ public interface NotifyService {
 	void updateNotifyAll(String id);
 	
 	// 알림 삭제하기
-	void deleteNotify(int notifyNo);
+	void deleteNotifyList(List<String> list);
 }

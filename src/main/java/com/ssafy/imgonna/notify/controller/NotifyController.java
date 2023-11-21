@@ -9,8 +9,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -59,6 +62,20 @@ public class NotifyController {
     			.body(notifyList);    
     }
     
+    @GetMapping("/mypage") 
+    public ResponseEntity<?> getNotifyListAll(@RequestParam Map<String, String> map) throws Exception {
+    	logger.debug("getNotifyListAll map : {}", map);
+    	
+    	List<Notify> notifyListAll = notifyService.getNotifyListAll(map);
+    	
+    	HttpHeaders header = new HttpHeaders();
+    	header.setContentType(MediaType.APPLICATION_JSON);
+    	return ResponseEntity
+    			.status(HttpStatus.OK)
+    			.headers(header)
+    			.body(notifyListAll);    
+    }
+    
     @GetMapping("/read")
     public ResponseEntity<?> updateNotify(@RequestParam Map<String, String> map) throws Exception {
     	logger.debug("updateNotify map : {}", map);
@@ -75,6 +92,17 @@ public class NotifyController {
     	logger.debug("updateNotifyAll map : {}", map);
     	
     	notifyService.updateNotifyAll(map.get("id"));
+    	
+    	return ResponseEntity
+    			.status(HttpStatus.OK)
+    			.build(); 
+    }   
+    
+    @PostMapping
+    public ResponseEntity<?> deleteNotifyList(@RequestBody List<String> list) throws Exception {
+    	logger.debug("deleteNotifyList map : {}", list);
+    	
+    	notifyService.deleteNotifyList(list);
     	
     	return ResponseEntity
     			.status(HttpStatus.OK)
