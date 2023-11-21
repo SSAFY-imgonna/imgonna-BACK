@@ -25,12 +25,18 @@ public class NotifyServiceImpl implements NotifyService {
 		return notifyMapper.getNotifyCount(map);
 	}
 	
-	// 알림 목록 가져오기
+	// 알림 목록 가져오기(안읽음)
 	@Override
 	public List<Notify> getNotifyList(Map<String, String> map) {
 		return notifyMapper.getNotifyList(map);
 	}
 
+	// 알림 목록 가져오기(읽음+안읽음)
+	@Override
+	public List<Notify> getNotifyListAll(Map<String, String> map) {
+		return notifyMapper.getNotifyListAll(map);
+	}
+	
 	// 알림 보내기
 	@Override
 	public void createNotify(Notify notify) {
@@ -51,10 +57,9 @@ public class NotifyServiceImpl implements NotifyService {
 	
 	// 알림 삭제하기
 	@Override
-	public void deleteNotify(int notifyNo) {
-		notifyMapper.deleteNotify(notifyNo);
+	public void deleteNotifyList(List<String> list) {
+		System.out.println("여기 들어옴?");
+		notifyMapper.deleteNotifyList(list);
 	}
-
-	
 
 }

@@ -27,6 +27,13 @@
 		order by created_time desc;
 	</select>
 	
+	<select id="getNotifyListAll" parameterType="map" resultMap="notify">
+		select notify_no, table_name, pk_no, content, send, receive, is_read, created_time
+		from notify
+		where receive=#{id}
+		order by created_time desc;
+	</select>
+	
     <insert id="createNotify" parameterType="notify">
         insert into notify (table_name, pk_no, content, send, receive)
         values (#{tableName}, #{pkNo}, #{content}, #{send}, #{receive})
@@ -42,22 +49,26 @@
     </update>
 
     <update id="updateNotifyAll" parameterType="String">
-		UPDATE notify
-		SET is_read = 1
-		WHERE notify_no BETWEEN (
-		    SELECT MIN_notify_no FROM (
-		        SELECT MIN(notify_no) AS MIN_notify_no FROM notify
+		update notify
+		set is_read = 1
+		where notify_no between (
+		    select min_notify_no from (
+		        select min(notify_no) AS min_notify_no from notify
 		    ) AS temp
-		) AND (
-		    SELECT MAX_notify_no FROM (
-		        SELECT MAX(notify_no) AS MAX_notify_no FROM notify
+		) and (
+		    select max_notify_no FROM (
+		        select max(notify_no) AS max_notify_no from notify
 		    ) AS temp
 		)
-		AND receive = #{id};
+		and receive = #{id};
     </update>
+    
+	<delete id="deleteNotifyList" parameterType="list">
+	  delete from notify
+	  where notify_no in
+	  <foreach collection="list" item="list" open="(" separator="," close=")">
+	    #{list}
+	  </foreach>
+	</delete>
 
-    <delete id="deleteNotify" parameterType="int">
-       delete from notify
-       where notify_no = #{notifyNo}
-    </delete>
 </mapper>
