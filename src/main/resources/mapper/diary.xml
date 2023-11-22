@@ -142,6 +142,6 @@
 		a.addr1, a.addr2, a.zipcode, a.tel, a.first_image, a.first_image2, a.readcount,
 		a.sido_code, a.gugun_code, a.latitude, a.longitude
 		from travel_diary t inner join attraction_info a on t.content_id = a.content_id
-		where t.id=#{id};
+		where t.id=#{id} and a.content_type_id not in (15, 25) 
 	</select>
 </mapper>
