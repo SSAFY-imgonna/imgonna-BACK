@@ -1,6 +1,6 @@
 package com.ssafy.imgonna.plan.model.dto;
 
-public class CourseRegistRequestDto {
+public class CourseRequestDto {
     private int planNo;
     private int contentId;
     private int order;

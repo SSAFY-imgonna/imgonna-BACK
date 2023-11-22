@@ -1,19 +1,8 @@
 package com.ssafy.imgonna.diary.controller;
 
-import java.io.File;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
-
+import com.ssafy.imgonna.diary.model.dto.*;
+import com.ssafy.imgonna.diary.service.DiaryService;
+import com.ssafy.imgonna.file.model.dto.FileInfoDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,27 +11,15 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.ssafy.imgonna.diary.model.dto.DiaryRequestDto;
-import com.ssafy.imgonna.diary.model.dto.DiaryResponseDto;
-import com.ssafy.imgonna.diary.model.dto.DiaryRequestDto;
-import com.ssafy.imgonna.diary.model.dto.DiaryResponseDto;
-import com.ssafy.imgonna.diary.model.dto.AttractionResponseDto;
-import com.ssafy.imgonna.diary.model.dto.DiaryListResponseDto;
-import com.ssafy.imgonna.diary.model.dto.DiaryRequestDto;
-import com.ssafy.imgonna.diary.service.DiaryService;
-import com.ssafy.imgonna.file.model.dto.FileInfoDto;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @RequestMapping("/diary")
 @RestController
@@ -159,6 +136,23 @@ public class DiaryController {
     	return ResponseEntity
     			.status(HttpStatus.OK)
     			.build();
+    }
+
+    /**
+     * 회원 별 방문 관광지 수 랭킹 조회
+     * ${root}/
+     *
+     * @return 방문 관광지 수 랭킹
+     *
+     * @author yihoney
+     */
+    @GetMapping("/rank")
+    public ResponseEntity<List<RankResponseDto>> getRankById() {
+
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(diaryService.getRankList());
     }
 
     private void uploadFiles(DiaryRequestDto diaryRequestDto, MultipartFile[] files) throws IOException {

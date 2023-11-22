@@ -35,6 +35,23 @@
 		<result column="content_type_id" property="contentTypeId"></result>
 		<result column="attraction" property="attraction"></result>
 	</resultMap>
+
+	<resultMap id="attractionInfo" type="attractionInfo">
+		<result column="content_id" property="contentId"/>
+		<result column="content_type_id" property="contentTypeId"/>
+		<result column="title" property="title"/>
+		<result column="addr1" property="addr1"/>
+		<result column="addr2" property="addr2"/>
+		<result column="zipcode" property="zipcode"/>
+		<result column="tel" property="tel"/>
+		<result column="first_image" property="firstImage"/>
+		<result column="first_image2" property="firstImage2"/>
+		<result column="readcount" property="readcount"/>
+		<result column="sido_code" property="sidoCode"/>
+		<result column="gugun_code" property="gugunCode"/>
+		<result column="latitude" property="latitude"/>
+		<result column="longitude" property="longitude"/>
+	</resultMap>
 		
 	<resultMap type="diaryResponseDto" id="diaryResponseFileDto" extends="diaryResponseDto">
 		<collection column="diary_no" property="fileInfos" javaType="list"
@@ -112,5 +129,19 @@
         where diary_no = #{diaryNo}
     </delete>
 
-    
+	<select id="getRankList" resultType="string">
+		select id
+		from travel_diary
+		group by id
+		order by count(content_id) desc
+		limit 5;
+	</select>
+
+	<select id="getAttractionListById" resultMap="attractionInfo" parameterType="string">
+		select a.content_id, a.content_type_id, a.title,
+		a.addr1, a.addr2, a.zipcode, a.tel, a.first_image, a.first_image2, a.readcount,
+		a.sido_code, a.gugun_code, a.latitude, a.longitude
+		from travel_diary t inner join attraction_info a on t.content_id = a.content_id
+		where t.id=#{id};
+	</select>
 </mapper>
