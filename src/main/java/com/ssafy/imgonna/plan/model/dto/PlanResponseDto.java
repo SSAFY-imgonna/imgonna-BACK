@@ -1,27 +1,16 @@
 package com.ssafy.imgonna.plan.model.dto;
 
-import com.ssafy.imgonna.attraction.model.dto.AttractionInfo;
-
 import java.util.List;
 
-public class PlanRegistRequestDto {
+public class PlanResponseDto {
     private int planNo;
     private String name;
     private String startTime;
     private String departureTime;
     private String id;
-    private List<AttractionInfo> attractions;
     private int themeNo;
     private String memo;
-    private List<String> detailMemoList;
-
-    public List<String> getDetailMemoList() {
-        return detailMemoList;
-    }
-
-    public void setDetailMemoList(List<String> detailMemoList) {
-        this.detailMemoList = detailMemoList;
-    }
+    private List<CourseResponseDto> courses;
 
     public int getPlanNo() {
         return planNo;
@@ -63,14 +52,6 @@ public class PlanRegistRequestDto {
         this.id = id;
     }
 
-    public List<AttractionInfo> getAttractions() {
-        return attractions;
-    }
-
-    public void setAttractions(List<AttractionInfo> attractions) {
-        this.attractions = attractions;
-    }
-
     public int getThemeNo() {
         return themeNo;
     }
@@ -85,5 +66,13 @@ public class PlanRegistRequestDto {
 
     public void setMemo(String memo) {
         this.memo = memo;
+    }
+
+    public List<CourseResponseDto> getCourses() {
+        return courses;
+    }
+
+    public void setCourses(List<CourseResponseDto> courses) {
+        this.courses = courses;
     }
 }

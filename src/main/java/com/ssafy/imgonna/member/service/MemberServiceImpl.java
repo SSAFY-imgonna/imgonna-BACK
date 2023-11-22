@@ -43,8 +43,10 @@ public class MemberServiceImpl implements MemberService {
         requestDto.setPassword(digest);
         requestDto.setSalt(PasswordUtils.bytesToHex(salt));
         //파일 업로드
-        String photoPath = fileUtil.uploadFile(upfile);
-        requestDto.setPhoto(photoPath);
+        if (upfile != null) {
+            String photoPath = fileUtil.uploadFile(upfile);
+            requestDto.setPhoto(photoPath);
+        }
 
         int result = memberMapper.createMember(requestDto);
 
@@ -60,7 +62,7 @@ public class MemberServiceImpl implements MemberService {
     public MemberDetailsDto updateMember(String id, MemberModifyRequestDto requestDto, MultipartFile upfile) throws IOException {
 
         String originPath = getMemberDetailsById(id).getPhoto();
-        if(originPath!=null) {
+        if (originPath != null) {
             fileUtil.removeFile(originPath);
         }
         //파일 업로드
