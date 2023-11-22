@@ -3,6 +3,7 @@ package com.ssafy.imgonna.member.service;
 import com.ssafy.imgonna.member.model.dto.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -35,9 +36,10 @@ public interface MemberService {
 
 	void saveRefreshToken(String id, String refreshToken);
 
-	void deleteRefreshToken(String id);
+	void deleteRefreshToken(String id, HttpSession session);
 
-	MemberLoginResponseDto loginMember(MemberLoginRequestDto requestDto);
+
+	MemberLoginResponseDto loginMember(MemberLoginRequestDto requestDto, HttpSession session);
 
 	MemberDetailsDto getInfo(String id, String authorization);
 

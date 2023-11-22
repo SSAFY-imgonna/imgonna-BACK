@@ -1,19 +1,19 @@
 package com.ssafy.imgonna.config;
 
+import com.ssafy.imgonna.common.interceptor.LoginInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.PathResourceResolver;
 
 
 @Configuration
-@EnableAspectJAutoProxy
 public class WebMvcConfiguration implements WebMvcConfigurer {
 	
 	private final Logger logger = LoggerFactory.getLogger(WebMvcConfiguration.class);
@@ -43,11 +43,12 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 				.setCachePeriod(3600).resourceChain(true).addResolver(new PathResourceResolver());
 	}
 
-//	@Override
-//	public void addViewControllers(ViewControllerRegistry registry) {
-//		registry.addViewController("/").setViewName("index");
-//	}
+	@Override
+	public void addInterceptors(InterceptorRegistry registry) {
+		registry.addInterceptor(new LoginInterceptor())
+//				.addPathPatterns("/**")
+				.addPathPatterns("/accompany","/accompany/**","/plans","/diary", "diary/**","/qna","/qna/**","/members/*")
+				.excludePathPatterns("/", "/members", "/login", "/logout/*");
+	}
 
-	
-	
 }

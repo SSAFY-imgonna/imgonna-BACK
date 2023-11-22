@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
@@ -168,9 +169,10 @@ public class MemberController {
      * @return
      */
     @PostMapping("/login")
-    public ResponseEntity<MemberLoginResponseDto> login(@RequestBody MemberLoginRequestDto requestDto) {
+    public ResponseEntity<MemberLoginResponseDto> login(@RequestBody MemberLoginRequestDto requestDto, HttpSession session) {
 
-        MemberLoginResponseDto responseDto = memberService.loginMember(requestDto);
+
+        MemberLoginResponseDto responseDto = memberService.loginMember(requestDto, session);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -187,8 +189,7 @@ public class MemberController {
     public ResponseEntity<MemberDetailsDto> getInfo(
             @PathVariable String id, @RequestHeader("Authorization") String authorization) {
 
-        MemberDetailsDto member = memberService
-                .getInfo(id, authorization);
+        MemberDetailsDto member = memberService.getInfo(id, authorization);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -199,10 +200,9 @@ public class MemberController {
      * 로그아웃 - 토큰 제거
      */
     @GetMapping("/logout/{id}")
-    public ResponseEntity<Void> removeToken(@PathVariable String id) {
+    public ResponseEntity<Void> removeToken(@PathVariable String id, HttpSession session) {
 
-        memberService.deleteRefreshToken(id);
-
+        memberService.deleteRefreshToken(id, session);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .build();

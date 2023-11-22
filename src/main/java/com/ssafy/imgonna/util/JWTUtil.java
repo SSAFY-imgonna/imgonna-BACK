@@ -1,17 +1,17 @@
 package com.ssafy.imgonna.util;
 
-import java.io.UnsupportedEncodingException;
-import java.util.Date;
-import java.util.Map;
-
 import com.ssafy.imgonna.exception.member.InvalidTokenException;
-import com.ssafy.imgonna.exception.member.UnAuthorizedException;
+import com.ssafy.imgonna.exception.member.UnauthorizedMemberException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.io.UnsupportedEncodingException;
+import java.util.Date;
+import java.util.Map;
 
 
 @Component
@@ -121,7 +121,7 @@ public class JWTUtil {
 		try {
 			claims = Jwts.parser().setSigningKey(this.generateKey()).parseClaimsJws(authorization);
 		} catch (Exception e) {
-			throw new UnAuthorizedException();
+			throw new UnauthorizedMemberException();
 		}
 		Map<String, Object> value = claims.getBody();
 		return (String) value.get("userId");
