@@ -14,7 +14,7 @@ public interface AttractionMapper {
 
 	List<AttractionInfo> getAttractionInfo(Map<String, Integer> map);
 	
-	List<AttractionInfo> getAttractionListByContentIdList(List<String> contentIdList);
+	List<AttractionInfo> getAttractionListByContentIdList(List<Integer> contentIdList);
 	
 	List<Gugun> getGugunBySidoCode(int sidoCode);
 	

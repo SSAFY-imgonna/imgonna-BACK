@@ -31,13 +31,13 @@ public class AttractionController {
         		.status(HttpStatus.OK)
         		.body(attractionService.getAttractionInfo(attractionRequestDto));
     }
-    
-    @GetMapping(params="contentIdList")
-    private ResponseEntity<List<AttractionInfo>> getAttractionListByContentIdList(@RequestParam List<String> contentIdList) {
-    	System.out.println(contentIdList);
+
+    @GetMapping("/{contentIdList}")
+    private ResponseEntity<List<AttractionInfo>> getAttractionListByContentIdList(@PathVariable List<Integer> contentIdList) {
+        System.out.println(contentIdList);
         return ResponseEntity
-        		.status(HttpStatus.OK)
-        		.body(attractionService.getAttractionListByContentIdList(contentIdList));
+                .status(HttpStatus.OK)
+                .body(attractionService.getAttractionListByContentIdList(contentIdList));
     }
     
     @GetMapping("/gugun")

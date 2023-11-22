@@ -32,7 +32,7 @@ public class AttractionServiceImpl implements AttractionService {
 	}
 
 	@Override
-	public List<AttractionInfo> getAttractionListByContentIdList(List<String> contentIdList) {
+	public List<AttractionInfo> getAttractionListByContentIdList(List<Integer> contentIdList) {
 		return attractionMapper.getAttractionListByContentIdList(contentIdList);
 	}
 
