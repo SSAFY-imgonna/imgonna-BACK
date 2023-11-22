@@ -11,6 +11,8 @@ import java.util.Map;
 public interface AttractionService {
 	List<AttractionInfo> getAttractionInfo(AttractionRequestDto attractionRequestDto);
 
+	List<AttractionInfo> getAttractionListByContentIdList(List<String> contentIdList);
+	
 	List<Gugun> getGugunBySidoCode(int sidoCode);
 
 	List<Sido> getSidoList();
