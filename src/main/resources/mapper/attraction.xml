@@ -52,5 +52,29 @@
         </trim>
     </select>
 
+    <select id="getAttractionListByContentIdList" resultMap="attractionInfo" parameterType="list">
+        select * from attraction_info
+        where content_id in
+		<foreach collection="list" item="contentId" open="(" separator="," close=")">
+		  #{contentId}
+		</foreach>
+    </select>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 </mapper>

@@ -32,6 +32,11 @@ public class AttractionServiceImpl implements AttractionService {
 	}
 
 	@Override
+	public List<AttractionInfo> getAttractionListByContentIdList(List<String> contentIdList) {
+		return attractionMapper.getAttractionListByContentIdList(contentIdList);
+	}
+
+	@Override
 	public List<Gugun> getGugunBySidoCode(int sidoCode) {
 		return attractionMapper.getGugunBySidoCode(sidoCode);
 	}
@@ -40,5 +45,6 @@ public class AttractionServiceImpl implements AttractionService {
 	public List<Sido> getSidoList() {
 		return attractionMapper.getSidoList();
 	}
+
 
 }
