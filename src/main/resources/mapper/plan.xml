@@ -86,8 +86,8 @@
         select plan_no, id, name, start_time, departure_time, memo, theme_no
         from attraction_plan
         <include refid="search"></include>
+        order by plan_no desc
         limit #{start}, #{listsize}
-
     </select>
 
     <select id="getPlanListById" parameterType="string" resultMap="planResponseDto">
