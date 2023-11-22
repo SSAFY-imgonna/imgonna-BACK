@@ -13,8 +13,11 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface AccompanyMapper {
 	// 동행 글 목록
-	List<Accompany> getAccompanyList(Map<String, String> map);
-
+	List<AccompanyResponseDto> getAccompanyList(Map<String, Object> map);
+	
+	// 전체 동행 글 수
+	int getTotalAccompanyCount(Map<String, Object> param);
+	
 	// 동행 글 작성
 	void createAccompany(AccompanyRequestDto accompanyRequestDto);
 

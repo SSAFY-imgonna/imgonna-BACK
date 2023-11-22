@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.ssafy.imgonna.accompany.model.dto.Accompany;
+import com.ssafy.imgonna.accompany.model.dto.AccompanyListResponseDto;
 import com.ssafy.imgonna.accompany.model.dto.AccompanyRequestDto;
 import com.ssafy.imgonna.accompany.model.dto.AccompanyResponseDto;
 
@@ -13,7 +14,7 @@ public interface AccompanyService {
 	void createAccompany(AccompanyRequestDto accompanyRequestDto);
 
 	// 동행 글 목록
-	List<Accompany> getAccompanyList(Map<String, String> map);
+	AccompanyListResponseDto getAccompanyList(Map<String, String> map);
 
 	// 동행 글 조회수 증가
 	void updateHit(int accompanyNo);

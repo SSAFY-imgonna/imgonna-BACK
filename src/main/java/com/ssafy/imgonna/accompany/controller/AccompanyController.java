@@ -35,6 +35,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.imgonna.file.model.dto.FileInfoDto;
 import com.ssafy.imgonna.accompany.model.dto.Accompany;
+import com.ssafy.imgonna.accompany.model.dto.AccompanyListResponseDto;
 import com.ssafy.imgonna.accompany.model.dto.AccompanyRequestDto;
 import com.ssafy.imgonna.accompany.model.dto.AccompanyResponseDto;
 import com.ssafy.imgonna.accompany.model.service.AccompanyService;
@@ -106,11 +107,9 @@ public class AccompanyController {
      * @throws Exception
      */
     @GetMapping
-    private ResponseEntity<?> getAccompanyList(@RequestParam Map<String, String> map) throws Exception {
-        logger.debug("getAccompanyList parameter cat : {}", map.get("cat"));
-         
+    private ResponseEntity<?> getAccompanyList(@RequestParam Map<String, String> map) throws Exception {       
         try {
-        	List<Accompany> AccompanyList = accompanyService.getAccompanyList(map);
+        	AccompanyListResponseDto AccompanyList = accompanyService.getAccompanyList(map);
         	HttpHeaders header = new HttpHeaders();
         	header.setContentType(MediaType.APPLICATION_JSON);
         	return ResponseEntity
@@ -120,8 +119,6 @@ public class AccompanyController {
         } catch (Exception e) {
         	return exceptionHandling(e);
         }
-        
-//        페이지 네이션 관련 처리 나중에 하자!!!
     }
 
     /**
