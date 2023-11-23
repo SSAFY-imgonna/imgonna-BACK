@@ -88,10 +88,10 @@ public class AttractionResponseDto {
 	public void setLatitude(String latitude) {
 		this.latitude = latitude;
 	}
-	public String getLongtitude() {
+	public String getLongitude() {
 		return longitude;
 	}
-	public void setLongtitude(String longitude) {
+	public void setLongitude(String longitude) {
 		this.longitude = longitude;
 	}
 	
