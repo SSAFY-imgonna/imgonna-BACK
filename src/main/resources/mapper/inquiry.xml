@@ -12,6 +12,7 @@
         <result column="modified_time" property="modifiedTime"></result>
         <result column="id" property="id"></result>
         <result column="nickname" property="nickname"></result>
+        <result column="photo" property="photo"></result>
     </resultMap>
 
     <sql id="search">
@@ -31,13 +32,13 @@
     </insert>
 
     <select id="getInquiryByInquiryNo" parameterType="Integer" resultMap="inquiryResponseDto">
-        select q.qna_no, q.title, q.content, q.created_time, q.modified_time, m.id, m.nickname
+        select q.qna_no, q.title, q.content, q.created_time, q.modified_time, m.id, m.nickname, m.photo
         from qna q inner join members m on q.id = m.id
         where qna_no = #{inquiryNo}
     </select>
 
     <select id="getInquiryList" parameterType="map" resultMap="inquiryResponseDto">
-        select q.qna_no, q.title, q.content, q.created_time, q.modified_time, m.id, m.nickname
+        select q.qna_no, q.title, q.content, q.created_time, q.modified_time, m.id, m.nickname, m.photo
         from qna q inner join members m on q.id = m.id
         <include refid="search"></include>
         order by q.qna_no desc

@@ -7,7 +7,7 @@ public class QnaComment {
 	private String createdTime;
 	private String modifiedTime;
 	private String id;
-	
+	private String photo;
 	
 	public int getCommentNo() {
 		return commentNo;
@@ -45,12 +45,18 @@ public class QnaComment {
 	public void setId(String id) {
 		this.id = id;
 	}
+	public String getPhoto() {
+		return photo;
+	}
+	public void setPhoto(String photo) {
+		this.photo = photo;
+	}
 	
 	
 	@Override
 	public String toString() {
 		return "QnaComment [commentNo=" + commentNo + ", qnaNo=" + qnaNo + ", content=" + content + ", createdTime="
-				+ createdTime + ", modifiedTime=" + modifiedTime + ", id=" + id + "]";
+				+ createdTime + ", modifiedTime=" + modifiedTime + ", id=" + id + ", photo=" + photo + "]";
 	}
 	
 }

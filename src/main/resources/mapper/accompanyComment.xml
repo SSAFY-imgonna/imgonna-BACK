@@ -11,6 +11,7 @@
 		<result column="created_time" property="createdTime"/>
 		<result column="modified_time" property="modifiedTime"/>
 		<result column="id" property="id"/>
+		<result column="photo" property="photo"/>
 	</resultMap>
 	
 	<insert id="createAccompanyComment" parameterType="accompanyComment">
