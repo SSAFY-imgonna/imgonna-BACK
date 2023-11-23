@@ -202,6 +202,9 @@ public class AccompanyServiceImpl implements AccompanyService {
 	@Override
 	@Transactional
 	public void joinCancel(Map<String, String> map) {
+		// 동행 신청 알림 삭제
+		accompanyMapper.deleteNotify(map);
+		
 		// accompany_join 테이블에서 레코드 삭제
 		accompanyMapper.joinCancel(map);
 
