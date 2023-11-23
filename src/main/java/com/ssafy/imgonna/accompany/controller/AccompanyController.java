@@ -1,5 +1,11 @@
 package com.ssafy.imgonna.accompany.controller;
 
+import com.ssafy.imgonna.accompany.model.dto.AccompanyListResponseDto;
+import com.ssafy.imgonna.accompany.model.dto.AccompanyRequestDto;
+import com.ssafy.imgonna.accompany.model.dto.AccompanyResponseDto;
+import com.ssafy.imgonna.accompany.model.service.AccompanyService;
+import com.ssafy.imgonna.common.annotation.CheckToken;
+import com.ssafy.imgonna.file.model.dto.FileInfoDto;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -9,11 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
-
-import com.ssafy.imgonna.common.annotation.CheckToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,13 +36,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
-import com.ssafy.imgonna.file.model.dto.FileInfoDto;
-import com.ssafy.imgonna.accompany.model.dto.Accompany;
-import com.ssafy.imgonna.accompany.model.dto.AccompanyListResponseDto;
-import com.ssafy.imgonna.accompany.model.dto.AccompanyRequestDto;
-import com.ssafy.imgonna.accompany.model.dto.AccompanyResponseDto;
-import com.ssafy.imgonna.accompany.model.service.AccompanyService;
 //import com.ssafy.util.FileUtil;
 //import com.ssafy.util.QuickSort;
 
@@ -103,6 +99,7 @@ public class AccompanyController {
         }
     }
 
+
     /**
      * 동행 글 목록
      *
@@ -125,6 +122,26 @@ public class AccompanyController {
         }
     }
 
+    /**
+     * 동행 글 목록
+     *
+     * @return ResponseEntity
+     * @throws Exception
+     */
+    @GetMapping("/rank")
+    private ResponseEntity<?> getAccompanyRankByHit(){
+        try {
+            AccompanyListResponseDto AccompanyList = accompanyService.getAccompanyRankByHit();
+            HttpHeaders header = new HttpHeaders();
+            header.setContentType(MediaType.APPLICATION_JSON);
+            return ResponseEntity
+                .status(HttpStatus.OK)
+                .headers(header)
+                .body(AccompanyList);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
     /**
      * 동행 글 상세
      *

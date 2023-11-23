@@ -1,13 +1,10 @@
 package com.ssafy.imgonna.accompany.model.service;
 
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
-
-import com.ssafy.imgonna.accompany.model.dto.Accompany;
 import com.ssafy.imgonna.accompany.model.dto.AccompanyListResponseDto;
 import com.ssafy.imgonna.accompany.model.dto.AccompanyRequestDto;
 import com.ssafy.imgonna.accompany.model.dto.AccompanyResponseDto;
+import java.sql.SQLException;
+import java.util.Map;
 
 public interface AccompanyService {
 	// 동행 글 작성
@@ -16,7 +13,10 @@ public interface AccompanyService {
 	// 동행 글 목록
 	AccompanyListResponseDto getAccompanyList(Map<String, String> map);
 
-	// 동행 글 조회수 증가
+    // 동행 글 목록
+    AccompanyListResponseDto getAccompanyRankByHit();
+
+    // 동행 글 조회수 증가
 	void updateHit(int accompanyNo);
 
 	// 동행 글 상세

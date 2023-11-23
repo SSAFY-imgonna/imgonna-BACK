@@ -1,20 +1,19 @@
 package com.ssafy.imgonna.accompany.model.mapper;
 
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
-
-import com.ssafy.imgonna.accompany.model.dto.Accompany;
 import com.ssafy.imgonna.accompany.model.dto.AccompanyRequestDto;
 import com.ssafy.imgonna.accompany.model.dto.AccompanyResponseDto;
 import com.ssafy.imgonna.file.model.dto.FileInfoDto;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface AccompanyMapper {
 	// 동행 글 목록
 	List<AccompanyResponseDto> getAccompanyList(Map<String, Object> map);
-	
+	List<AccompanyResponseDto> getAccompanyRankByHit();
+
 	// 전체 동행 글 수
 	int getTotalAccompanyCount(Map<String, Object> param);
 	

@@ -1,27 +1,22 @@
 package com.ssafy.imgonna.accompany.model.service;
 
+import com.ssafy.imgonna.accompany.model.dto.AccompanyListResponseDto;
+import com.ssafy.imgonna.accompany.model.dto.AccompanyRequestDto;
+import com.ssafy.imgonna.accompany.model.dto.AccompanyResponseDto;
+import com.ssafy.imgonna.accompany.model.mapper.AccompanyMapper;
+import com.ssafy.imgonna.exception.accompany.InvalidAccompanyDataException;
+import com.ssafy.imgonna.exception.member.MemberNotFoundException;
+import com.ssafy.imgonna.file.model.dto.FileInfoDto;
+import com.ssafy.imgonna.file.model.service.FileService;
+import com.ssafy.imgonna.notify.model.dto.Notify;
+import com.ssafy.imgonna.notify.model.service.NotifyService;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.ssafy.imgonna.file.model.service.FileService;
-import com.ssafy.imgonna.notify.model.dto.Notify;
-import com.ssafy.imgonna.notify.model.service.NotifyService;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.ssafy.imgonna.file.model.dto.FileInfoDto;
-import com.ssafy.imgonna.accompany.model.dto.Accompany;
-import com.ssafy.imgonna.accompany.model.dto.AccompanyRequestDto;
-import com.ssafy.imgonna.accompany.model.dto.AccompanyResponseDto;
-import com.ssafy.imgonna.accompany.model.mapper.AccompanyMapper;
-import com.ssafy.imgonna.accompany.model.dto.AccompanyListResponseDto;
-import com.ssafy.imgonna.accompany.model.dto.AccompanyResponseDto;
-import com.ssafy.imgonna.exception.accompany.InvalidAccompanyDataException;
-import com.ssafy.imgonna.exception.member.MemberNotFoundException;
 
 @Service
 public class AccompanyServiceImpl implements AccompanyService {
@@ -53,6 +48,7 @@ public class AccompanyServiceImpl implements AccompanyService {
     	}
     }
     
+
     // 동행 글 목록
     @Override
     public AccompanyListResponseDto getAccompanyList(Map<String, String> map) {
@@ -88,7 +84,17 @@ public class AccompanyServiceImpl implements AccompanyService {
         
         return accompanyListResponseDto;
     }
+	// 동행 글 목록
+    @Override
+    public AccompanyListResponseDto getAccompanyRankByHit() {
 
+        List<AccompanyResponseDto> accompanyList = accompanyMapper.getAccompanyRankByHit();
+
+        AccompanyListResponseDto accompanyListResponseDto = new AccompanyListResponseDto();
+        accompanyListResponseDto.setAccompanyList(accompanyList);
+
+        return accompanyListResponseDto;
+    }
     // 조회수 증가
     @Override
     public void updateHit(int accompanyNo) {
