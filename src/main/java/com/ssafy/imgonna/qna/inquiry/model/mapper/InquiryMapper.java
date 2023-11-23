@@ -14,6 +14,7 @@ public interface InquiryMapper {
    List<InquiryResponseDto> getInquiryList(Map<String, Object> map);
    int getTotalInquiresCount(Map<String, Object> param);
    void modifyInquiry(InquiryRequestDto inquiryRequestDto);
+   void deleteCommentAll(int InquiryNo);
    void deleteInquiry(int inquiryNo);
 
 }

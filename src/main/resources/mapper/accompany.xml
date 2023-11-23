@@ -58,17 +58,12 @@
 		where table_name=1 and pk_no = #{accompanyNo}
 	</select>
 	
-<!-- 	<sql id="search">
-		<if test="word != null and word != ''">
-			<if test="key == 'subject'">
-				and subject like concat('%', #{word}, '%')
-			</if>
-			<if test="key != 'subject'">
-				and ${key} = #{word}
-			</if>
-		</if>
-	</sql>
- -->
+    <sql id="search">
+        <if test="word != null and word != ''">
+                and ${key} like concat ('%', #{word}, '%')
+        </if>
+    </sql>
+    
 	<select id="getAccompanyList" parameterType="map" resultMap="accompanyFile">
 		select accompany_no, title, content, addr, join_time, current_num, limit_num,
 			hit, id, created_time, modified_time, status, theme_no
@@ -82,8 +77,17 @@
 			</if>
 		</where>
 		order by created_time desc
+		limit #{start}, #{listsize}
 	</select>
 	
+	<select id="getTotalAccompanyCount" parameterType="map" resultType="int">
+        select count(accompany_no)
+        from accompany
+<!--         <where>
+            <include refid="search"></include>
+        </where> -->
+    </select>
+    
  	<insert id="createAccompany" parameterType="accompanyRequestDto">
 		insert into accompany (title, content, addr, join_time, 
 			limit_num, id, status, theme_no)
@@ -112,6 +116,16 @@
 			join_time = #{joinTime}, limit_num = #{limitNum}, status = #{status}, theme_no=#{themeNo} 
 		where accompany_no = #{accompanyNo}
 	</update>
+
+	<delete id="deleteCommentAll" parameterType="int">
+		delete from accompany_comment
+		where accompany_no = #{accompanyNo}
+	</delete>
+	
+	<delete id="deleteJoinAll" parameterType="int">
+		delete from accompany_join
+		where accompany_no = #{accompanyNo}
+	</delete>	
 	
 	<delete id="deleteAccompany" parameterType="int">
 		delete from accompany
@@ -142,6 +156,11 @@
 		where accompany_no = #{accompanyNo}
 	</update>		
 
+	<delete id="deleteNotify" parameterType="map">
+		delete from notify
+		where table_name = 1 and pk_no = #{accompanyNo} and send = #{id}
+	</delete>
+	
 	<delete id="joinCancel" parameterType="map">
 		delete from accompany_join
 		where accompany_no = #{accompanyNo} and id = #{id}

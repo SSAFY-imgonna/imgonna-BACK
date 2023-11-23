@@ -2,6 +2,7 @@ package com.ssafy.imgonna.accompany.model.service;
 
 import java.io.File;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +18,8 @@ import com.ssafy.imgonna.accompany.model.dto.Accompany;
 import com.ssafy.imgonna.accompany.model.dto.AccompanyRequestDto;
 import com.ssafy.imgonna.accompany.model.dto.AccompanyResponseDto;
 import com.ssafy.imgonna.accompany.model.mapper.AccompanyMapper;
+import com.ssafy.imgonna.accompany.model.dto.AccompanyListResponseDto;
+import com.ssafy.imgonna.accompany.model.dto.AccompanyResponseDto;
 import com.ssafy.imgonna.exception.accompany.InvalidAccompanyDataException;
 import com.ssafy.imgonna.exception.member.MemberNotFoundException;
 
@@ -52,23 +55,38 @@ public class AccompanyServiceImpl implements AccompanyService {
     
     // 동행 글 목록
     @Override
-    public List<Accompany> getAccompanyList(Map<String, String> map) {
-    	
-    	// 나중에 검색어 조회시에 변경해주어야!!!
-//        Map<String, Object> param = new HashMap<String, Object>();
+    public AccompanyListResponseDto getAccompanyList(Map<String, String> map) {
+        Map<String, Object> param = new HashMap<>();
 //        String key = map.get("key");
 //		if("userid".equals(key))
 //			key = "b.user_id";
 //        param.put("key", key == null ? "" : key);
-//        param.put("word", map.get("word") == null ? "" : map.get("word"));
-//		int pgNo = Integer.parseInt(map.get("pgno") == null ? "1" : map.get("pgno"));
-//		int start = pgNo * SizeConstant.LIST_SIZE - SizeConstant.LIST_SIZE;
-//		param.put("start", start);
-//		param.put("listsize", SizeConstant.LIST_SIZE);
+        param.put("word", map.get("word") == null ? "" : map.get("word"));
+        int currentPage = Integer.parseInt(map.get("pgno") == null ? "1" : map.get("pgno"));
+        int sizePerPage = Integer.parseInt(map.get("spp") == null ? "9" : map.get("spp"));
+   
+        int start = currentPage * sizePerPage - sizePerPage;
+        param.put("start", start);
+        param.put("listsize", sizePerPage);
+        
+        String key = map.get("key");
+        param.put("key", key == null ? "" : key);
     	
-//    	String cat = map.get("cat");
-    	
-        return accompanyMapper.getAccompanyList(map);
+        
+    	String cat = map.get("cat");
+    	param.put("cat", cat == null ? "" : cat);
+        List<AccompanyResponseDto> accompanyList = accompanyMapper.getAccompanyList(param);
+
+        int totalArticleCount = accompanyMapper.getTotalAccompanyCount(param);
+        int totalPageCount = (totalArticleCount - 1) / sizePerPage + 1;
+
+
+        AccompanyListResponseDto accompanyListResponseDto = new AccompanyListResponseDto();
+        accompanyListResponseDto.setAccompanyList(accompanyList);
+        accompanyListResponseDto.setCurrentPage(currentPage);
+        accompanyListResponseDto.setTotalPageCount(totalPageCount);
+        
+        return accompanyListResponseDto;
     }
 
     // 조회수 증가
@@ -118,7 +136,11 @@ public class AccompanyServiceImpl implements AccompanyService {
     	deleteFiles(accompanyNo, uploadPath);
     	// 파일 정보 삭제
         fileService.deleteFile("accompany", accompanyNo);
-
+        
+        // 동행 글 삭제시 댓귿들 먼저 삭제
+        accompanyMapper.deleteCommentAll(accompanyNo);
+        // 동행 글 삭제시 동행 신청 정보 먼저 삭제
+        accompanyMapper.deleteJoinAll(accompanyNo);
         // 동행 글 정보 삭제
         accompanyMapper.deleteAccompany(accompanyNo);
     }
@@ -180,6 +202,9 @@ public class AccompanyServiceImpl implements AccompanyService {
 	@Override
 	@Transactional
 	public void joinCancel(Map<String, String> map) {
+		// 동행 신청 알림 삭제
+		accompanyMapper.deleteNotify(map);
+		
 		// accompany_join 테이블에서 레코드 삭제
 		accompanyMapper.joinCancel(map);
 

@@ -68,6 +68,10 @@ public class InquiryServiceImpl implements InquiryService {
 
     @Override
     public void deleteInquiry(int InquiryNo) {
+		// 글 삭제시 댓글들 먼저 삭제
+		inquiryMapper.deleteCommentAll(InquiryNo);
+		
+		// 글삭제
         inquiryMapper.deleteInquiry(InquiryNo);
     }
 }

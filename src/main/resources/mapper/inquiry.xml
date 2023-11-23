@@ -57,7 +57,12 @@
         set title=#{title}, content=#{content}, modified_time = now()
         where qna_no = #{inquiryNo}
     </update>
-
+	
+	<delete id="deleteCommentAll" parameterType="int">
+		delete from qna_comment
+		where qna_no = #{inquryNo}
+	</delete>
+	
     <delete id="deleteInquiry" parameterType="int">
         delete from qna
         where qna_no = #{inquiryNo}
