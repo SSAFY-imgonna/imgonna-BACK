@@ -20,6 +20,7 @@ public class DiaryResponseDto {
 	private int contentTypeId;
 	private String attraction;
 	private List<FileInfoDto> fileInfos;
+	private String photo;
 	
 	public int getDiaryNo() {
 		return diaryNo;
@@ -110,6 +111,12 @@ public class DiaryResponseDto {
 	}
 	public void setFileInfos(List<FileInfoDto> fileInfos) {
 		this.fileInfos = fileInfos;
+	}
+	public String getPhoto() {
+		return photo;
+	}
+	public void setPhoto(String photo) {
+		this.photo = photo;
 	}
 	
 	

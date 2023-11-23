@@ -34,6 +34,7 @@
 		<result column="modified_time" property="modifiedTime"/>
 		<result column="status" property="status"/>
 		<result column="theme_no" property="themeNo"/>
+		<result column="photo" property="photo"/>
 	</resultMap>
 	
 	<resultMap type="accompanyResponseDto" id="accompanyFile" extends="accompanyResponseDto">
