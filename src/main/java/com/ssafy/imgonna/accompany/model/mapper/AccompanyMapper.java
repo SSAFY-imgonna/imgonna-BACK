@@ -33,6 +33,10 @@ public interface AccompanyMapper {
 	// 동행 글 수정
 	void modifyAccompany(AccompanyRequestDto accompanyRequestDto) throws SQLException;
 
+	// 동행 글 삭제시 댓귿들 먼저 삭제
+	void deleteCommentAll(int accompanyNo);
+	// 동행 글 삭제시 동행 신청 정보 먼저 삭제
+	void deleteJoinAll(int accompanyNo);
 	// 동행 글 삭제
 	void deleteAccompany(int accompanyNo);
 

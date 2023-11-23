@@ -116,6 +116,16 @@
 			join_time = #{joinTime}, limit_num = #{limitNum}, status = #{status}, theme_no=#{themeNo} 
 		where accompany_no = #{accompanyNo}
 	</update>
+
+	<delete id="deleteCommentAll" parameterType="int">
+		delete from accompany_comment
+		where accompany_no = #{accompanyNo}
+	</delete>
+	
+	<delete id="deleteJoinAll" parameterType="int">
+		delete from accompany_join
+		where accompany_no = #{accompanyNo}
+	</delete>	
 	
 	<delete id="deleteAccompany" parameterType="int">
 		delete from accompany

@@ -136,7 +136,11 @@ public class AccompanyServiceImpl implements AccompanyService {
     	deleteFiles(accompanyNo, uploadPath);
     	// 파일 정보 삭제
         fileService.deleteFile("accompany", accompanyNo);
-
+        
+        // 동행 글 삭제시 댓귿들 먼저 삭제
+        accompanyMapper.deleteCommentAll(accompanyNo);
+        // 동행 글 삭제시 동행 신청 정보 먼저 삭제
+        accompanyMapper.deleteJoinAll(accompanyNo);
         // 동행 글 정보 삭제
         accompanyMapper.deleteAccompany(accompanyNo);
     }
