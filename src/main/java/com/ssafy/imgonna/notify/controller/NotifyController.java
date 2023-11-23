@@ -3,6 +3,7 @@ package com.ssafy.imgonna.notify.controller;
 import java.util.List;
 import java.util.Map;
 
+import com.ssafy.imgonna.common.annotation.CheckToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -34,7 +35,8 @@ public class NotifyController {
 		this.notifyService = notifyService;
 	}
     
-    @GetMapping 
+    @GetMapping
+	@CheckToken
     public ResponseEntity<?> getNotifyCount(@RequestParam Map<String, String> map) throws Exception {
     	logger.debug("getNotifyCount map : {}", map);
     	
@@ -48,7 +50,8 @@ public class NotifyController {
     			.body(cnt);    
     }
     
-    @GetMapping("/list") 
+    @GetMapping("/list")
+	@CheckToken
     public ResponseEntity<?> getNotifyList(@RequestParam Map<String, String> map) throws Exception {
     	logger.debug("getNotifyList map : {}", map);
     	
@@ -62,7 +65,8 @@ public class NotifyController {
     			.body(notifyList);    
     }
     
-    @GetMapping("/mypage") 
+    @GetMapping("/mypage")
+	@CheckToken
     public ResponseEntity<?> getNotifyListAll(@RequestParam Map<String, String> map) throws Exception {
     	logger.debug("getNotifyListAll map : {}", map);
     	
@@ -77,6 +81,7 @@ public class NotifyController {
     }
     
     @GetMapping("/read")
+	@CheckToken
     public ResponseEntity<?> updateNotify(@RequestParam Map<String, String> map) throws Exception {
     	logger.debug("updateNotify map : {}", map);
     	
@@ -88,6 +93,7 @@ public class NotifyController {
     }  
     
     @GetMapping("/readAll")
+	@CheckToken
     public ResponseEntity<?> updateNotifyAll(@RequestParam Map<String, String> map) throws Exception {
     	logger.debug("updateNotifyAll map : {}", map);
     	
@@ -99,6 +105,7 @@ public class NotifyController {
     }   
     
     @PostMapping
+	@CheckToken
     public ResponseEntity<?> deleteNotifyList(@RequestBody List<String> list) throws Exception {
     	logger.debug("deleteNotifyList map : {}", list);
     	

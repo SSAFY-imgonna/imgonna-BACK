@@ -199,17 +199,15 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void deleteRefreshToken(String id, HttpSession session) {
+    public void deleteRefreshToken(String id) {
         Map<String, String> map = new HashMap<>();
         map.put("id", id);
         map.put("token", null);
-        session.removeAttribute("refreshToken");
-        session.invalidate();
         memberMapper.deleteRefreshToken(map);
     }
 
     @Override
-    public MemberLoginResponseDto loginMember(MemberLoginRequestDto requestDto, HttpSession session) {
+    public MemberLoginResponseDto loginMember(MemberLoginRequestDto requestDto) {
 
         MemberDetailsDto member = getMemberDetailsByIdAndPassword(requestDto);
 
@@ -225,8 +223,6 @@ public class MemberServiceImpl implements MemberService {
             saveRefreshToken(requestDto.getId(), refreshToken);
 
             responseDto = new MemberLoginResponseDto(accessToken, refreshToken);
-
-            session.setAttribute("refreshToken",refreshToken);
 
         }
         return responseDto;

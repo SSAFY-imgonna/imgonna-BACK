@@ -26,6 +26,8 @@ public class JWTUtil {
 	@Value("${jwt.refresh-token.expiretime}")
 	private long refreshTokenExpireTime;
 
+	private static final String HEADER_TOKEN_KEY = "Bearer ";
+
 	/**
 	 * AccessToken 생성
 	 *
@@ -90,8 +92,6 @@ public class JWTUtil {
 		return key;
 	}
 	
-//	전달 받은 토큰이 제대로 생성된것인지 확인 하고
-
 	/**
 	 * 전달 받은 토큰이 제대로 생성된 것인지 확인
 	 * 
@@ -100,6 +100,8 @@ public class JWTUtil {
 	 */
 	public boolean isValidToken(String token) {
 		try {
+
+			token = token.replace(HEADER_TOKEN_KEY, "");
 //			Json Web Signature: 서버에서 인증을 근거로 인증 정보를 서버의 private key로 서명 한것을 토큰화 한 것
 //			setSigningKey : JWS 서명 검증을 위한  secret key 세팅
 //			parseClaimsJws : 파싱하여 원본 jws 만들기
@@ -107,6 +109,7 @@ public class JWTUtil {
 //			Claims 는 Map의 구현체 형태
 			return true;
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			throw new InvalidTokenException();
 		}
 	}

@@ -36,10 +36,10 @@ public interface MemberService {
 
 	void saveRefreshToken(String id, String refreshToken);
 
-	void deleteRefreshToken(String id, HttpSession session);
+	void deleteRefreshToken(String id);
 
 
-	MemberLoginResponseDto loginMember(MemberLoginRequestDto requestDto, HttpSession session);
+	MemberLoginResponseDto loginMember(MemberLoginRequestDto requestDto);
 
 	MemberDetailsDto getInfo(String id, String authorization);
 

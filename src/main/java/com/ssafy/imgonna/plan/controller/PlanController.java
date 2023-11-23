@@ -1,5 +1,6 @@
 package com.ssafy.imgonna.plan.controller;
 
+import com.ssafy.imgonna.common.annotation.CheckToken;
 import com.ssafy.imgonna.plan.model.dto.PlanListResponseDto;
 import com.ssafy.imgonna.plan.model.dto.PlanNoResponseDto;
 import com.ssafy.imgonna.plan.model.dto.PlanRequestDto;
@@ -60,6 +61,7 @@ public class PlanController {
      * @return 아이디에 해당하는 회원이 작성한 여행 계획 리스트
      */
     @GetMapping(params = "id")
+    @CheckToken
     public ResponseEntity<List<PlanResponseDto>> getPlanListById(@RequestParam String id) {
         List<PlanResponseDto> planList = planService.getPlanListById(id);
         return ResponseEntity
@@ -76,6 +78,7 @@ public class PlanController {
      * @author yihoney
      */
     @PostMapping
+    @CheckToken
     public ResponseEntity<PlanNoResponseDto> createPlan(@RequestBody PlanRequestDto requestDto) {
         int planNo = planService.createPlan(requestDto);
         return ResponseEntity
@@ -91,6 +94,7 @@ public class PlanController {
      * @author yihoney
      */
     @PutMapping
+    @CheckToken
     public ResponseEntity<PlanNoResponseDto> modifyPlan(@RequestBody PlanRequestDto requestDto) {
         int planNo = planService.modifyPlan(requestDto);
         return ResponseEntity
@@ -106,6 +110,7 @@ public class PlanController {
      * @author yihoney
      */
     @DeleteMapping
+    @CheckToken
     public ResponseEntity<Void> deletePlan(@RequestBody int planNo) {
         planService.deletePlan(planNo);
         return ResponseEntity

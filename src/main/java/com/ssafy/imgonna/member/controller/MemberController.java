@@ -1,5 +1,6 @@
 package com.ssafy.imgonna.member.controller;
 
+import com.ssafy.imgonna.common.annotation.CheckToken;
 import com.ssafy.imgonna.member.model.dto.*;
 import com.ssafy.imgonna.member.service.MemberService;
 import org.springframework.http.HttpStatus;
@@ -7,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
@@ -81,6 +81,7 @@ public class MemberController {
      * @return
      */
     @PutMapping("/{id}/pw")
+    @CheckToken
     public ResponseEntity<Void> modifyMemberPassword(@PathVariable String id,
                                                      @RequestBody MemberModifyPwRequestDto requestDto) {
 
@@ -101,6 +102,7 @@ public class MemberController {
      * @return
      */
     @PostMapping("/{id}")
+    @CheckToken
     public ResponseEntity<String> deleteMember(@PathVariable String id,
                                                @RequestBody MemberDeleteRequestDto requestDto) {
         memberService.delete(id, requestDto);
@@ -118,6 +120,7 @@ public class MemberController {
      * @return
      */
     @GetMapping("/{id}")
+    @CheckToken
     public ResponseEntity<Member> getMemberById(@PathVariable String id) {
         Member member = memberService.getMemberById(id);
         return ResponseEntity
@@ -134,6 +137,7 @@ public class MemberController {
      * @return
      */
     @PutMapping("/{id}")
+    @CheckToken
     public ResponseEntity<MemberDetailsDto> modifyMember(@PathVariable String id, MemberModifyRequestDto requestDto,
                                                          @RequestPart(required = false) MultipartFile upfile) throws IOException {
 
@@ -169,10 +173,10 @@ public class MemberController {
      * @return
      */
     @PostMapping("/login")
-    public ResponseEntity<MemberLoginResponseDto> login(@RequestBody MemberLoginRequestDto requestDto, HttpSession session) {
+    public ResponseEntity<MemberLoginResponseDto> login(@RequestBody MemberLoginRequestDto requestDto) {
 
 
-        MemberLoginResponseDto responseDto = memberService.loginMember(requestDto, session);
+        MemberLoginResponseDto responseDto = memberService.loginMember(requestDto);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -200,9 +204,9 @@ public class MemberController {
      * 로그아웃 - 토큰 제거
      */
     @GetMapping("/logout/{id}")
-    public ResponseEntity<Void> removeToken(@PathVariable String id, HttpSession session) {
+    public ResponseEntity<Void> removeToken(@PathVariable String id) {
 
-        memberService.deleteRefreshToken(id, session);
+        memberService.deleteRefreshToken(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .build();

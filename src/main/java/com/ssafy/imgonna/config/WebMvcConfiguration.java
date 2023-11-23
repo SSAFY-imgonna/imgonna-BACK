@@ -1,6 +1,7 @@
 package com.ssafy.imgonna.config;
 
 import com.ssafy.imgonna.common.interceptor.LoginInterceptor;
+import com.ssafy.imgonna.util.JWTUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,9 +20,12 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 	private final Logger logger = LoggerFactory.getLogger(WebMvcConfiguration.class);
 
 	private final String uploadFilePath;
+	private final JWTUtil jwtUtil;
 
-	public WebMvcConfiguration(@Value("${file.path}") String uploadFilePath) {
+	public WebMvcConfiguration(@Value("${file.path}") String uploadFilePath, JWTUtil jwtUtil) {
 		this.uploadFilePath = uploadFilePath;
+		this.jwtUtil = jwtUtil;
+
 	}
 
 	@Override
@@ -45,10 +49,9 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(new LoginInterceptor())
-//				.addPathPatterns("/**")
-				.addPathPatterns("/accompany","/accompany/**","/plans","/diary", "diary/**","/qna","/qna/**","/members/*")
-				.excludePathPatterns("/", "/members", "/login", "/logout/*");
+		registry.addInterceptor(new LoginInterceptor(jwtUtil))
+				.addPathPatterns("/imgonna/**");
+//				.excludePathPatterns("/", "/members", "/members/login", "/members/logout/*");
 	}
 
 }

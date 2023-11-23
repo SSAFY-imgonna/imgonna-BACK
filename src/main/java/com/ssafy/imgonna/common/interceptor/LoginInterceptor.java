@@ -1,33 +1,48 @@
 package com.ssafy.imgonna.common.interceptor;
 
+import com.ssafy.imgonna.common.annotation.CheckToken;
 import com.ssafy.imgonna.exception.member.UnauthorizedMemberException;
-import org.springframework.http.HttpMethod;
+import com.ssafy.imgonna.util.JWTUtil;
+import org.springframework.stereotype.Component;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
+@Component
 public class LoginInterceptor implements HandlerInterceptor {
+
+    private final String HEADER_AUTH = "Authorization";
+    private JWTUtil jwtUtil;
+
+    public LoginInterceptor(JWTUtil jwtUtil) {
+        this.jwtUtil = jwtUtil;
+    }
+
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String requestURI = request.getRequestURI();
-        System.out.println("[interceptor] : " + requestURI);
-        HttpSession session = request.getSession(false);
+        System.out.println("[interceptor] : " + requestURI + "(" + request.getMethod() + ")");
 
-        // 조회일 경우엔 권한 체크 안함
-        if(HttpMethod.GET.name().equals(request.getMethod())) {
-            return true;
+
+        // 컨트롤러에 @WithoutTokenCheck 어노테이션이 사용되었는지 체크
+        CheckToken checkToken = ((HandlerMethod) handler).getMethodAnnotation(CheckToken.class);
+
+//        if (handler != HandlerMethod) return true;
+
+        if (checkToken != null) {
+            // @WithOutAuth 없으면 인증 체크
+            final String token = request.getHeader(HEADER_AUTH);
+
+            if (token == null) {
+                throw new UnauthorizedMemberException();
+
+            }
+
+            jwtUtil.isValidToken(token);
         }
-
-        // 로그인 안되어있을 때
-        if (session == null || session.getAttribute("accessToken") == null) {
-            throw new UnauthorizedMemberException();
-        }
-
-        // 로그인 되어있을 때
         return true;
     }
-
 }

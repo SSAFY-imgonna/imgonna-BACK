@@ -4,6 +4,7 @@ import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 
+import com.ssafy.imgonna.common.annotation.CheckToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -43,6 +44,7 @@ public class QnaCommentController {
 	 * @return
 	 */
 	@PostMapping("/{qnaNo}/comments")
+	@CheckToken
 	public ResponseEntity<?> createQnaComment(@PathVariable int qnaNo, @RequestBody QnaComment qnaComment) {
 		logger.info("writeComment qnaComment - {}", qnaComment);
 		
@@ -100,6 +102,7 @@ public class QnaCommentController {
 	 * @throws Exception
 	 */
 	@PutMapping("/{qnaNo}/comments/{commentNo}")
+	@CheckToken
 	public ResponseEntity<String> modifyQnaComment(@PathVariable int commentNo, @RequestBody QnaComment qnaComment) throws Exception {
 		logger.info("modifyQnaComment - 호출 {}", qnaComment);
 		
@@ -118,6 +121,7 @@ public class QnaCommentController {
 	 * @throws Exception
 	 */
 	@DeleteMapping("/{qnaNo}/comments/{commentNo}")
+	@CheckToken
 	public ResponseEntity<String> deleteQnaComment(@PathVariable int commentNo) throws Exception {
 		logger.info("deleteQnaComment - 호출");
 		

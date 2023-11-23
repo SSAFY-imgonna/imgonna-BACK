@@ -1,5 +1,6 @@
 package com.ssafy.imgonna.qna.inquiry.controller;
 
+import com.ssafy.imgonna.common.annotation.CheckToken;
 import com.ssafy.imgonna.qna.inquiry.model.dto.InquiryListResponseDto;
 import com.ssafy.imgonna.qna.inquiry.model.dto.InquiryRequestDto;
 import com.ssafy.imgonna.qna.inquiry.model.dto.InquiryResponseDto;
@@ -23,6 +24,7 @@ public class InquiryController {
     }
 
     @PostMapping
+    @CheckToken
     public ResponseEntity<?> createInquiry(
             @RequestBody InquiryRequestDto inquiryRequestDto) {
         try {
@@ -60,6 +62,7 @@ public class InquiryController {
     }
 
     @PutMapping("/{inquiryNo}")
+    @CheckToken
     public ResponseEntity<String> modifyInquiry(@PathVariable int inquiryNo, @RequestBody InquiryRequestDto inquiryRequestDto) throws Exception {
 
         inquiryService.modifyInquiry(inquiryNo, inquiryRequestDto);
@@ -69,6 +72,7 @@ public class InquiryController {
     }
 
     @DeleteMapping("/{inquiryNo}")
+    @CheckToken
     public ResponseEntity<String> deleteInquiry(@PathVariable("inquiryNo") int inquiryNo) throws Exception {
         inquiryService.deleteInquiry(inquiryNo);
         return ResponseEntity

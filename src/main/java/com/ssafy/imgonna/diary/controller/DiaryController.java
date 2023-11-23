@@ -1,5 +1,6 @@
 package com.ssafy.imgonna.diary.controller;
 
+import com.ssafy.imgonna.common.annotation.CheckToken;
 import com.ssafy.imgonna.diary.model.dto.*;
 import com.ssafy.imgonna.diary.service.DiaryService;
 import com.ssafy.imgonna.file.model.dto.FileInfoDto;
@@ -58,6 +59,7 @@ public class DiaryController {
 	}	
 
     @PostMapping
+    @CheckToken
     public ResponseEntity<?> createDiary(DiaryRequestDto diaryRequestDto,
     		@RequestPart(required=false) MultipartFile[] upfile, HttpSession session) throws Exception {
     	logger.debug("DiaryRequestDto : {}", diaryRequestDto);
@@ -105,7 +107,8 @@ public class DiaryController {
     }
 
     @PutMapping("/{diaryNo}")
-    public ResponseEntity<String> modifyDiary(@PathVariable int diaryNo, DiaryRequestDto diaryRequestDto, 
+    @CheckToken
+    public ResponseEntity<String> modifyDiary(@PathVariable int diaryNo, DiaryRequestDto diaryRequestDto,
     		@RequestPart(required=false) MultipartFile[] upfile, @RequestPart(required=false) String originFile) throws Exception {
     	logger.debug("modifyDiary DiaryRequestDto : {}", diaryRequestDto);
     	diaryRequestDto.setDiaryNo(diaryNo);
@@ -129,6 +132,7 @@ public class DiaryController {
     }
 
     @DeleteMapping("/{diaryNo}")
+    @CheckToken
     public ResponseEntity<String> deleteDiary(@PathVariable int diaryNo) throws Exception {
     	logger.debug("deleteDiary diaryNo : {}", diaryNo);
     	
