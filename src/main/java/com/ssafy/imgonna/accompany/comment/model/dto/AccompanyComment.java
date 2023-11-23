@@ -7,7 +7,7 @@ public class AccompanyComment {
 	private String createdTime;
 	private String modifiedTime;
 	private String id;
-	
+	private String photo;
 	
 	public int getCommentNo() {
 		return commentNo;
@@ -45,12 +45,19 @@ public class AccompanyComment {
 	public void setId(String id) {
 		this.id = id;
 	}
+	public String getPhoto() {
+		return photo;
+	}
+	public void setPhoto(String photo) {
+		this.photo = photo;
+	}
 	
 	
 	@Override
 	public String toString() {
-		return "AccompanyDto [commentNo=" + commentNo + ", accompanyNo=" + accompanyNo + ", content=" + content
-				+ ", createdTime=" + createdTime + ", modifiedTime=" + modifiedTime + ", id=" + id + "]";
+		return "AccompanyComment [commentNo=" + commentNo + ", accompanyNo=" + accompanyNo + ", content=" + content
+				+ ", createdTime=" + createdTime + ", modifiedTime=" + modifiedTime + ", id=" + id + ", photo=" + photo
+				+ "]";
 	}
 	
 }

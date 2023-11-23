@@ -8,6 +8,7 @@ public class AccompanyComm implements Serializable{
 	private String id;
 	private String commentContent;
 	private String regDate;
+	private String photo;
 	
 	public int getCommentNo() {
 		return commentNo;
@@ -39,10 +40,17 @@ public class AccompanyComm implements Serializable{
 	public void setRegDate(String regDate) {
 		this.regDate = regDate;
 	}
+	public String getPhoto() {
+		return photo;
+	}
+	public void setPhoto(String photo) {
+		this.photo = photo;
+	}
 	
 	@Override
 	public String toString() {
-		return "AccompanyCommDto [commentNo=" + commentNo + ", accompanyNo=" + accompanyNo + ", id=" + id
-				+ ", commentContent=" + commentContent + ", regDate=" + regDate + "]";
+		return "AccompanyComm [commentNo=" + commentNo + ", accompanyNo=" + accompanyNo + ", id=" + id
+				+ ", commentContent=" + commentContent + ", regDate=" + regDate + ", photo=" + photo + "]";
 	}
+	
 }

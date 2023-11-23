@@ -22,7 +22,7 @@ public class AccompanyResponseDto {
 	private String themeNo;	
 	private List<FileInfoDto> fileInfos;
 	private boolean isJoin;
-	
+	private String photo;
 	
 	public int getAccompanyNo() {
 		return accompanyNo;
@@ -126,6 +126,15 @@ public class AccompanyResponseDto {
 	public void setIsJoin(boolean isJoin) {
 		this.isJoin = isJoin;
 	}
+	public String getPhoto() {
+		return photo;
+	}
+	public void setPhoto(String photo) {
+		this.photo = photo;
+	}
+	public void setJoin(boolean isJoin) {
+		this.isJoin = isJoin;
+	}
 	
 	
 	@Override
@@ -134,7 +143,7 @@ public class AccompanyResponseDto {
 				+ ", addr=" + addr + ", date=" + date + ", time=" + time + ", joinTime=" + joinTime + ", currentNum="
 				+ currentNum + ", limitNum=" + limitNum + ", hit=" + hit + ", id=" + id + ", createdTime=" + createdTime
 				+ ", modifiedTime=" + modifiedTime + ", status=" + status + ", themeNo=" + themeNo + ", fileInfos="
-				+ fileInfos + ", isJoin=" + isJoin + "]";
+				+ fileInfos + ", isJoin=" + isJoin + ", photo=" + photo + "]";
 	}
 	
 }

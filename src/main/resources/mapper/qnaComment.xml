@@ -19,8 +19,9 @@
 	</insert>
 
 	<select id="getQnaCommentList" parameterType="map" resultMap="comment">
-		select comment_no, qna_no, content, created_time, modified_time, id
-		from qna_comment 
+		select comment_no, qna_no, content, created_time, modified_time, q.id, photo
+		from qna_comment q join members m
+        on q.id = m.id
 		where qna_no = #{qnaNo}
 		order by comment_no desc
 		<!-- 	댓글 목록 관련 부분 주석 처리

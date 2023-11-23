@@ -34,6 +34,7 @@
 		<result column="longitude" property="longitude"></result>
 		<result column="content_type_id" property="contentTypeId"></result>
 		<result column="attraction" property="attraction"></result>
+		<result column="photo" property="photo"/>
 	</resultMap>
 
 	<resultMap id="attractionInfo" type="attractionInfo">
@@ -94,9 +95,12 @@
     </sql>
 
     <select id="getDiaryList" parameterType="map" resultMap="diaryResponseFileDto">
-		select t.*,  content_type_id, a.title attraction, latitude, longitude 
-		from travel_diary t join attraction_info a
-		where t.content_id = a.content_id
+		select t.*, m.photo 
+        from members m join (select t.*,  content_type_id, a.title attraction, latitude, longitude 
+							from travel_diary t join attraction_info a
+							on t.content_id = a.content_id
+							) t
+        using(id)
 		<include refid="search"></include>
 		order by created_time desc
 		limit #{start}, #{listsize}
@@ -111,10 +115,13 @@
     </select>
     
     <select id="getDiaryByDiaryNo" parameterType="Integer" resultMap="diaryResponseFileDto">
-		select t.*,  content_type_id, a.title attraction, latitude, longitude 
-		from travel_diary t join attraction_info a
-		on t.content_id = a.content_id
-		where diary_no = #{diaryNo}
+    	select t.*, m.photo 
+        from members m join (select t.*,  content_type_id, a.title attraction, latitude, longitude 
+							from travel_diary t join attraction_info a
+							on t.content_id = a.content_id
+							where diary_no = #{diaryNo}
+							) t
+        using(id)
     </select>
     
     <update id="modifyDiary" parameterType="diaryRequestDto">

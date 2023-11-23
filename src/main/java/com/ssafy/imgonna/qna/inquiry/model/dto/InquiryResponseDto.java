@@ -8,7 +8,8 @@ public class InquiryResponseDto {
     private String modifiedTime;
     private String id;
     private String nickname;
-
+    private String photo;
+    
     public int getInquiryNo() {
         return inquiryNo;
     }
@@ -64,4 +65,13 @@ public class InquiryResponseDto {
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
+
+	public String getPhoto() {
+		return photo;
+	}
+
+	public void setPhoto(String photo) {
+		this.photo = photo;
+	}
+    
 }

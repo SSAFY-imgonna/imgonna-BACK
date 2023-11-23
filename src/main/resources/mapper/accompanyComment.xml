@@ -11,6 +11,7 @@
 		<result column="created_time" property="createdTime"/>
 		<result column="modified_time" property="modifiedTime"/>
 		<result column="id" property="id"/>
+		<result column="photo" property="photo"/>
 	</resultMap>
 	
 	<insert id="createAccompanyComment" parameterType="accompanyComment">
@@ -19,8 +20,9 @@
 	</insert>
 
 	<select id="getAccompanyCommentList" parameterType="map" resultMap="comment">
-		select comment_no, accompany_no, content, created_time, modified_time, id
-		from accompany_comment 
+		select comment_no, accompany_no, content, created_time, modified_time, id, photo
+		from accompany_comment join members
+		using(id)
 		where accompany_no = #{accompanyNo}
 		order by comment_no desc
 		<!-- 	댓글 목록 관련 부분 주석 처리

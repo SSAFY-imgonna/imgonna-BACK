@@ -34,6 +34,7 @@
 		<result column="modified_time" property="modifiedTime"/>
 		<result column="status" property="status"/>
 		<result column="theme_no" property="themeNo"/>
+		<result column="photo" property="photo"/>
 	</resultMap>
 	
 	<resultMap type="accompanyResponseDto" id="accompanyFile" extends="accompanyResponseDto">
@@ -66,8 +67,9 @@
     
 	<select id="getAccompanyList" parameterType="map" resultMap="accompanyFile">
 		select accompany_no, title, content, addr, join_time, current_num, limit_num,
-			hit, id, created_time, modified_time, status, theme_no
-		from accompany
+			hit, id, created_time, modified_time, status, theme_no, photo
+		from accompany join members
+        using(id)
 		<where>
 			<if test="cat == '모집중'">
 				AND status = '모집중'
@@ -99,9 +101,10 @@
 	</insert>
 
 	<select id="getAccompanyByAccompanyNo" parameterType="int" resultMap="accompanyFileDto">
-		select *
-		from accompany
-		where accompany_no = #{accompanyNo}
+		select a.*, m.photo
+		from accompany a join members m
+        using(id)
+		where a.accompany_no = #{accompanyNo}
 	</select>
 
 	<update id="updateHit" parameterType="int">
