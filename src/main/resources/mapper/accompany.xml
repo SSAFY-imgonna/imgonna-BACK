@@ -87,8 +87,8 @@
 			hit, id, created_time, modified_time, status, theme_no, photo
 		from accompany join members
         using(id)
-		order by created_time desc
-		limit #{start}, #{listsize}
+		order by hit desc
+		limit 5
 	</select>
 	
 	<select id="getTotalAccompanyCount" parameterType="map" resultType="int">
