@@ -109,9 +109,9 @@ public class PlanController {
      * @return 200 OK
      * @author yihoney
      */
-    @DeleteMapping
+    @PostMapping("/{planNo}")
     @CheckToken
-    public ResponseEntity<Void> deletePlan(@RequestBody int planNo) {
+    public ResponseEntity<Void> deletePlan(@PathVariable int planNo) {
         planService.deletePlan(planNo);
         return ResponseEntity
                 .status(HttpStatus.OK)
